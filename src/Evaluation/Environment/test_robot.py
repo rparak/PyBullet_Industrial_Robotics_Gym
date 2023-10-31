@@ -52,13 +52,18 @@ def main():
     # Get the homogeneous transformation matrix of the robot end-effector.
     T = Kinematics.Forward_Kinematics(theta, 'Fast', Robot_Str)[1]
     
+    # ...
+    T_n = T.Translation([0.0, 0.0, -0.4])
+    T_n = T_n.Rotation([0.0, 0.0, 0.349066], 'ZYX')
+
     # Add a viewpoint with the correct transformation to the end-effector of the structure.
-    PyBullet_Robot_Cls.Add_External_Object('/../../../URDFs/Viewpoint/Viewpoint.urdf', T, None, 
-                                            0.5, True, False)
+    PyBullet_Robot_Cls.Add_External_Object('/../../../URDFs/Viewpoint/Viewpoint.urdf', T_n, None, 
+                                           0.5, True, False)
     
     # The physical simulation is in progress.
     while PyBullet_Robot_Cls.is_connected == True:
-        pass
+        PyBullet_Robot_Cls.Set_TCP_Position(T_n, 'Motion', {'force': 100.0, 't_0': 0.0, 't_1': 2.0})
+        #x = PyBullet_Robot_Cls.Set_TCP_Position(T_n, 'Reset')
 
     # Disconnect the created environment from a physical server.
     PyBullet_Robot_Cls.Disconnect()

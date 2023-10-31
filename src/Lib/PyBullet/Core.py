@@ -438,3 +438,50 @@ class Robot_Cls(object):
         except AssertionError as error:
             print(f'[ERROR] Information: {error}')
             print(f'[ERROR] Incorrect number of values in the input variable theta. The input variable "theta" must contain {self.__Robot_Parameters_Str.Theta.Zero.size} values.')
+
+    def Set_TCP_Position(self, T: tp.List[tp.List[float]], mode: str, parameters: tp.Dict = None) -> bool:
+        """
+        Description:
+            Set the TCP (tool center point) of the robot.
+
+        Args:
+            (1) T [Matrix<float> 4x4]: Homogeneous transformation matrix of the desired TCP position.
+            (2) mode [string]: The name of the mode to be used to perform the transformation.
+                                Note:
+                                    mode = 'Reset' or 'Motion'
+            (3) parameters [Dictionary {'force': float, 't_0': float, 't_1': float}]: The parameters of the 'Motion' mode. If the mode is equal
+                                                                                      to 'Reset', the parameters will be equal to 'None'.
+                                                                                        Note:
+                                                                                            'force': The maximum motor force used to reach the target value.
+                                                                                            't_0': Animation start time in seconds.
+                                                                                            't_1': Animation stop time in seconds.
+
+        Returns:
+            (1) parameter [bool]: The result is 'True' if the robot is in the desired position,
+                                  and 'False' if it is not.
+        """ 
+
+        try:
+            assert mode in ['Reset', 'Motion']
+
+            if isinstance(T, (list, np.ndarray)):
+                T = HTM_Cls(T, np.float64)
+
+            # Get the translational and rotational part from the transformation matrix.
+            p = T.p.all(); q = T.Get_Rotation('QUATERNION')
+
+            # A function to compute the inverse kinematics (IK) using the Damped Least Squares (DLS) method.
+            theta = np.array(pb.calculateInverseKinematics(bodyUniqueId=self.__robot_id, endEffectorLinkIndex=self.__theta_index[-1], 
+                                                           targetPosition=p, targetOrientation=[q.x, q.y, q.z, q.w], 
+                                                           lowerLimits=self.__Robot_Parameters_Str.Theta.Limit[:, 0], upperLimits=self.__Robot_Parameters_Str.Theta.Limit[:, 1], 
+                                                           restPoses=self.Theta, jointDamping=[0.1]*self.__Robot_Parameters_Str.Theta.Zero.size, 
+                                                           solver=pb.IK_DLS), dtype=np.float64)
+
+            if mode == 'Reset':
+                return self.Reset('Individual', theta)
+            else:
+                return self.Set_Absolute_Joint_Position(theta, parameters['force'], parameters['t_0'], parameters['t_1'])
+
+        except AssertionError as error:
+            print(f'[ERROR] Information: {error}')
+            print('[ERROR] An incorrect name of the mode was selected for the ...')

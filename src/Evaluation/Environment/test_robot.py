@@ -53,7 +53,7 @@ def main():
     T = Kinematics.Forward_Kinematics(theta, 'Fast', Robot_Str)[1]
     
     # ...
-    T_n = T.Translation([0.0, 0.0, -0.4])
+    T_n = T.Translation([-0.1, -0.15, -0.1])
     T_n = T_n.Rotation([0.0, 0.0, 0.349066], 'ZYX')
 
     # Add a viewpoint with the correct transformation to the end-effector of the structure.

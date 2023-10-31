@@ -54,7 +54,7 @@ def main():
     
     # ...
     # 0.349066
-    T_n = T.Translation([0.0, 0.1, 0.0])
+    T_n = T.Translation([0.0, -0.1, 0.0])
     T_n = T_n.Rotation([0.0, 0.0, 0.0], 'ZYX')
 
     # Add a viewpoint with the correct transformation to the end-effector of the structure.

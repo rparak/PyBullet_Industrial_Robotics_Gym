@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<robot name="ABB_IRB_14000_Base">
+  <!-- Configuration of the part called 'Base'. -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <mesh filename="/Mesh/Visual/Base.stl"/>
+      </geometry>
+      <material name="Custom_Color">
+        <color rgba="0.9 0.9 0.9 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="/Mesh/Visual/Base.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="22.0"/>
+      <origin rpy="0.0 0.0 0.0" xyz="-0.11307 0.00000 0.18543"/>
+      <inertia ixx="0.8904048929" ixy="0.0" ixz="0.0" iyy="1.0479105340" iyz="0.0" izz="0.7439376585"/>
+    </inertial>
+  </link>
+</robot>
+

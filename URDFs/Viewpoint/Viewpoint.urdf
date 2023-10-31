@@ -1,0 +1,60 @@
+<?xml version="1.0" ?>
+<robot name="Viewpoint">
+  <!-- Configuration of the part called 'Base'. -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+	 	     <mesh filename="/Mesh/Visual/Viewpoint.stl" scale="1 1 1"/>
+      </geometry>
+      <material name="Custom_Color_White">
+        <color rgba="1.0 1.0 1.0 1.0"/>
+      </material>
+    </visual>
+  </link>
+  <joint name="x_axis" type="fixed">
+    <parent link="base_link"/>
+    <child link="x_axis_link"/>
+  </joint>
+  <!-- Configuration of the part called 'X-Axis'. -->
+  <link name="x_axis_link">
+    <visual>
+      <geometry>
+        <mesh filename="/Mesh/Visual/X_Axis.stl"/>
+      </geometry>
+      <material name="Custom_Color_Red">
+        <color rgba="1.0 0.0 0.0 1.0"/>
+      </material>
+    </visual>
+  </link>
+  <!-- Configuration of the part called 'Y-Axis'. -->
+  <joint name="y_axis" type="fixed">
+    <parent link="base_link"/>
+    <child link="y_axis_link"/>
+  </joint>
+  <link name="y_axis_link">
+    <visual>
+      <geometry>
+        <mesh filename="/Mesh/Visual/Y_Axis.stl"/>
+      </geometry>
+      <material name="Custom_Color_Green">
+        <color rgba="0.0 1.0 0.0 1.0"/>
+      </material>
+    </visual>
+  </link>
+  <!-- Configuration of the part called 'Z-Axis'. -->
+  <joint name="z_axis" type="fixed">
+    <parent link="base_link"/>
+    <child link="z_axis_link"/>
+  </joint>
+  <link name="z_axis_link">
+    <visual>
+      <geometry>
+        <mesh filename="/Mesh/Visual/Z_Axis.stl"/>
+      </geometry>
+      <material name="Custom_Color_Blue">
+        <color rgba="0.0 0.0 1.0 1.0"/>
+      </material>
+    </visual>
+  </link>
+</robot>
+

@@ -63,16 +63,16 @@ def main():
     T_n = T.Translation([0.0, 0.0, 0.0])
     T_n = T_n.Rotation([0.0, 0.0, 0.0], 'ZYX')
 
-    """
+
     T_obj = Transformation.Homogeneous_Transformation_Matrix_Cls(None, np.float64).Translation([T.p.x, T.p.y, 0.05])
     PyBullet_Robot_Cls.Add_External_Object('/../../../URDFs/Primitives/Cube/Cube.urdf', T_obj, [0.0, 1.0, 0.0, 0.25],
                                            0.1, True, False)
-    """
 
     # Add a viewpoint with the correct transformation to the end-effector of the structure.
     PyBullet_Robot_Cls.Add_External_Object('/../../../URDFs/Viewpoint/Viewpoint.urdf', T_n, None, 
                                            0.5, True, False)
     
+    PyBullet_Robot_Cls.Test_1()
     # The physical simulation is in progress.
     while PyBullet_Robot_Cls.is_connected == True:
         #PyBullet_Robot_Cls.Set_TCP_Position(T_n, 'Motion', {'force': 100.0, 't_0': 0.0, 't_1': 1.0})

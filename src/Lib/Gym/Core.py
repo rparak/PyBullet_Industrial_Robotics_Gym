@@ -320,6 +320,11 @@ class Robot_Cls(object):
         if enable_collision == False:
             pb.setCollisionFilterGroupMask(object_id, -1, 0, 0)
 
+    @staticmethod
+    def Create_Visual_Shape():
+        pb.createVisualShape(shapeType=pb.GEOM_MESH, fileName="duck.obj")
+
+
     def Remove_All_External_Objects(self) -> None:
         """
         Description:

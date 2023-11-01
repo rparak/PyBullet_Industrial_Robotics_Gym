@@ -253,7 +253,7 @@ Universal_Robots_UR3_Str.DH.Modified = np.array([[0.0,      0.0,  0.1519,       
                                                  [0.0,      0.0,  0.0819,  -1.5707963267948966]], dtype=np.float64)
 # Zero/Home absolute position of each joint.
 Universal_Robots_UR3_Str.Theta.Zero = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0], dtype = np.float64)
-Universal_Robots_UR3_Str.Theta.Home = Mathematics.Degree_To_Radian(np.array([-90.0, -90.0, 0.0, -90.0, 0.0, 0.0], 
+Universal_Robots_UR3_Str.Theta.Home = Mathematics.Degree_To_Radian(np.array([-90.0, -91.3938, -102.14643, -76.459560, 90.0, 0.0], 
                                                                             dtype=np.float64))
 # Limits of absolute joint position.
 Universal_Robots_UR3_Str.Theta.Limit = np.array([[-3.141592653589793, 3.141592653589793], 
@@ -339,7 +339,7 @@ ABB_IRB_120_Str.DH.Modified = np.array([[0.0,                   0.0, 0.290,     
                                         [3.141592653589793,     0.0, 0.072, -1.5707963267948966]], dtype = np.float64)
 # Zero/Home absolute position of each joint.
 ABB_IRB_120_Str.Theta.Zero = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0], dtype = np.float64)
-ABB_IRB_120_Str.Theta.Home = Mathematics.Degree_To_Radian(np.array([0.0, 0.0, 0.0, 0.0, 90.0, 0.0], 
+ABB_IRB_120_Str.Theta.Home = Mathematics.Degree_To_Radian(np.array([0.0, -1.39184, 19.9806, 0.0, 71.41144, 0.0], 
                                                                    dtype=np.float64))
 # Limits of absolute joint position.
 ABB_IRB_120_Str.Theta.Limit = np.array([[-2.8797932657906435, 2.8797932657906435], 
@@ -428,8 +428,8 @@ ABB_IRB_120_L_Ax_Str.DH.Modified = np.array([[0.0,                   0.0, 0.113,
                                              [3.141592653589793,     0.0, 0.072, -1.5707963267948966]], dtype = np.float64)
 # Zero/Home absolute position of each joint.
 ABB_IRB_120_L_Ax_Str.Theta.Zero = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], dtype = np.float64)
-ABB_IRB_120_L_Ax_Str.Theta.Home = np.array([0.400, Mathematics.Degree_To_Radian(90.0), 0.0, 0.0, 0.0, Mathematics.Degree_To_Radian(90.0), 0.0],
-                                           dtype = np.float64)
+ABB_IRB_120_L_Ax_Str.Theta.Home = np.append([0.4], Mathematics.Degree_To_Radian(np.array([90.0, -1.39184, 19.9806, 0.0, 71.41144, 0.0], 
+                                                                                         dtype=np.float64)))
 # Limits of absolute joint position.
 ABB_IRB_120_L_Ax_Str.Theta.Limit = np.array([[                0.0,              0.800],
                                              [-2.8797932657906435, 2.8797932657906435], 
@@ -742,7 +742,7 @@ EPSON_LS3_B401S_Str.DH.Modified = np.array([[0.0,   0.0,  0.1731,               
 # Zero/Home absolute position of each joint.
 EPSON_LS3_B401S_Str.Theta.Zero = np.array([0.0, 0.0, 0.0, 0.0], 
                                           dtype = np.float64)
-EPSON_LS3_B401S_Str.Theta.Home = np.array([Mathematics.Degree_To_Radian(90.0), Mathematics.Degree_To_Radian(0.0), 0.0, Mathematics.Degree_To_Radian(0.0)],
+EPSON_LS3_B401S_Str.Theta.Home = np.array([Mathematics.Degree_To_Radian(47.16657), Mathematics.Degree_To_Radian(103.77408), 0.0, Mathematics.Degree_To_Radian(60.94065)],
                                           dtype = np.float64)
 # Limits of absolute joint position.
 EPSON_LS3_B401S_Str.Theta.Limit = np.array([[  -2.303834612632515,  2.303834612632515], 

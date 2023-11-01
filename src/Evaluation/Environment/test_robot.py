@@ -53,8 +53,6 @@ def main():
     # Reset the absolute position of the robot joints to the 'Individual'.
     PyBullet_Robot_Cls.Reset('Individual', theta)
 
-
-
     # Get the homogeneous transformation matrix of the robot end-effector.
     T = Kinematics.Forward_Kinematics(theta, 'Fast', Robot_Str)[1]
 
@@ -62,7 +60,6 @@ def main():
     # 0.349066 -> boundaries in orientation +-
     T_n = T.Translation([0.0, 0.0, 0.0])
     T_n = T_n.Rotation([0.0, 0.0, 0.0], 'ZYX')
-
 
     T_obj = Transformation.Homogeneous_Transformation_Matrix_Cls(None, np.float64).Translation([T.p.x, T.p.y, 0.05])
     PyBullet_Robot_Cls.Add_External_Object('/../../../URDFs/Primitives/Cube/Cube.urdf', T_obj, [0.0, 1.0, 0.0, 0.25],

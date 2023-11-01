@@ -21,7 +21,7 @@ Description:
     Initialization of constants.
 """
 # Set the structure of the main parameters of the robot.
-CONST_ROBOT_TYPE = Parameters.ABB_IRB_120_Str
+CONST_ROBOT_TYPE = Parameters.ABB_IRB_120_L_Ax_Str
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 # The properties of the PyBullet environment.
@@ -72,10 +72,10 @@ def main():
     PyBullet_Robot_Cls.Test_1()
     # The physical simulation is in progress.
     while PyBullet_Robot_Cls.is_connected == True:
-        #PyBullet_Robot_Cls.Set_TCP_Position(T_n, 'Motion', {'force': 100.0, 't_0': 0.0, 't_1': 1.0})
+        PyBullet_Robot_Cls.Set_TCP_Position(T_n, 'Motion', {'force': 100.0, 't_0': 0.0, 't_1': 3.0})
         #x = PyBullet_Robot_Cls.Set_TCP_Position(T_n, 'Reset')
         #print(np.round(np.rad2deg(PyBullet_Robot_Cls.Theta), 5))
-        pass
+        #pass
 
     # Disconnect the created environment from a physical server.
     PyBullet_Robot_Cls.Disconnect()

@@ -18,7 +18,7 @@ Description:
     Initialization of constants.
 """
 # Set the structure of the main parameters of the robot.
-CONST_ROBOT_TYPE = Parameters.ABB_IRB_120_Str
+CONST_ROBOT_TYPE = Parameters.EPSON_LS3_B401S_Str
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 # The properties of the PyBullet environment.
@@ -54,7 +54,7 @@ def main():
     
     # ...
     # 0.349066
-    T_n = T.Translation([0.0, -0.1, 0.0])
+    T_n = T.Translation([0.0, 0.0, 0.0])
     T_n = T_n.Rotation([0.0, 0.0, 0.0], 'ZYX')
 
     # Add a viewpoint with the correct transformation to the end-effector of the structure.
@@ -63,8 +63,8 @@ def main():
     
     # The physical simulation is in progress.
     while PyBullet_Robot_Cls.is_connected == True:
-        PyBullet_Robot_Cls.Set_TCP_Position(T_n, 'Motion', {'force': 100.0, 't_0': 0.0, 't_1': 1.0})
-        #x = PyBullet_Robot_Cls.Set_TCP_Position(T_n, 'Reset')
+        #PyBullet_Robot_Cls.Set_TCP_Position(T_n, 'Motion', {'force': 100.0, 't_0': 0.0, 't_1': 1.0})
+        x = PyBullet_Robot_Cls.Set_TCP_Position(T_n, 'Reset')
 
     # Disconnect the created environment from a physical server.
     PyBullet_Robot_Cls.Disconnect()

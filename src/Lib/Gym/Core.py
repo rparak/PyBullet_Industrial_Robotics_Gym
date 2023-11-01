@@ -477,7 +477,6 @@ class Robot_Cls(object):
                                                            restPoses=self.Theta, jointDamping=[0.1]*self.__Robot_Parameters_Str.Theta.Zero.size, 
                                                            solver=pb.IK_DLS), dtype=np.float64)
 
-            print(np.round(theta, 3))
             if mode == 'Reset':
                 return self.Reset('Individual', theta)
             else:

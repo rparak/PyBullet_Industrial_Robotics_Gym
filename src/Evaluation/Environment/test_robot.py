@@ -15,6 +15,8 @@ import Lib.Kinematics.Core as Kinematics
 
 # ...
 import Lib.Transformation.Core as Transformation
+# ...
+import Lib.Gym.Utilities
 
 """
 Description:
@@ -69,7 +71,7 @@ def main():
     PyBullet_Robot_Cls.Add_External_Object('/../../../URDFs/Viewpoint/Viewpoint.urdf', T_n, None, 
                                            0.5, True, False)
     
-    PyBullet_Robot_Cls.Test_1(T_obj)
+    Lib.Gym.Utilities.Add_Wireframe_Cuboid(T_n, [0.1, 0.1, 0.1], [1.0, 0.0, 0.0], 1.0)
 
     # The physical simulation is in progress.
     while PyBullet_Robot_Cls.is_connected == True:

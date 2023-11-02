@@ -21,7 +21,7 @@ Description:
     Initialization of constants.
 """
 # Set the structure of the main parameters of the robot.
-CONST_ROBOT_TYPE = Parameters.ABB_IRB_120_L_Ax_Str
+CONST_ROBOT_TYPE = Parameters.ABB_IRB_120_Str
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 # The properties of the PyBullet environment.
@@ -61,7 +61,7 @@ def main():
     T_n = T.Translation([0.0, 0.0, 0.0])
     T_n = T_n.Rotation([0.0, 0.0, 0.0], 'ZYX')
 
-    T_obj = Transformation.Homogeneous_Transformation_Matrix_Cls(None, np.float64).Translation([T.p.x, T.p.y, 0.05])
+    T_obj = Transformation.Homogeneous_Transformation_Matrix_Cls(None, np.float64).Translation([T.p.x, T.p.y, 0.0])
     PyBullet_Robot_Cls.Add_External_Object('/../../../URDFs/Primitives/Cube/Cube.urdf', T_obj, [0.0, 1.0, 0.0, 0.25],
                                            0.1, True, False)
 
@@ -69,7 +69,8 @@ def main():
     PyBullet_Robot_Cls.Add_External_Object('/../../../URDFs/Viewpoint/Viewpoint.urdf', T_n, None, 
                                            0.5, True, False)
     
-    PyBullet_Robot_Cls.Test_1()
+    PyBullet_Robot_Cls.Test_1(T_obj)
+
     # The physical simulation is in progress.
     while PyBullet_Robot_Cls.is_connected == True:
         PyBullet_Robot_Cls.Set_TCP_Position(T_n, 'Motion', {'force': 100.0, 't_0': 0.0, 't_1': 3.0})

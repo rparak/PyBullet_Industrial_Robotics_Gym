@@ -321,9 +321,31 @@ class Robot_Cls(object):
             pb.setCollisionFilterGroupMask(object_id, -1, 0, 0)
 
     @staticmethod
-    def Test_1():
-        pb.addUserDebugLine(lineFromXYZ=[0.5, 0.0, 0.0], lineToXYZ=[0.5, 0.0, 0.5], lineColorRGB=[0.0, 1.0, 0.0], lineWidth=1.0)
+    def Test_1(T):
+        import Lib.Primitives.Core as Primitives
 
+        Box_Cls = Primitives.Box_Cls([0.0, 0.0, 0.0], [0.2, 0.2, 0.1])
+        
+        vertices = Box_Cls.Vertices.copy()
+
+        p = T.p.all()
+        for i, verts_i in enumerate(Box_Cls.Vertices):
+            vertices[i, :] = verts_i + p
+
+        """
+        Define the edges of the cuboid
+            Note: 
+                Lower Base: A {id: 0}, B {id: 1}, C {id: 2}, D {id: 3}
+                Upper Base: E {id: 4}, F {id: 5}, G {id: 6}, H {id: 7}
+        """
+        edges = [[0, 1], [1, 2], [2, 3], [3, 0],
+                 [4, 5], [5, 6], [6, 7], [7, 4],
+                 [0, 4], [1, 5], [2, 6], [3, 7]]
+
+        for _, edges_i in enumerate(edges):
+            pb.addUserDebugLine(lineFromXYZ=vertices[edges_i[0]], lineToXYZ=vertices[edges_i[1]], lineColorRGB=[0.0, 1.0, 0.0], 
+                                lineWidth=1.0)
+        
     def Remove_All_External_Objects(self) -> None:
         """
         Description:

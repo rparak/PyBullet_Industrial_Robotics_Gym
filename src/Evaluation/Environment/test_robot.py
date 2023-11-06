@@ -60,7 +60,7 @@ def main():
 
     # ...
     # 0.349066 -> boundaries in orientation +-
-    T_n = T.Translation([0.0, 0.0, 0.0])
+    T_n = T.Translation([0.0, 0.0, -0.1])
     T_n = T_n.Rotation([0.0, 0.0, 0.0], 'ZYX')
 
     T_obj = Transformation.Homogeneous_Transformation_Matrix_Cls(None, np.float64).Translation([T.p.x, T.p.y, 0.0])

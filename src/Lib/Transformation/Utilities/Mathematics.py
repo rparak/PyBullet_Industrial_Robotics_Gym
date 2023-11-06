@@ -322,6 +322,24 @@ def Factorial(n: int) -> int:
         print('[ERROR] The input condition for the calculation is not satisfied.')
         print('[ERROR] The number n ({n}) must be larger than or equal to 0.')
 
+def Combinations(n: int, r: int):
+    """
+    Description:
+        Get the number of possible combinations.
+
+            Formula:
+                C(n,r) = n!/(r! * (n - r)!)
+
+    Args:
+        (1) n [int]: Total number of objects.
+        (2) r [int]: Sample size.
+
+    Returns:
+        (1) parameter [int]: The number of possible combinations.
+    """
+
+    return int(Factorial(n) / (Factorial(r) * Factorial(n - r)))
+
 def Perpendicular_Distance(A: tp.List[float], B: tp.List[float], C: tp.List[float]) -> float:
     """
     Description:

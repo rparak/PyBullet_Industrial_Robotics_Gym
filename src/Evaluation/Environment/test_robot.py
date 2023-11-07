@@ -17,6 +17,8 @@ import Lib.Kinematics.Core as Kinematics
 import Lib.Transformation.Core as Transformation
 # ...
 import Lib.Gym.Utilities
+# ...
+import numpy as np
 
 """
 Description:
@@ -45,7 +47,6 @@ def main():
     Robot_Str = CONST_ROBOT_TYPE
 
     # Obtain the desired absolute position of the robot joints.
-    import numpy as np
     theta = Robot_Str.Theta.Home
     
     # Initialization of the class to work with a robotic arm object in a PyBullet environment.
@@ -60,7 +61,7 @@ def main():
 
     # ...
     # 0.349066 -> boundaries in orientation +-
-    T_n = T.Translation([0.0, 0.0, -0.1])
+    T_n = T.Translation([0.0, 0.0, 0.0])
     T_n = T_n.Rotation([0.0, 0.0, 0.0], 'ZYX')
 
     T_obj = Transformation.Homogeneous_Transformation_Matrix_Cls(None, np.float64).Translation([T.p.x, T.p.y, 0.0])

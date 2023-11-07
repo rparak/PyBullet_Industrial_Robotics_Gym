@@ -24,6 +24,9 @@ def Add_Wireframe_Cuboid(T: tp.List[tp.List[float]], size: tp.List[float], color
                                         Note:
                                             Format: rgba(red, green, blue)
         (4) line_width [float]: The width of the line of the cuboid.
+
+    Returns:
+        (1) parameter [Vector<float> 8x3]: Vertices of the object.
     """
 
     if isinstance(T, (list, np.ndarray)):
@@ -54,3 +57,5 @@ def Add_Wireframe_Cuboid(T: tp.List[tp.List[float]], size: tp.List[float], color
     for _, edges_i in enumerate(edges):
         pb.addUserDebugLine(lineFromXYZ=vertices[edges_i[0]], lineToXYZ=vertices[edges_i[1]], lineColorRGB=color, 
                             lineWidth=line_width)
+        
+    return vertices

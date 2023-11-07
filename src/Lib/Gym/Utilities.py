@@ -10,6 +10,8 @@ import pybullet_data
 import Lib.Primitives.Core as Primitives
 #   ../Lib/Transformation/Core
 from Lib.Transformation.Core import Homogeneous_Transformation_Matrix_Cls as HTM_Cls, Vector3_Cls
+#   ../Lib/Gym/Configuration/Environment
+import Lib.Gym.Configuration.Environment
 
 def Add_Wireframe_Cuboid(T: tp.List[tp.List[float]], size: tp.List[float], color: tp.List[float],
                          line_width: float) -> None:
@@ -59,3 +61,26 @@ def Add_Wireframe_Cuboid(T: tp.List[tp.List[float]], size: tp.List[float], color
                             lineWidth=line_width)
         
     return vertices
+
+def Get_Configuration_Space(name: str) -> Lib.Gym.Configuration.Environment.Configuration_Space_Str:
+    """
+    Description:
+        Obtain the structure of the main parameters of the environment configuration 
+        space for the defined robotic arm.
+    
+    Args:
+        (1) name [string]: Name of the robotic structure.
+
+    Returns:
+        (1) parameter [Configuration_Space_Str(object)]: Defined structure of the main parameters of the environment c
+                                                         onfiguration space.
+    """
+
+    return {
+        'Universal_Robots_UR3': Lib.Gym.Configuration.Environment.Universal_Robots_UR3_C_Str,
+        'ABB_IRB_120': Lib.Gym.Configuration.Environment.ABB_IRB_120_C_Str,
+        'ABB_IRB_120_L_Ax': Lib.Gym.Configuration.Environment.ABB_IRB_120_L_Ax_C_Str,
+        'ABB_IRB_14000_R': Lib.Gym.Configuration.Environment.ABB_IRB_14000_R_C_Str,
+        'ABB_IRB_14000_L': Lib.Gym.Configuration.Environment.ABB_IRB_14000_L_C_Str,
+        'EPSON_LS3_B401S': Lib.Gym.Configuration.Environment.EPSON_LS3_B401S_C_Str
+    }[name]

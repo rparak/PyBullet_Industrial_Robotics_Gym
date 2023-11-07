@@ -474,7 +474,7 @@ class Robot_Cls(object):
             theta = np.array(pb.calculateInverseKinematics(bodyUniqueId=self.__robot_id, endEffectorLinkIndex=self.__theta_index[-1], 
                                                            targetPosition=p, targetOrientation=[q.x, q.y, q.z, q.w], 
                                                            lowerLimits=self.__Robot_Parameters_Str.Theta.Limit[:, 0], upperLimits=self.__Robot_Parameters_Str.Theta.Limit[:, 1], 
-                                                           restPoses=self.Theta, jointDamping=[0.1]*self.__Robot_Parameters_Str.Theta.Zero.size, 
+                                                           restPoses=self.Theta, jointDamping=[0.01]*self.__Robot_Parameters_Str.Theta.Zero.size, 
                                                            solver=pb.IK_DLS), dtype=np.float64)
 
             if mode == 'Reset':

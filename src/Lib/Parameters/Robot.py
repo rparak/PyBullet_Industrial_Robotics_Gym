@@ -720,7 +720,7 @@ EPSON_LS3_B401S_Str.DH.Modified = np.array([[0.0,   0.0,  0.1731,               
 # Zero/Home absolute position of each joint.
 EPSON_LS3_B401S_Str.Theta.Zero = np.array([0.0, 0.0, 0.0, 0.0], 
                                           dtype = np.float64)
-EPSON_LS3_B401S_Str.Theta.Home = np.array([Mathematics.Degree_To_Radian(47.16657), Mathematics.Degree_To_Radian(103.77408), 0.0, Mathematics.Degree_To_Radian(60.94065)],
+EPSON_LS3_B401S_Str.Theta.Home = np.array([Mathematics.Degree_To_Radian(47.16657), Mathematics.Degree_To_Radian(103.77408), 0.025, Mathematics.Degree_To_Radian(60.94065)],
                                           dtype = np.float64)
 # Limits of absolute joint position.
 EPSON_LS3_B401S_Str.Theta.Limit = np.array([[  -2.303834612632515,  2.303834612632515], 

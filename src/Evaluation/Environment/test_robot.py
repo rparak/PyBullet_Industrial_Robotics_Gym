@@ -5,21 +5,13 @@ if '../' + 'src' not in sys.path:
     sys.path.append('../..')
 # OS (Operating system interfaces)
 import os
+# Time (Time access and conversions)
+import time
 # Custom Lib.:
 #   ../Lib/Parameters/Robot
 import Lib.Parameters.Robot as Parameters
 #   ../Lib/Gym/Core
 import Lib.Gym.Core
-#   ../Lib/Kinematics/Core
-import Lib.Kinematics.Core as Kinematics
-
-# ...
-import Lib.Transformation.Core as Transformation
-# ...
-import Lib.Gym.Utilities
-# ...
-import numpy as np
-import time
 
 """
 Description:

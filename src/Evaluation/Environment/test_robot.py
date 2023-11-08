@@ -26,7 +26,7 @@ Description:
     Initialization of constants.
 """
 # Set the structure of the main parameters of the robot.
-CONST_ROBOT_TYPE = Parameters.ABB_IRB_14000_L_Str
+CONST_ROBOT_TYPE = Parameters.ABB_IRB_120_L_Ax_Str
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 # The properties of the PyBullet environment.
@@ -77,9 +77,9 @@ def main():
     PyBullet_Robot_Cls.Add_External_Object('/../../../URDFs/Viewpoint/Viewpoint.urdf', T, None, 0.5, True, False)
     
     C = Lib.Gym.Utilities.Get_Configuration_Space(Robot_Str.Name)
-    _ = Lib.Gym.Utilities.Add_Wireframe_Cuboid(C.Search.T, C.Search.Size, 
+    vertices = Lib.Gym.Utilities.Add_Wireframe_Cuboid(C.Search.T, C.Search.Size, 
                                                C.Search.Color, 1.0)
-    vertices = Lib.Gym.Utilities.Add_Wireframe_Cuboid(C.Target.T, C.Target.Size, 
+    _ = Lib.Gym.Utilities.Add_Wireframe_Cuboid(C.Target.T, C.Target.Size, 
                                                       C.Target.Color, 1.0)
     
     #print(vertices)
@@ -94,7 +94,7 @@ def main():
         PyBullet_Robot_Cls.Add_External_Object('/../../../URDFs/Viewpoint/Viewpoint.urdf', T_n, None, 0.5, True, False)
         x = PyBullet_Robot_Cls.Set_TCP_Position(T_n, 'Motion', {'force': 100.0, 't_0': 0.0, 't_1': 2.0})
         #x = PyBullet_Robot_Cls.Set_TCP_Position(T_n, 'Reset')
-        time.sleep(2.0)
+        time.sleep(1.0)
 
         if i < vertices.shape[0] - 1:
             i += 1
@@ -106,7 +106,7 @@ def main():
         #x = PyBullet_Robot_Cls.Set_TCP_Position(T_n, 'Motion', {'force': 100.0, 't_0': 0.0, 't_1': 3.0})
         #x = PyBullet_Robot_Cls.Set_TCP_Position(T_n, 'Reset')
         #print(np.round(np.rad2deg(PyBullet_Robot_Cls.Theta), 5).tolist())
-        pass
+        #pass
 
     # Disconnect the created environment from a physical server.
     PyBullet_Robot_Cls.Disconnect()

@@ -1,30 +1,3 @@
-"""
-## =========================================================================== ## 
-MIT License
-Copyright (c) 2023 Roman Parak
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-## =========================================================================== ## 
-Author   : Roman Parak
-Email    : Roman.Parak@outlook.com
-Github   : https://github.com/rparak
-File Name: Core.py
-## =========================================================================== ## 
-"""
-
 # Numpy (Array computing) [pip3 install numpy]
 import numpy as np
 # Typing (Support for type hints)
@@ -37,7 +10,13 @@ import Lib.Kinematics.Utilities.Forward_Kinematics as Utilities
 #   ../Lib/Kinematics/Utilities/General
 import Lib.Kinematics.Utilities.General as General
 #   ../Lib/Transformation/Core
-from Lib.Transformation.Core import Homogeneous_Transformation_Matrix_Cls as HTM_Cls
+from Lib.Transformation.Core import Homogeneous_Transformation_Matrix_Cls as HTM_Cls, Vector3_Cls
+#   ../Lib/Transformation/Utilities/Mathematics
+import Lib.Transformation.Utilities.Mathematics as Mathematics
+#   ../Lib/Transformation/Core
+import Lib.Transformation.Core as Transformation
+#   ../Lib/Interpolation/Utilities
+import Lib.Interpolation.Utilities
 
 """
 Description:
@@ -112,7 +91,7 @@ def __Forward_Kinematics_Standard(theta: tp.List[float], Robot_Parameters_Str: P
     """
 
     T_i = Robot_Parameters_Str.T.Base
-    for _, (th_i, dh_i, th_i_type, th_ax_i) in enumerate(zip(theta, Robot_Parameters_Str.DH.Standard, Robot_Parameters_Str.Theta.Type, 
+    for _, (th_i, dh_i, th_i_type, th_i_ax) in enumerate(zip(theta, Robot_Parameters_Str.DH.Standard, Robot_Parameters_Str.Theta.Type, 
                                                              Robot_Parameters_Str.Theta.Axis)):
         # Forward kinematics using standard DH parameters.
         if th_i_type == 'R':
@@ -120,7 +99,7 @@ def __Forward_Kinematics_Standard(theta: tp.List[float], Robot_Parameters_Str: P
             T_i = T_i @ DH_Standard(dh_i[0] + th_i, dh_i[1], dh_i[2], dh_i[3])
         elif th_i_type == 'P':
             # Identification of joint type: P - Prismatic
-            if th_ax_i == 'Z':
+            if th_i_ax == 'Z':
                 T_i = T_i @ DH_Standard(dh_i[0], dh_i[1], dh_i[2] - th_i, dh_i[3])
             else:
                 # Translation along the X axis.
@@ -165,7 +144,7 @@ def __Forward_Kinematics_Modified(theta: tp.List[float], Robot_Parameters_Str: P
     """
     
     T_i = Robot_Parameters_Str.T.Base
-    for _, (th_i, dh_i, th_i_type, th_ax_i) in enumerate(zip(theta, Robot_Parameters_Str.DH.Modified, Robot_Parameters_Str.Theta.Type, 
+    for _, (th_i, dh_i, th_i_type, th_i_ax) in enumerate(zip(theta, Robot_Parameters_Str.DH.Modified, Robot_Parameters_Str.Theta.Type, 
                                                              Robot_Parameters_Str.Theta.Axis)):
         # Forward kinematics using modified DH parameters.
         if th_i_type == 'R':
@@ -173,7 +152,7 @@ def __Forward_Kinematics_Modified(theta: tp.List[float], Robot_Parameters_Str: P
             T_i = T_i @ DH_Modified(dh_i[0] + th_i, dh_i[1], dh_i[2], dh_i[3])
         elif th_i_type == 'P':
             # Identification of joint type: P - Prismatic
-            if th_ax_i == 'Z':
+            if th_i_ax == 'Z':
                 T_i = T_i @ DH_Modified(dh_i[0], dh_i[1], dh_i[2] - th_i, dh_i[3])
             else:
                 # Translation along the X axis.
@@ -234,7 +213,7 @@ def __Get_Individual_Joint_Configuration_Standard(theta: tp.List[float], Robot_P
     """
     
     T_i = Robot_Parameters_Str.T.Base; T_cfg = []
-    for i, (th_i, dh_i, th_i_type, th_ax_i) in enumerate(zip(theta, Robot_Parameters_Str.DH.Standard, Robot_Parameters_Str.Theta.Type, 
+    for i, (th_i, dh_i, th_i_type, th_i_ax) in enumerate(zip(theta, Robot_Parameters_Str.DH.Standard, Robot_Parameters_Str.Theta.Type, 
                                                              Robot_Parameters_Str.Theta.Axis)):
         # Forward kinematics using standard DH parameters.
         if th_i_type == 'R':
@@ -242,7 +221,7 @@ def __Get_Individual_Joint_Configuration_Standard(theta: tp.List[float], Robot_P
             T_i = T_i @ DH_Standard(dh_i[0] + th_i, dh_i[1], dh_i[2], dh_i[3])
         elif th_i_type == 'P':
             # Identification of joint type: P - Prismatic
-            if th_ax_i == 'Z':
+            if th_i_ax == 'Z':
                 T_i = T_i @ DH_Standard(dh_i[0], dh_i[1], dh_i[2] - th_i, dh_i[3])
             else:
                 # Translation along the X axis.
@@ -275,7 +254,7 @@ def __Get_Individual_Joint_Configuration_Modified(theta: tp.List[float], Robot_P
     """
     
     T_i = Robot_Parameters_Str.T.Base; T_cfg = []
-    for i, (th_i, dh_i, th_i_type, th_ax_i) in enumerate(zip(theta, Robot_Parameters_Str.DH.Modified, Robot_Parameters_Str.Theta.Type, 
+    for i, (th_i, dh_i, th_i_type, th_i_ax) in enumerate(zip(theta, Robot_Parameters_Str.DH.Modified, Robot_Parameters_Str.Theta.Type, 
                                                              Robot_Parameters_Str.Theta.Axis)):
         # Forward kinematics using modified DH parameters.
         if th_i_type == 'R':
@@ -283,7 +262,7 @@ def __Get_Individual_Joint_Configuration_Modified(theta: tp.List[float], Robot_P
             T_i = T_i @ DH_Modified(dh_i[0] + th_i, dh_i[1], dh_i[2], dh_i[3])
         elif th_i_type == 'P':
             # Identification of joint type: P - Prismatic
-            if th_ax_i == 'Z':
+            if th_i_ax == 'Z':
                 T_i = T_i @ DH_Modified(dh_i[0], dh_i[1], dh_i[2] - th_i, dh_i[3])
             else:
                 # Translation along the X axis.
@@ -334,3 +313,391 @@ def Get_Individual_Joint_Configuration(theta: tp.List[float], method: str, Robot
         'Standard': lambda th, th_err, r_param_str: (th_err, __Get_Individual_Joint_Configuration_Standard(th, r_param_str)),
         'Modified': lambda th, th_err, r_param_str: (th_err, __Get_Individual_Joint_Configuration_Modified(th, r_param_str))
     }[method](th, th_limit_err, Robot_Parameters_Str)
+
+def Get_Geometric_Jacobian(theta: tp.List[float], Robot_Parameters_Str: Parameters.Robot_Parameters_Str) -> tp.List[tp.List[float]]:
+    """
+    Description:
+        Get the matrix of the geometric Jacobian (6 x n), where n equals the number of joints.
+
+        The geometric Jacobian (also called the fundamental Jacobian) directly establishes 
+        the relationship between joint velocities and the end-effector linear (p_{ee}') and angular (omega_{ee})
+        velocities.
+
+        Linear Velocity of the End-Effector:
+            p_{ee}' = J_{P}(theta) * theta'
+        
+        Angular Velocity of the End-Effector:
+            omega_{ee} = J_{O}(theta) * theta'
+
+        The Jacobian can be divided into 3x1 columns J_{P} and J_{O} vectors:
+            J(theta) = [[J_{P}], = ....
+                        [J_{O}]] 
+
+            Revolute Joint = [[z_{i-1} x (p_{ee} - p_{i-1})],
+                              [z_{i-1}]]
+
+            Prismatic Joint('Z - Axis') = [[z_{i-1}],
+                                           [0.0]]
+            Prismatic Joint('X - Axis') = [[(-1) * x_{i-1}],
+                                           [0.0]]
+
+    Args:
+        (1) theta [Vector<float> 1xn]: Desired absolute joint position in radians / meters.
+                                        Note:
+                                            Where n is the number of joints.
+        (2) Robot_Parameters_Str [Robot_Parameters_Str(object)]: The structure of the main parameters of the robot.
+
+    Returns:
+        (1) parameter [Matrix<float> 6xn]: Matrix of the geometric Jacobian (6 x n).
+                                            Note: 
+                                                Where n is equal to the number of joints.
+    """
+    
+    # Change of axis direction in individual joints.
+    th = theta * Robot_Parameters_Str.Theta.Direction
+
+    # Get the configuration of the homogeneous transformation matrix of each joint using the 
+    # modified forward kinematics calculation method.
+    T_Cfg_Arr = __Get_Individual_Joint_Configuration_Modified(th, Robot_Parameters_Str)
+
+    # Get the translation part from the homogeneous transformation matrix 
+    # of the end-effector.
+    T_n_p_ee = T_Cfg_Arr[-1].p
+
+    J = np.zeros((6, th.size), dtype=T_n_p_ee.Type); z_i = Vector3_Cls(None, T_n_p_ee.Type)
+    for i, (T_Cfg_i, th_i_type, th_i_ax) in enumerate(zip(T_Cfg_Arr, Robot_Parameters_Str.Theta.Type, Robot_Parameters_Str.Theta.Axis)):
+        z_i[:] = T_Cfg_i[0:3, 2]
+        if th_i_type == 'R':
+            # Identification of joint type: R - Revolute
+            J_P = z_i.Cross(T_n_p_ee - T_Cfg_i.p)
+            J_O = z_i
+        elif th_i_type == 'P':
+            # Identification of joint type: P - Prismatic
+            if th_i_ax == 'Z':
+                J_P = z_i
+            else:
+                J_P = np.float64(-1.0) * Vector3_Cls(T_Cfg_i[0:3, 0], T_n_p_ee.Type)
+            J_O = Vector3_Cls([0.0, 0.0, 0.0], z_i.Type)
+
+        # The Jacobian can be divided into 3x1 columns J_{P} and J_{O} vectors:
+        J[0:3, i] = J_P.all()
+        J[3:6, i] = J_O.all()
+
+    return J
+
+def __IK_N_JT(J: tp.List[tp.List[float]], e_i: tp.List[float]) -> tp.List[float]:
+    """
+    Description:
+        A function to obtain the absolute joint position (theta) of an individual robotic structure using an inverse kinematics (IK) numerical 
+        method called the Jacobian-Transpose (JT).
+
+        Equation:
+            theta = alpha * J^T @ e_i,
+
+            where alpha is a appropriate scalar and must be greater than 0. J^T is the transpose of J and e_i is the error (angle axis).
+
+            Expression of the parameter alpha:
+                alpha = <e_i, J @ J^T @ e_i> / <J @ J^T @ e_i, J @ J^T @ e_i>.
+
+            Reference:
+                Introduction to Inverse Kinematics with Jacobian Transpose, Pseudoinverse and Damped Least Squares methods, Samuel R. Buss.
+
+        Note:
+            To obtain more information about the Args and Returns parameters, please refer to the '__Obtain_Theta_IK_N_Method(..)' function.
+    """
+
+    # Auxiliary expression.
+    J_T = J.T; x = J @ J_T @ e_i
+
+    # Error avoidance condition.
+    if x.any() == False:
+        # Because alpha must be greater than 0.0, set alpha
+        # as a small number.
+        alpha = 1e-5
+    else:
+        alpha = (e_i @ x) / (x @ x)
+
+    return alpha * J_T @ e_i
+
+def __IK_N_NR(J: tp.List[tp.List[float]], e_i: tp.List[float]) -> tp.List[float]:
+    """
+    Description:
+        A function to obtain the absolute joint position (theta) of an individual robotic structure using an inverse kinematics (IK) numerical 
+        method called the Newton-Raphson (NR).
+
+        Equation:
+            theta = J^(dagger) @ e_i,
+
+            where J^(dagger) is the pseudoinverse of J, also called the Moore-Penrose inverse of J and e_i is the error (angle axis).
+
+            Reference:
+                Modern Robotics: Mechanics, Planning, and Control, Kevin M. Lynch and Frank C. Park
+
+        Note:
+            To obtain more information about the Args and Returns parameters, please refer to the '__Obtain_Theta_IK_N_Method(..)' function.
+    """
+
+    return np.linalg.pinv(J) @ e_i
+
+def __IK_N_GN(J: tp.List[tp.List[float]], e_i: tp.List[float], W_e: tp.List[tp.List[float]]) -> tp.List[float]:
+    """
+    Description:
+        A function to obtain the absolute joint positions (theta) of an individual robotic structure using an inverse kinematics (IK) numerical 
+        method called the Gauss-Newton (GN).
+
+        Equation:
+            theta = (H)^(dagger) @ g,
+
+            where H is the Hessian matrix, defined as:
+                H = J^T @ W_e @ J
+
+            and W_e is the diagonal weighted matrix and g is the error vector.
+
+            Expression of the parameter g:
+                g = J^T @ W_e @ e_i.
+
+            Reference:
+                T. Sugihara, "Solvability-Unconcerned Inverse Kinematics by the Levenberg-Marquardt Method."
+
+        Note:
+            To obtain more information about the Args and Returns parameters, please refer to the '__Obtain_Theta_IK_N_Method(..)' function.   
+    """
+    # Auxiliary expression.
+    J_T = J.T; g = J_T @ W_e @ e_i
+
+    return np.linalg.pinv(J_T @ W_e @ J) @ g
+
+def __IK_N_LM(J: tp.List[tp.List[float]], e_i: tp.List[float], W_e: tp.List[tp.List[float]], E: float) -> tp.List[float]:
+    """
+    Description:
+        A function to obtain the absolute joint positions (theta) of an individual robotic structure using an inverse kinematics (IK) numerical 
+        method called the Levenberg-Marquardt (LM).
+
+        Equation:
+            theta = (H)^(-1) @ g,
+
+            where H is the Hessian matrix, defined as:
+                H = J^T @ W_e @ J + W_n,
+
+            and W_e is the diagonal weighted matrix, g is the error vector, and W_n is the damping matrix.
+
+            Note:
+                The damping matrix (W_n) ensures that the Hessian matrix (H) is non-singular and positive definite.
+
+            Reference:
+                T. Sugihara, "Solvability-Unconcerned Inverse Kinematics by the Levenberg-Marquardt Method."
+
+        Note:
+            To obtain more information about the Args and Returns parameters, please refer to the '__Obtain_Theta_IK_N_Method(..)' function.
+    """
+
+    # Number of joints.
+    n = J.shape[1]
+
+    # Biasing value.
+    gamma = 0.0001
+
+    # Auxiliary expression.
+    J_T = J.T; g = J_T @ W_e @ e_i
+
+    # Obtain the diagonal damping matrix.
+    W_n = E * np.eye(n) + gamma * np.eye(n)
+
+    return np.linalg.inv(J.T @ W_e @ J + W_n) @ g
+
+def __Obtain_Theta_IK_N_Method(method: str, J: tp.List[tp.List[float]], e_i: tp.List[float], W_e: tp.List[tp.List[float]], 
+                               E: float) -> tp.List[float]:
+    """
+    Description:
+        A function to obtain the absolute joint positions (theta) of an individual robotic structure using the chosen numerical method.
+
+        Note:
+            The pseudoinverse function in numpy is computed using singular value decomposition (SVD), which is robust to 
+            singular matrices.
+
+    Args:
+        (1) method [string]: Name of the numerical method to be used to calculate the IK solution.
+        (2) J [Matrix<float> kxn]: Matrix of the geometric Jacobian (6 x n).
+                                    Note: 
+                                        Where k is equal to the number of axes and n is equal 
+                                        to the number of joints.
+        (3) e_i [Vector<float> 1xk]: Vector of an error (angle-axis).
+                                        Note: 
+                                            Where k is equal to the number of axes.
+        (4) W_e [Matrix<float, float> nxn]: Diagonal weight matrix.
+                                                Note:
+                                                    Where n s equal to the number of joints.
+        (5) E [float]: Quadratic (angle-axis) error.
+
+    Returns:
+        (1) parameter [Vector<float> 1xn]: Obtained absolute positions of joints in radians / meters.
+                                            Note:
+                                                Where n is the number of joints. 
+    """
+
+    return {
+        'Jacobian-Transpose': lambda *x: __IK_N_JT(x[0], x[1]),
+        'Newton-Raphson': lambda *x: __IK_N_NR(x[0], x[1]),
+        'Gauss-Newton': lambda *x: __IK_N_GN(x[0], x[1], x[2]),
+        'Levenberg-Marquardt': lambda *x: __IK_N_LM(x[0], x[1], x[2], x[3])
+    }[method](J, e_i, W_e, E)
+
+def Inverse_Kinematics_Numerical(TCP_Position: tp.List[tp.List[float]], theta_0: tp.List[float], method: str, 
+                                 Robot_Parameters_Str: Parameters.Robot_Parameters_Str, ik_solver_properties: tp.Dict) -> tp.Tuple[tp.Dict, tp.List[float]]:
+    """
+    Description:
+        A function to compute the inverse kinematics (IK) solution of the individual robotic structure using the chosen numerical method.
+
+        Possible numerical methods that can be used include:
+            1\ Jacobian-Transpose (JT) Method
+            2\ Newton-Raphson (NR) Method
+            3\ Gauss-Newton (GN) Method
+            4\ Levenberg-Marquardt (LM) Method
+
+        Note:
+            The numerical inverse kinematics will be calculated using linear interpolation between the actual and desired positions, defined by the 
+            variable 'delta_time.'
+            
+            If 'delta_time' is equal to 'None,' the calculation will be used without interpolation.
+
+    Args:
+        (1) TCP_Position [Matrix<float> 4x4]: The desired TCP (tool center point) in Cartesian coordinates defined 
+                                              as a homogeneous transformation matrix.
+        (2) theta_0 [Vector<float> 1xn]: Actual absolute joint position in radians / meters.
+                                            Note:
+                                                Where n is the number of joints.
+        (3) method [string]: Name of the numerical method to be used to calculate the IK solution.
+                                Note:
+                                    method = 'Jacobian-Transpose', 'Newton-Raphson', 'Gauss-Newton' or 'Levenberg-Marquardt'
+        (4) Robot_Parameters_Str [Robot_Parameters_Str(object)]: The structure of the main parameters of the robot.
+        (5) ik_solver_properties [Dictionary {'delta_time': float or None, 'num_of_iteration': float, 
+                                              'tolerance': float}]: The properties of the inverse kinematics solver.
+                                                                        Note:
+                                                                            'delta_time': The difference (spacing) between 
+                                                                                          the time values. If equal to 'None', do not 
+                                                                                          use interpolation between the actual and desired 
+                                                                                          positions.
+                                                                            'num_of_iteration': The number of iterations per 
+                                                                                                time instant.
+                                                                            'tolerance': The minimum required tolerance per 
+                                                                                         time instant.
+                                                                                
+                                                                            Where time instant is defined by the 'delta_time' variable.
+
+    Returns:
+        (1) parameter [Dictionary {'successful': bool, 'iteration': int, 'error': {'position': float, 'orientation': float}, 
+                                   'quadratic_error': float, 'is_close_singularity': bool, 
+                                   'is_self_collision': bool}]: Information on the best results that were found.
+                                                                Note:
+                                                                    'successful': Information on whether the result was found 
+                                                                                  within the required tolerance.
+                                                                    'iteration': Information about the iteration in which the best 
+                                                                                 result was found.
+                                                                    'error': Information about the absolute error (position, orientation)
+                                                                    'quadratic_error': Information about Quadratic (angle-axis) error.
+                                                                    'is_close_singularity': Information about whether the Jacobian matrix 
+                                                                                            is close to singularity.
+                                                                    'is_self_collision': Information about whether there are collisions 
+                                                                                         between joints.
+        (2) parameter [Vector<float> 1xn]: Obtained the best solution of the absolute positions of the joints in radians / meters.
+                                            Note:
+                                                Where n is the number of joints. 
+    """
+
+    try:
+        assert method in ['Jacobian-Transpose', 'Newton-Raphson', 'Gauss-Newton', 'Levenberg-Marquardt']
+
+        if isinstance(TCP_Position, (list, np.ndarray)):
+            TCP_Position = Transformation.Homogeneous_Transformation_Matrix_Cls(TCP_Position, np.float64)
+
+        # Diagonal weight matrix.
+        #   Note:
+        #       Translation(x, y, z) part + Rotation(x, y, z) part.
+        W_e = np.diag(np.ones(6))
+
+        # Obtain the actual homogeneous transformation matrix T of the tool center point (TCP).
+        T_0 = Forward_Kinematics(theta_0, 'Fast', Robot_Parameters_Str)[1]
+
+        # Express the actual/desired position and orientation of the tool center point (TCP).
+        #   Position: p = x, y, z in meters.
+        p_0 = T_0.p.all(); p_1 = TCP_Position.p.all()
+        #   Orientation: q = w, x, y, z in [-] -> [-1.0, 1.0].
+        q_0 = T_0.Get_Rotation('QUATERNION'); q_1 = TCP_Position.Get_Rotation('QUATERNION')
+
+        # If the variable 'delta_time' is not defined, set the variable 't' to 1.0.
+        if ik_solver_properties['delta_time'] == None:
+            t = np.array([1.0], dtype=np.float64)
+        else:
+            # Get evenly distributed time values in a given interval.
+            #   t_0(0.0) <= t <= t_1(1.0)
+            t = np.linspace(0.0, 1.0, int(1.0/ik_solver_properties['delta_time']))
+        
+        """
+        Description:
+            Calculate the numerical inverse kinematics using linear interpolation between the actual and desired positions defined by the time 't.'
+        """
+        iteration = 0.0; th_i = theta_0.copy(); th_i_tmp = theta_0.copy(); T = HTM_Cls(T_0.all(), np.float64)
+        for _, t_i in enumerate(t):
+            # Obtain the interpolation (Lerp, Slerp) between the given positions and orientations.
+            p_i = Lib.Interpolation.Utilities.Lerp('Explicit', p_0, p_1, t_i)
+            q_i = Lib.Interpolation.Utilities.Slerp('Quaternion', q_0, q_1, t_i)
+            
+            # Express the homogeneous transformation matrix for the point based on position and rotation.
+            T_i = Transformation.Homogeneous_Transformation_Matrix_Cls(None, np.float64).Rotation(q_i.all(), 'QUATERNION').Translation(p_i)
+
+            is_successful = False
+            for iteration_i in range(ik_solver_properties['num_of_iteration']):
+                # Get the matrix of the geometric Jacobian.
+                J = Get_Geometric_Jacobian(th_i, Robot_Parameters_Str)
+
+                # Get an error (angle-axis) vector which represents the translation and rotation.
+                e_i = General.Get_Angle_Axis_Error(T_i, T) 
+
+                # Get the quadratic (angle-axis) error which is weighted by the diagonal 
+                # matrix W_e.
+                E = General.Get_Quadratic_Angle_Axis_Error(e_i, W_e)
+
+                if E < ik_solver_properties['tolerance']:
+                    is_successful = True; th_i_tmp = th_i.copy()
+                    break
+                else: 
+                    # Obtain the new theta value using the chosen numerical method.
+                    th_i += __Obtain_Theta_IK_N_Method(method, J, e_i, W_e, E)
+
+                # Get the current TCP position of the robotic arm using Forward Kinematics (FK).
+                (th_limit_err, T) = Forward_Kinematics(th_i, 'Fast', Robot_Parameters_Str)
+
+                # Check whether the desired absolute joint positions are within the limits.
+                for i, th_limit_err_i in enumerate(th_limit_err):
+                    if th_limit_err_i == True:
+                        th_i[i] = th_i_tmp[i]
+                    else:
+                        th_i_tmp[i] = th_i[i]
+
+            # Save the number of iterations needed to find the inverse 
+            # kinematics (IK) solution at point 'T_i'.
+            iteration += iteration_i
+
+            # If the solution was not found within the required tolerance, abort the cycle.
+            if is_successful != True:
+                break
+
+        # Get the best TCP position of the robotic arm using Forward Kinematics (FK).
+        T = Forward_Kinematics(th_i, 'Fast', Robot_Parameters_Str)[1]
+
+        # Check whether the absolute positions of the joints are close to a singularity or if there are collisions 
+        # between the joints.
+        is_close_singularity = General.Is_Close_Singularity(J)
+        is_self_collision = General.Is_Self_Collision(th_i, Robot_Parameters_Str).any() == True
+
+        # Obtain the absolute error of position and orientation.
+        error = {'position': Mathematics.Euclidean_Norm((TCP_Position.p - T.p).all()), 
+                 'orientation': TCP_Position.Get_Rotation('QUATERNION').Distance('Euclidean', T.Get_Rotation('QUATERNION'))}
+        
+        # Write all the information about the results of the IK solution.
+        return ({'successful': is_successful, 'iteration': iteration, 'error': error, 'quadratic_error': E, 
+                'is_close_singularity': is_close_singularity, 'is_self_collision': is_self_collision}, th_i)
+
+    except AssertionError as error:
+        print(f'[ERROR] Information: {error}')
+        print('[ERROR] An incorrect name of the method was selected for the numerical inverse kinematics calculation.')

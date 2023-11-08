@@ -41,8 +41,12 @@ import Lib.Parameters.Robot
 import Lib.Trajectory.Utilities
 #   ../Lib/Transformation/Core
 from Lib.Transformation.Core import Homogeneous_Transformation_Matrix_Cls as HTM_Cls, Get_Translation_Matrix
+#   ../Lib/Transformation/Utilities/Mathematics
+import Lib.Transformation.Utilities.Mathematics as Mathematics
 #   ../Lib/Kinematics/Core
 import Lib.Kinematics.Core as Kinematics
+#   ../Lib/Gym/Utilities
+import Lib.Gym.Utilities
 
 """
 Description:
@@ -139,6 +143,21 @@ class Robot_Cls(object):
             info = pb.getJointInfo(self.__robot_id , i)
             if info[2] in [pb.JOINT_REVOLUTE, pb.JOINT_PRISMATIC]:
                 self.__theta_index.append(i)
+
+        # Obtain the structure of the main parameters of the environment configuration space.
+        C = Lib.Gym.Utilities.Get_Configuration_Space(self.__Robot_Parameters_Str.Name)
+        #   Add the cube of the search (configuration) space and get the vertices of the defined cube.
+        self.__vertices_C_search = Lib.Gym.Utilities.Add_Wireframe_Cuboid(C.Search.T, C.Search.Size, 
+                                                                          C.Search.Color, 1.0)
+        #   Add the cube of the target (configuration) space and get the vertices of the defined cube.
+        self.__vertices_C_target = Lib.Gym.Utilities.Add_Wireframe_Cuboid(C.Target.T, C.Target.Size, 
+                                                                          C.Target.Color, 1.0)
+        
+        # Get the homogeneous transformation matrix of the robot end-effector in the 'Home' position.
+        T_Home = Kinematics.Forward_Kinematics(self.__Robot_Parameters_Str.Theta.Home, 'Fast', 
+                                               self.__Robot_Parameters_Str)[1]
+        #   Get the rotational part from the transformation matrix.
+        self.__q_Home = T_Home.Get_Rotation('QUATERNION').all()
 
     def __Set_Env_Parameters(self, enable_gui: int, camera_parameters: tp.Dict) -> None:
         """
@@ -329,6 +348,44 @@ class Robot_Cls(object):
 
         for _, external_obj in enumerate(self.__external_object):
             pb.removeBody(external_obj)
+
+    def Generate_Random_T_EE(self, C_type: str) -> tp.List[tp.List[float]]:
+        """
+        Description:
+            A function that generates the homogeneous transformation matrix of a random end-effector position.
+
+        Args:
+            (1) C_type [string]: Type of the configuration space.
+                                    Note:
+                                        C_type = 'Search' or 'Target'
+
+        Returns:
+            (1) parameter [Matrix<float> 4x4]: Homogeneous transformation matrix of a random end-effector position.
+        """
+
+        try:
+            assert C_type in ['Search', 'Target'] 
+
+            if C_type == 'Search':
+                x = np.random.uniform(Mathematics.Min(self.__vertices_C_search[:, 0])[1],
+                                      Mathematics.Max(self.__vertices_C_search[:, 0])[1])
+                y = np.random.uniform(Mathematics.Min(self.__vertices_C_search[:, 1])[1],
+                                      Mathematics.Max(self.__vertices_C_search[:, 1])[1])
+                z = np.random.uniform(Mathematics.Min(self.__vertices_C_search[:, 2])[1],
+                                      Mathematics.Max(self.__vertices_C_search[:, 2])[1])
+            else:
+                x = np.random.uniform(Mathematics.Min(self.__vertices_C_target[:, 0])[1],
+                                      Mathematics.Max(self.__vertices_C_target[:, 0])[1])
+                y = np.random.uniform(Mathematics.Min(self.__vertices_C_target[:, 1])[1],
+                                      Mathematics.Max(self.__vertices_C_target[:, 1])[1])
+                z = np.random.uniform(Mathematics.Min(self.__vertices_C_target[:, 2])[1],
+                                      Mathematics.Max(self.__vertices_C_target[:, 2])[1])
+
+            return HTM_Cls(None, np.float32).Rotation(self.__q_Home, 'QUATERNION').Translation([x, y, z])
+
+        except AssertionError as error:
+            print(f'[ERROR] Information: {error}')
+            print('[ERROR] Incorrect configuration type selected. The selected mode must be chosen from the two options (Search, Target).')
 
     def Reset(self, mode: str, theta: tp.Union[None, tp.List[float]] = None) -> bool:
         """

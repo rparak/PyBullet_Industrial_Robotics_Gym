@@ -47,6 +47,12 @@ import Lib.Transformation.Utilities.Mathematics as Mathematics
 import Lib.Kinematics.Core as Kinematics
 #   ../Lib/Gym/Utilities
 import Lib.Gym.Utilities
+#   ../Lib/Primitives/Core
+from Lib.Primitives.Core import Box_Cls
+#   ../Lib/Collider/Utilities
+from Lib.Collider.Utilities import Get_Min_Max
+#   ../Lib/Primitives/Core
+from Lib.Collider.Core import OBB_Cls
 
 """
 Description:
@@ -105,7 +111,7 @@ class Robot_Cls(object):
     def __init__(self, Robot_Parameters_Str: Lib.Parameters.Robot.Robot_Parameters_Str, urdf_file_path: str, properties: tp.Dict) -> None:
         # << PRIVATE >> #
         self.__Robot_Parameters_Str = Robot_Parameters_Str
-        self.__external_object = []
+        self.__external_object = {}
         # Time step.
         self.__delta_time = 1.0/np.float64(properties['fps'])
 
@@ -282,7 +288,7 @@ class Robot_Cls(object):
         return {'Yaw': parameters[8], 'Pitch': parameters[9], 'Distance': parameters[10], 
                 'Position': parameters[11]}
     
-    def __Step(self) -> None:
+    def Step(self) -> None:
         """
         Description:
             A function to perform all the actions in a single forward dynamics 
@@ -303,7 +309,7 @@ class Robot_Cls(object):
         if self.is_connected == True:
             pb.disconnect()
 
-    def Add_External_Object(self, urdf_file_path: str, T: HTM_Cls, color: tp.Union[None, tp.List[float]], scale: float, 
+    def Add_External_Object(self, urdf_file_path: str, name: str, T: HTM_Cls, color: tp.Union[None, tp.List[float]], scale: float, 
                             fixed_position: bool, enable_collision: bool) -> None:
         """
         Description:
@@ -311,6 +317,7 @@ class Robot_Cls(object):
 
         Args:
             (1) urdf_file_path [string]: The specified path of the object file with the extension '*.urdf'.
+            (2) name [string]: The name of the object.
             (2) T [Matrix<float> 4x4]: Homogeneous transformation matrix of the object.
             (3) color [Vector<float> 1x4]: The color of the object.
                                             Note:
@@ -328,8 +335,10 @@ class Robot_Cls(object):
         # Load a physics model of the object.
         object_id = pb.loadURDF(urdf_file_path, p, [q.x, q.y, q.z, q.w], globalScaling=scale, useMaximalCoordinates=False, 
                                 useFixedBase=fixed_position)
-        #   Store the object ID to the list.
-        self.__external_object.append(object_id)
+        #   Store the object ID and object name into the dictionary.
+        self.__external_object[name] = object_id
+
+        print(pb.getAABB(object_id))
 
         # Set the properties of the added object.
         #   Color.
@@ -338,7 +347,21 @@ class Robot_Cls(object):
         #   Collision.
         if enable_collision == False:
             pb.setCollisionFilterGroupMask(object_id, -1, 0, 0)
-        
+
+    def Remove_External_Object(self, name: str) -> None:
+        """
+        Description:
+            A function to remove a specific model with the *.urdf extension from the PyBullet environment
+            that was added using the 'Add_External_Object' function of the class.
+
+        Args:
+            (1) name [string]: The name of the object.
+        """
+
+        if name in self.__external_object.keys():
+            pb.removeBody(self.__external_object[name])
+            del self.__external_object[name]
+
     def Remove_All_External_Objects(self) -> None:
         """
         Description:
@@ -346,8 +369,10 @@ class Robot_Cls(object):
             that were added using the 'Add_External_Object' function of the class.
         """
 
-        for _, external_obj in enumerate(self.__external_object):
+        for _, external_obj in enumerate(self.__external_object.values()):
             pb.removeBody(external_obj)
+
+        self.__external_object = {}
 
     def Generate_Random_T_EE(self, C_type: str) -> tp.List[tp.List[float]]:
         """
@@ -367,19 +392,16 @@ class Robot_Cls(object):
             assert C_type in ['Search', 'Target'] 
 
             if C_type == 'Search':
-                x = np.random.uniform(Mathematics.Min(self.__vertices_C_search[:, 0])[1],
-                                      Mathematics.Max(self.__vertices_C_search[:, 0])[1])
-                y = np.random.uniform(Mathematics.Min(self.__vertices_C_search[:, 1])[1],
-                                      Mathematics.Max(self.__vertices_C_search[:, 1])[1])
-                z = np.random.uniform(Mathematics.Min(self.__vertices_C_search[:, 2])[1],
-                                      Mathematics.Max(self.__vertices_C_search[:, 2])[1])
+                # Get the minimum and maximum X, Y, Z values of the input vertices.
+                (min_vec3, max_vec3) = Get_Min_Max(self.__vertices_C_search)
+
             else:
-                x = np.random.uniform(Mathematics.Min(self.__vertices_C_target[:, 0])[1],
-                                      Mathematics.Max(self.__vertices_C_target[:, 0])[1])
-                y = np.random.uniform(Mathematics.Min(self.__vertices_C_target[:, 1])[1],
-                                      Mathematics.Max(self.__vertices_C_target[:, 1])[1])
-                z = np.random.uniform(Mathematics.Min(self.__vertices_C_target[:, 2])[1],
-                                      Mathematics.Max(self.__vertices_C_target[:, 2])[1])
+                # Get the minimum and maximum X, Y, Z values of the input vertices.
+                (min_vec3, max_vec3) = Get_Min_Max(self.__vertices_C_target)
+            
+            x = np.random.uniform(min_vec3[0], max_vec3[0])
+            y = np.random.uniform(min_vec3[1], max_vec3[1])
+            z = np.random.uniform(min_vec3[2], max_vec3[2])
 
             return HTM_Cls(None, np.float32).Rotation(self.__q_Home, 'QUATERNION').Translation([x, y, z])
 
@@ -488,7 +510,7 @@ class Robot_Cls(object):
                         return False
 
                 # Update the state of the dynamic system.
-                self.__Step()
+                self.Step()
 
             return True
             

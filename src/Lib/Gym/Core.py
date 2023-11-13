@@ -42,9 +42,7 @@ import Lib.Parameters.Robot
 #   ../Lib/Trajectory/Utilities
 import Lib.Trajectory.Utilities
 #   ../Lib/Transformation/Core
-from Lib.Transformation.Core import Homogeneous_Transformation_Matrix_Cls as HTM_Cls, Get_Translation_Matrix
-#   ../Lib/Transformation/Utilities/Mathematics
-import Lib.Transformation.Utilities.Mathematics as Mathematics
+from Lib.Transformation.Core import Homogeneous_Transformation_Matrix_Cls as HTM_Cls
 #   ../Lib/Kinematics/Core
 import Lib.Kinematics.Core as Kinematics
 #   ../Lib/Gym/Utilities

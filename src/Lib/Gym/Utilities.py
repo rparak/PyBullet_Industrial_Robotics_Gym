@@ -4,7 +4,6 @@ import typing as tp
 import numpy as np
 # PyBullet (Real-Time Physics Simulation) [pip3 install pybullet]
 import pybullet as pb
-import pybullet_data
 # Custom Lib.:
 #   ../Lib/Primitives/Core
 import Lib.Primitives.Core as Primitives

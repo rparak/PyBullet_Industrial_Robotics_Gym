@@ -67,7 +67,13 @@ def main():
         T_rand = PyBullet_Robot_Cls.Generate_Random_T_EE(CONST_C_TYPE, True)
 
         # Set the TCP (tool center point) of the robot end-effector.
-        PyBullet_Robot_Cls.Set_TCP_Position(T_rand, CONST_CTRL_MODE, {'force': 100.0, 't_0': 0.0, 't_1': 2.0})
+        in_position = PyBullet_Robot_Cls.Set_TCP_Position(T_rand, CONST_CTRL_MODE, {'force': 100.0, 't_0': 0.0, 't_1': 2.0})
+
+        if in_position == False:
+            print('[WARNING] There is an issue during the execution of the TCP (tool center point) target.')
+            print(f'[WARNING] >> p = {T_rand.p.all()}')
+            print(f'[WARNING] >> Quaternions = {T_rand.Get_Rotation("QUATERNION").all()}')
+            break
 
         # Pause for a defined time.
         time.sleep(1.0)

@@ -298,8 +298,8 @@ class Robot_Cls(object):
 
         Args:
             (1) C_type [string]: Type of the configuration space.
-                            Note:
-                                C_type = 'Search' or 'Target'
+                                    Note:
+                                        C_type = 'Search' or 'Target'
 
         Returns:
             (1) parameter [Vector<float> 8x3]: Vertices of the selected configuration space.

@@ -36,7 +36,7 @@ CONST_C_TYPE = 'Target'
 # The name of the mode to be used to perform the transformation.
 #   Note:
 #       mode = 'Reset' or 'Motion'
-CONST_CTRL_MODE = 'Motion'
+CONST_CTRL_MODE = 'Reset'
 
 def main():
     """

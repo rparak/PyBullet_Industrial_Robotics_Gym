@@ -431,7 +431,8 @@ class Robot_Cls(object):
     def Generate_Random_T_EE(self, C_type: str, visibility: bool) -> tp.List[tp.List[float]]:
         """
         Description:
-            A function that generates the homogeneous transformation matrix of a random end-effector position.
+            A function that generates the homogeneous transformation matrix of a random end-effector 
+            position within the defined configuration space.
 
         Args:
             (1) C_type [string]: Type of the configuration space.
@@ -441,7 +442,8 @@ class Robot_Cls(object):
                                    in the PyBullet environment or not.
 
         Returns:
-            (1) parameter [Matrix<float> 4x4]: Homogeneous transformation matrix of a random end-effector position.
+            (1) parameter [Matrix<float> 4x4]: Homogeneous transformation matrix of a random end-effector position 
+                                               within the defined configuration space.
         """
 
         try:
@@ -516,7 +518,6 @@ class Robot_Cls(object):
                 if th_i_limit[0] <= th_i <= th_i_limit[1]:
                     # Reset the state (position) of the joint.
                     pb.resetJointState(self.__robot_id, th_index, th_i) 
-
                 else:
                     print(f'[WARNING] The desired input joint {th_i} in index {i} is out of limit.')
                     return False
@@ -590,7 +591,7 @@ class Robot_Cls(object):
     def Set_TCP_Position(self, T: tp.List[tp.List[float]], mode: str, parameters: tp.Dict = None) -> bool:
         """
         Description:
-            Set the TCP (tool center point) of the robot.
+            Set the TCP (tool center point) of the robot end-effector.
 
         Args:
             (1) T [Matrix<float> 4x4]: Homogeneous transformation matrix of the desired TCP position.

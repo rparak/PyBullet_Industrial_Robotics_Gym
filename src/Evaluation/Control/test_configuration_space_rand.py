@@ -3,8 +3,6 @@ import sys
 #   Add access if it is not in the system path.
 if '../' + 'src' not in sys.path:
     sys.path.append('../..')
-# Numpy (Arline computing) [pip3 install numpy]
-import numpy as np
 # OS (Operating system interfaces)
 import os
 # Time (Time access and conversions)
@@ -14,8 +12,6 @@ import time
 import Lib.Parameters.Robot as Parameters
 #   ../Lib/Gym/Core
 import Lib.Gym.Core
-#  ../Lib/Transformation/Core
-from Lib.Transformation.Core import Homogeneous_Transformation_Matrix_Cls as HTM_Cls
 
 """
 Description:
@@ -37,11 +33,15 @@ CONST_PYBULLET_ENV_PROPERTIES = {'Enable_GUI': 0, 'fps': 100,
 #   Note:
 #       'Search' or 'Target'
 CONST_C_TYPE = 'Target'
+# The name of the mode to be used to perform the transformation.
+#   Note:
+#       mode = 'Reset' or 'Motion'
+CONST_CTRL_MODE = 'Motion'
 
 def main():
     """
     Description:
-        ...
+        A program to test the search/target (configuration) space by generating a random point within a defined cuboid area.
     """
     
     # Initialization of the structure of the main parameters of the robot.
@@ -54,29 +54,26 @@ def main():
     # Reset the absolute position of the robot joints to the 'Home'.
     PyBullet_Robot_Cls.Reset('Home')
 
-    # Get the vertices of the selected configuration space.
-    C_vertices = PyBullet_Robot_Cls.Get_Configuration_Space_Vertices(CONST_C_TYPE)
-
+    # Add a viewpoint (+ sphere) with the correct transformation to the end-effector of the structure.
+    PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Primitives/Sphere/Sphere.urdf', 'T_EE_Sphere', PyBullet_Robot_Cls.T_EE, 
+                                           [0.0, 1.0, 0.0, 0.25], 0.015, True, False)
+    PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'T_EE_Viewpoint', PyBullet_Robot_Cls.T_EE, None, 
+                                           0.3, True, False)
+    
     # The physical simulation is in progress.
-    i = 0
     while PyBullet_Robot_Cls.is_connected == True:
-        # Get the homogeneous transformation matrix of the vertex with index 'i'.
-        #   Note:
-        #       The orientation of the vertex is defined by the homogeneous transformation 
-        #       matrix of the 'Home' position.
-        T_vertex = HTM_Cls(None, np.float64).Rotation(PyBullet_Robot_Cls.T_EE.Get_Rotation('QUATERNION').all(), 'QUATERNION').Translation(C_vertices[i])
+        # Generate the homogeneous transformation matrix of a random end-effector position 
+        # within the defined configuration space.
+        T_rand = PyBullet_Robot_Cls.Generate_Random_T_EE(CONST_C_TYPE, True)
 
-        # Add a viewpoint with the correct transformation to the vertex with index 'i'.
-        PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'Viewpoint_i', T_vertex, None, 
-                                               0.3, True, False)
+        # Set the TCP (tool center point) of the robot end-effector.
+        PyBullet_Robot_Cls.Set_TCP_Position(T_rand, CONST_CTRL_MODE, {'force': 100.0, 't_0': 0.0, 't_1': 2.0})
 
+        # Pause for a defined time.
         time.sleep(1.0)
 
-        # If index 'i' is out of range, reset the counter.
-        i = i + 1 if i < C_vertices.shape[0] - 1 else 0
-
-        # Remove the specified model from the PyBullet environment.
-        PyBullet_Robot_Cls.Remove_External_Object('Viewpoint_i')
+        # Reset the absolute position of the robot joints to the 'Home'.
+        PyBullet_Robot_Cls.Reset('Home')
 
     # Disconnect the created environment from a physical server.
     PyBullet_Robot_Cls.Disconnect()

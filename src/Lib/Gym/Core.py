@@ -266,7 +266,6 @@ class Robot_Cls(object):
                 
         return Kinematics.Forward_Kinematics(self.Theta, 'Fast', self.__Robot_Parameters_Str)[1]
 
-    @property
     def Get_Camera_Parameters(self) -> tp.Dict:
         """
         Description:
@@ -292,6 +291,32 @@ class Robot_Cls(object):
         return {'Yaw': parameters[8], 'Pitch': parameters[9], 'Distance': parameters[10], 
                 'Position': parameters[11]}
     
+    def Get_Configuration_Space_Vertices(self, C_type: str):
+        """
+        Description:
+            Get the vertices of the selected configuration space.
+
+        Args:
+            (1) C_type [string]: Type of the configuration space.
+                            Note:
+                                C_type = 'Search' or 'Target'
+
+        Returns:
+            (1) parameter [Vector<float> 8x3]: Vertices of the selected configuration space.
+        """
+
+        try:
+            assert C_type in ['Search', 'Target']
+
+            if C_type == 'Search':
+                return self.__vertices_C_search
+            else:
+                return self.__vertices_C_target
+
+        except AssertionError as error:
+            print(f'[ERROR] Information: {error}')
+            print('[ERROR] Incorrect configuration type selected. The selected mode must be chosen from the two options (Search, Target).')
+
     def Step(self) -> None:
         """
         Description:
@@ -442,7 +467,7 @@ class Robot_Cls(object):
                 self.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Primitives/Sphere/Sphere.urdf', 'T_EE_Rand_Sphere', T, 
                                          [0.0, 1.0, 0.0, 0.25], 0.015, True, False)
                 self.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'T_EE_Rand_Viewpoint', T,
-                                         [0.0, 1.0, 0.0, 0.25], 0.3, True, False)
+                                         None, 0.3, True, False)
 
             return T
 

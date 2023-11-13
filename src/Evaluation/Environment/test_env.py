@@ -5,8 +5,6 @@ if '../' + 'src' not in sys.path:
     sys.path.append('../..')
 # OS (Operating system interfaces)
 import os
-# Time (Time access and conversions)
-import time
 # Custom Lib.:
 #   ../Lib/Parameters/Robot
 import Lib.Parameters.Robot as Parameters
@@ -33,7 +31,7 @@ CONST_PYBULLET_ENV_PROPERTIES = {'Enable_GUI': 0, 'fps': 100,
 def main():
     """
     Description:
-        A program to test the functionality of the designed class.
+        A program that tests whether the environment has been successfully generated.
     """
     
     # Initialization of the structure of the main parameters of the robot.
@@ -46,21 +44,13 @@ def main():
     # Reset the absolute position of the robot joints to the 'Home'.
     PyBullet_Robot_Cls.Reset('Home')
 
-    #print(PyBullet_Robot_Cls.T_EE.p.all())
+    # Add a viewpoint with the correct transformation to the end-effector of the structure.
+    PyBullet_Robot_Cls.Add_External_Object('/../../../URDFs/Viewpoint/Viewpoint.urdf', 'T_EE_Viewpoint', PyBullet_Robot_Cls.T_EE, None, 
+                                           0.5, True, False)
 
-    PyBullet_Robot_Cls.Add_External_Object('/../../../URDFs/Primitives/Cube/Cube.urdf', 'Cube_1', PyBullet_Robot_Cls.T_EE.Translation([0.0, 0.0, -0.1]), [0.0, 1.0, 0.0, 1.0], 0.05, True, False)
-    
     # The physical simulation is in progress.
     while PyBullet_Robot_Cls.is_connected == True:
-        # ...
-        #T_EE_rand = PyBullet_Robot_Cls.Generate_Random_T_EE('Target', True)
-
-        # ...
-        #time.sleep(1.0)
-
-        # ...
         PyBullet_Robot_Cls.Step()
-
 
     # Disconnect the created environment from a physical server.
     PyBullet_Robot_Cls.Disconnect()

@@ -48,30 +48,19 @@ def main():
 
     #print(PyBullet_Robot_Cls.T_EE.p.all())
 
-    PyBullet_Robot_Cls.Add_External_Object('/../../../URDFs/Primitives/Sphere/Sphere.urdf', 'Sphere_1', PyBullet_Robot_Cls.T_EE.Translation([0.0, 0.0, -0.1]), [0.0, 1.0, 0.0, 1.0], 
-                                           0.05, True, False)
+    #PyBullet_Robot_Cls.Add_External_Object('/../../../URDFs/Primitives/Sphere/Sphere.urdf', 'Sphere_1', PyBullet_Robot_Cls.T_EE.Translation([0.0, 0.0, -0.1]), [0.0, 1.0, 0.0, 1.0], 0.05, True, False)
     
     # The physical simulation is in progress.
     while PyBullet_Robot_Cls.is_connected == True:
-        """
         # ...
-        T_EE_rand = PyBullet_Robot_Cls.Generate_Random_T_EE('Target')
-
-        # Add a viewpoint (+ sphere) with the correct transformation to the end-effector of the structure.
-        PyBullet_Robot_Cls.Add_External_Object('/../../../URDFs/Primitives/Sphere/Sphere.urdf', 'Sphere_1', T_EE_rand, [0.0, 1.0, 0.0, 0.25], 
-                                               0.015, True, False)
-        PyBullet_Robot_Cls.Add_External_Object('/../../../URDFs/Viewpoint/Viewpoint.urdf', 'Viewpoint_1', T_EE_rand, None, 
-                                               0.3, True, False)
+        #T_EE_rand = PyBullet_Robot_Cls.Generate_Random_T_EE('Target', True)
 
         # ...
-        time.sleep(1.0)
-
-        # ...
-        PyBullet_Robot_Cls.Remove_All_External_Objects()
-        """
+        #time.sleep(1.0)
 
         # ...
         PyBullet_Robot_Cls.Step()
+
 
     # Disconnect the created environment from a physical server.
     PyBullet_Robot_Cls.Disconnect()

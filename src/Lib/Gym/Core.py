@@ -34,6 +34,8 @@ import pybullet as pb
 import pybullet_data
 # Time (Time access and conversions)
 import time
+# OS (Operating system interfaces)
+import os
 # Custom Lib.:
 #   ../Lib/Parameters/Robot
 import Lib.Parameters.Robot
@@ -60,6 +62,8 @@ Description:
 """
 # Gravitational Constant.
 CONST_GRAVITY = 9.81
+# Locate the path to the project folder.
+CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 
 class Robot_Cls(object):
     """
@@ -318,14 +322,14 @@ class Robot_Cls(object):
         Args:
             (1) urdf_file_path [string]: The specified path of the object file with the extension '*.urdf'.
             (2) name [string]: The name of the object.
-            (2) T [Matrix<float> 4x4]: Homogeneous transformation matrix of the object.
-            (3) color [Vector<float> 1x4]: The color of the object.
+            (3) T [Matrix<float> 4x4]: Homogeneous transformation matrix of the object.
+            (4) color [Vector<float> 1x4]: The color of the object.
                                             Note:
                                                 Format: rgba(red, green, blue, alpha)
-            (4) scale [float]: The scale factor of the object.
-            (5) fixed_position [bool]: Information about whether the position of the object should 
+            (5) scale [float]: The scale factor of the object.
+            (6) fixed_position [bool]: Information about whether the position of the object should 
                                        be fixed (static) or dynamic.
-            (6) enable_collision [bool]: Information on whether or not the object is to be exposed 
+            (7) enable_collision [bool]: Information on whether or not the object is to be exposed 
                                          to collisions
         """
 
@@ -338,7 +342,7 @@ class Robot_Cls(object):
         #   Store the object ID and object name into the dictionary.
         self.__external_object[name] = object_id
 
-        print(pb.getAABB(object_id))
+        #print(pb.getAABB(object_id))
 
         # Set the properties of the added object.
         #   Color.
@@ -374,7 +378,7 @@ class Robot_Cls(object):
 
         self.__external_object = {}
 
-    def Generate_Random_T_EE(self, C_type: str) -> tp.List[tp.List[float]]:
+    def Generate_Random_T_EE(self, C_type: str, visibility: bool) -> tp.List[tp.List[float]]:
         """
         Description:
             A function that generates the homogeneous transformation matrix of a random end-effector position.
@@ -383,6 +387,8 @@ class Robot_Cls(object):
             (1) C_type [string]: Type of the configuration space.
                                     Note:
                                         C_type = 'Search' or 'Target'
+            (2) visibility [bool]: Information about whether the random point will be displayed 
+                                   in the PyBullet environment or not.
 
         Returns:
             (1) parameter [Matrix<float> 4x4]: Homogeneous transformation matrix of a random end-effector position.
@@ -403,7 +409,20 @@ class Robot_Cls(object):
             y = np.random.uniform(min_vec3[1], max_vec3[1])
             z = np.random.uniform(min_vec3[2], max_vec3[2])
 
-            return HTM_Cls(None, np.float32).Rotation(self.__q_Home, 'QUATERNION').Translation([x, y, z])
+            # Obtain the homogeneous transformation matrix of a random end-effector position.
+            T = HTM_Cls(None, np.float32).Rotation(self.__q_Home, 'QUATERNION').Translation([x, y, z])
+
+            if visibility == True:
+                # Removal of external objects corresponding to a random point.
+                self.Remove_External_Object('T_EE_Rand_Sphere'); self.Remove_External_Object('T_EE_Rand_Viewpoint')
+                
+                # Adding external objects corresponding to a random point.
+                self.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Primitives/Sphere/Sphere.urdf', 'T_EE_Rand_Sphere', T, 
+                                         [0.0, 1.0, 0.0, 0.25], 0.015, True, False)
+                self.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'T_EE_Rand_Viewpoint', T,
+                                         [0.0, 1.0, 0.0, 0.25], 0.3, True, False)
+
+            return T
 
         except AssertionError as error:
             print(f'[ERROR] Information: {error}')

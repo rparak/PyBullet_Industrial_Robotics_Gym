@@ -400,7 +400,7 @@ class Robot_Cls(object):
             that was added using the 'Add_External_Object' function of the class.
 
             Note:
-                A function also removes the 
+                The function also removes external collider added to the robotic structure.
 
         Args:
             (1) name [string]: The name of the object.
@@ -418,6 +418,9 @@ class Robot_Cls(object):
         Description:
             A function to remove all models with the *.urdf extension from the PyBullet environment 
             that were added using the 'Add_External_Object' function of the class.
+
+            Note:
+                The function also removes external colliders added to the robotic structure.
         """
 
         for _, external_obj in enumerate(self.__external_object.values()):

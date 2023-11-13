@@ -327,7 +327,7 @@ class AABB_Cls(object):
 
             In our case, these are 3D primitives:
                 1\ Axis-aligned Bounding Box (AABB)
-                2\ Oriented Bounding Boxe (OBB)
+                2\ Oriented Bounding Box (OBB)
 
             The function can solve both AABB <-> AABB and AABB <-> OBB intersections.
 
@@ -677,7 +677,7 @@ class OBB_Cls(object):
 
             In our case, these are 3D primitives:
                 1\ Axis-aligned Bounding Box (AABB)
-                2\ Oriented Bounding Boxe (OBB)
+                2\ Oriented Bounding Box (OBB)
 
             The function can solve both OBB <-> OBB and OBB <-> AABB intersections.
 

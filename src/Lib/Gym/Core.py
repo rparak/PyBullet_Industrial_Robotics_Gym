@@ -138,7 +138,7 @@ class Robot_Cls(object):
 
             # Load a physics model of the robotic structure.
             self.__robot_id = pb.loadURDF(urdf_file_path, p, [q.x, q.y, q.z, q.w], useFixedBase=True, 
-                                        flags=pb.URDF_ENABLE_CACHED_GRAPHICS_SHAPES)
+                                          flags=pb.URDF_ENABLE_CACHED_GRAPHICS_SHAPES)
             
             # Enable collision detection between specific pairs of links.
             pb.setCollisionFilterPair(self.__robot_id, base_id, -1,-1, 1)
@@ -206,9 +206,9 @@ class Robot_Cls(object):
         pb.configureDebugVisualizer(pb.COV_ENABLE_MOUSE_PICKING, 0)
 
         # Load a physics model of the plane.
-        plane_id = pb.loadURDF('/../../../URDFs/Primitives/Plane/Plane.urdf', globalScaling=0.20, useMaximalCoordinates=True, useFixedBase=True)
+        plane_id = pb.loadURDF(f'{CONST_PROJECT_FOLDER}/URDFs/Primitives/Plane/Plane.urdf', globalScaling=0.20, useMaximalCoordinates=True, useFixedBase=True)
         #   Change the texture of the loaded object.
-        pb.changeVisualShape(plane_id, -1, textureUniqueId=pb.loadTexture('/../../../Textures/Plane.png'))
+        pb.changeVisualShape(plane_id, -1, textureUniqueId=pb.loadTexture(f'{CONST_PROJECT_FOLDER}/Textures/Plane.png'))
         pb.changeVisualShape(plane_id, -1, rgbaColor=[0.55, 0.55, 0.55, 0.95])
 
     @property
@@ -337,12 +337,19 @@ class Robot_Cls(object):
         p = T.p.all(); q = T.Get_Rotation('QUATERNION')
 
         # Load a physics model of the object.
-        object_id = pb.loadURDF(urdf_file_path, p, [q.x, q.y, q.z, q.w], globalScaling=scale, useMaximalCoordinates=False, 
+        #   Note:
+        #       Set the object position to 'Zero'.
+        object_id = pb.loadURDF(urdf_file_path, [0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], globalScaling=scale, useMaximalCoordinates=False, 
                                 useFixedBase=fixed_position)
         #   Store the object ID and object name into the dictionary.
         self.__external_object[name] = object_id
 
-        #print(pb.getAABB(object_id))
+        # Get the minimum and maximum X, Y, and Z values from the AABB coordinates of the object.
+        (min_AABB, max_AABB) = pb.getAABB(object_id)
+
+        # Set the object position to the desired position defined by the function 
+        # input parameters.
+        pb.resetBasePositionAndOrientation(object_id, p, [q.x, q.y, q.z, q.w])
 
         # Set the properties of the added object.
         #   Color.
@@ -352,11 +359,23 @@ class Robot_Cls(object):
         if enable_collision == False:
             pb.setCollisionFilterGroupMask(object_id, -1, 0, 0)
 
+            # Add a collider (type OBB) as a part of the robotic arm structure.
+            self.__Robot_Parameters_Str.Collider.External[name] = OBB_Cls(Box_Cls([0.0, 0.0, 0.0], 
+                                                                                  [max_AABB[0] - min_AABB[0],
+                                                                                   max_AABB[1] - min_AABB[1],
+                                                                                   max_AABB[2] - min_AABB[2]]))
+            # Oriented Bounding Box (OBB) transformation according to the input homogeneous 
+            # transformation matrix.
+            self.__Robot_Parameters_Str.Collider.External[name].Transformation(T)
+
     def Remove_External_Object(self, name: str) -> None:
         """
         Description:
             A function to remove a specific model with the *.urdf extension from the PyBullet environment
             that was added using the 'Add_External_Object' function of the class.
+
+            Note:
+                A function also removes the 
 
         Args:
             (1) name [string]: The name of the object.
@@ -365,6 +384,9 @@ class Robot_Cls(object):
         if name in self.__external_object.keys():
             pb.removeBody(self.__external_object[name])
             del self.__external_object[name]
+
+        if name in self.__Robot_Parameters_Str.Collider.External.keys():
+            del self.__Robot_Parameters_Str.Collider.External[name]
 
     def Remove_All_External_Objects(self) -> None:
         """
@@ -376,7 +398,7 @@ class Robot_Cls(object):
         for _, external_obj in enumerate(self.__external_object.values()):
             pb.removeBody(external_obj)
 
-        self.__external_object = {}
+        self.__external_object = {}; self.__Robot_Parameters_Str.Collider.External = {}
 
     def Generate_Random_T_EE(self, C_type: str, visibility: bool) -> tp.List[tp.List[float]]:
         """

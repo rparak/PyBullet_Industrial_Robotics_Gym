@@ -48,7 +48,7 @@ def main():
 
     #print(PyBullet_Robot_Cls.T_EE.p.all())
 
-    #PyBullet_Robot_Cls.Add_External_Object('/../../../URDFs/Primitives/Sphere/Sphere.urdf', 'Sphere_1', PyBullet_Robot_Cls.T_EE.Translation([0.0, 0.0, -0.1]), [0.0, 1.0, 0.0, 1.0], 0.05, True, False)
+    PyBullet_Robot_Cls.Add_External_Object('/../../../URDFs/Primitives/Cube/Cube.urdf', 'Cube_1', PyBullet_Robot_Cls.T_EE.Translation([0.0, 0.0, -0.1]), [0.0, 1.0, 0.0, 1.0], 0.05, True, False)
     
     # The physical simulation is in progress.
     while PyBullet_Robot_Cls.is_connected == True:

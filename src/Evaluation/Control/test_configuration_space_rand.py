@@ -19,6 +19,10 @@ Description:
 """
 # Set the structure of the main parameters of the robot.
 CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
+# Numerical IK Parameters.
+#   The properties of the inverse kinematics solver.
+CONST_IK_PROPERTIES = {'delta_time': 0.1, 'num_of_iteration': 500, 
+                       'tolerance': 1e-30}
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 # The properties of the PyBullet environment.
@@ -67,7 +71,8 @@ def main():
         T_rand = PyBullet_Robot_Cls.Generate_Random_T_EE(CONST_C_TYPE, True)
 
         # Set the TCP (tool center point) of the robot end-effector.
-        in_position = PyBullet_Robot_Cls.Set_TCP_Position(T_rand, CONST_CTRL_MODE, {'force': 100.0, 't_0': 0.0, 't_1': 2.0})
+        in_position = PyBullet_Robot_Cls.Set_TCP_Position(T_rand, CONST_CTRL_MODE, CONST_IK_PROPERTIES, 
+                                                          {'force': 100.0, 't_0': 0.0, 't_1': 2.0})
 
         if in_position == False:
             print('[WARNING] There is an issue during the execution of the TCP (tool center point) target.')

@@ -586,7 +586,8 @@ class Robot_Cls(object):
             print(f'[ERROR] Information: {error}')
             print(f'[ERROR] Incorrect number of values in the input variable theta. The input variable "theta" must contain {self.__Robot_Parameters_Str.Theta.Zero.size} values.')
 
-    def Set_TCP_Position(self, T: tp.List[tp.List[float]], mode: str, parameters: tp.Dict = None) -> bool:
+    def Set_TCP_Position(self, T: tp.List[tp.List[float]], mode: str, ik_solver_properties: tp.Dict, 
+                         motion_parameters: tp.Dict = None) -> bool:
         """
         Description:
             Set the TCP (tool center point) of the robot end-effector.
@@ -596,7 +597,19 @@ class Robot_Cls(object):
             (2) mode [string]: The name of the mode to be used to perform the transformation.
                                 Note:
                                     mode = 'Reset' or 'Motion'
-            (3) parameters [Dictionary {'force': float, 't_0': float, 't_1': float}]: The parameters of the 'Motion' mode. If the mode is equal
+            (3) ik_solver_properties [Dictionary {'delta_time': float or None, 'num_of_iteration': float, 
+                                                  'tolerance': float}]: The properties of the inverse kinematics solver.
+                                                                            Note:
+                                                                                'delta_time': The difference (spacing) between 
+                                                                                                the time values. If equal to 'None', do not 
+                                                                                                use interpolation between the actual and desired 
+                                                                                                positions.
+                                                                                'num_of_iteration': The number of iterations per 
+                                                                                                    time instant.
+                                                                                'tolerance': The minimum required tolerance per 
+                                                                                                time instant.    
+                                                                                Where time instant is defined by the 'delta_time' variable.
+            (4) parameters [Dictionary {'force': float, 't_0': float, 't_1': float}]: The parameters of the 'Motion' mode. If the mode is equal
                                                                                       to 'Reset', the parameters will be equal to 'None'.
                                                                                         Note:
                                                                                             'force': The maximum motor force used to reach the target value.
@@ -614,27 +627,16 @@ class Robot_Cls(object):
             if isinstance(T, (list, np.ndarray)):
                 T = HTM_Cls(T, np.float64)
 
-            """
-            # Get the translational and rotational part from the transformation matrix.
-            p = T.p.all(); q = T.Get_Rotation('QUATERNION')
-
-            # A function to compute the inverse kinematics (IK) using the Damped Least Squares (DLS) method.
-            theta = np.array(pb.calculateInverseKinematics(bodyUniqueId=self.__robot_id, endEffectorLinkIndex=self.__theta_index[-1], 
-                                                           targetPosition=p, targetOrientation=[q.x, q.y, q.z, q.w], 
-                                                           lowerLimits=self.__Robot_Parameters_Str.Theta.Limit[:, 0], upperLimits=self.__Robot_Parameters_Str.Theta.Limit[:, 1], 
-                                                           restPoses=self.Theta, jointDamping=[0.01]*self.__Robot_Parameters_Str.Theta.Zero.size, 
-                                                           solver=pb.IK_DLS), dtype=np.float64)
-            """
-
             # A function to compute the inverse kinematics (IK) using the using the chosen numerical method.
             (info, theta) = Kinematics.Inverse_Kinematics_Numerical(T, self.Theta, 'Levenberg-Marquardt', self.__Robot_Parameters_Str, 
-                                                                    {'delta_time': 0.1, 'num_of_iteration': 500, 'tolerance': 1e-30})
+                                                                    ik_solver_properties)
 
             if info["successful"] == True:
                 if mode == 'Reset':
                     return self.Reset('Individual', theta)
                 else:
-                    return self.Set_Absolute_Joint_Position(theta, parameters['force'], parameters['t_0'], parameters['t_1'])
+                    return self.Set_Absolute_Joint_Position(theta, motion_parameters['force'], motion_parameters['t_0'], 
+                                                            motion_parameters['t_1'])
             else:
                 print('[WARNING] A problem occurred during the calculation of the inverse kinematics (IK).')
 

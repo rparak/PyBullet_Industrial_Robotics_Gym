@@ -31,6 +31,12 @@ class Cuboid_Str:
     Color: tp.List[float] = field(default_factory=list)
 
 @dataclass
+class Collision_Object_Str:
+    # Homogeneous transformation matrix of the cuboid.
+    #   Unit [Matrix<float>]
+    T: tp.List[tp.List[float]] = field(default_factory=list)
+
+@dataclass
 class Configuration_Space_Str:
     """
     Description:
@@ -61,6 +67,17 @@ class Configuration_Space_Str:
     # where the robot aims to reach.
     #   Unit [Cuboid_Str(object)]
     Target: Cuboid_Str = field(default_factory=Cuboid_Str)
+
+@dataclass
+class Environment_Str:
+    # The name of the robotic structure for which 
+    # the configuration space will be defined.
+    #   Unit [string]
+    Name: str = ''
+    # ...
+    C: Configuration_Space_Str = field(default_factory=Configuration_Space_Str)
+    # ...
+    Collision_Object: Collision_Object_Str = field(default_factory=Collision_Object_Str)
 
 """         
 Description:

@@ -54,6 +54,17 @@ from Lib.Collider.Utilities import Get_Min_Max
 #   ../Lib/Primitives/Core
 from Lib.Collider.Core import OBB_Cls, AABB_Cls
 
+# Addition of the second environment:
+#   1\ Addition of the C in the Environment.py
+#   2\ Re-write the Get_Configuration_Space() function (add information about the type)
+#   3\ Add information about the type to the properties of the input parameters of the class
+#  Note:
+#   The second environment will contain the collision object. 
+#       1\ Add information about the collision object to the Environment.py structure or not? 
+#       2\ If not .. Create a function to generate the collision object in the environment type 2.
+#       3\ If yes ... add collision_object parameter to the structure with 
+#          the parameters as Name, T, and Scale.
+
 """
 Description:
     Initialization of constants.

@@ -161,12 +161,11 @@ class Robot_Cls(object):
         self.__vertices_C_target = Lib.Gym.Utilities.Add_Wireframe_Cuboid(C.Target.T, C.Target.Size, 
                                                                           C.Target.Color, 1.0)
         
-        # ... AABB 
-        #   ...
+        # Represent the search (configuration) space as Axis-aligned Bounding Boxes (AABB).
         self.__AABB_C_search = AABB_Cls(Box_Cls([0.0, 0.0, 0.0], C.Search.Size))
-        #       ...
         self.__AABB_C_search.Transformation(C.Search.T)
-        #   ...
+        #   Initialize a point that will be used to check whether the homogeneous transformation matrix 
+        #   of the end-effector is inside the search (configuration) space or not.
         self.__P_EE = Point_Cls([0.0, 0.0, 0.0])
 
         # Get the homogeneous transformation matrix of the robot end-effector in the 'Home' position.

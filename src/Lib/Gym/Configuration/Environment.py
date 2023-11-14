@@ -92,16 +92,16 @@ ABB_IRB_120_L_Ax_C_Str.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation
 # ABB IRB 14000 (Right).
 ABB_IRB_14000_R_C_Str = Configuration_Space_Str(Name='ABB_IRB_14000_R')
 ABB_IRB_14000_R_C_Str.Search = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.35, -0.15, 0.125 + 0.02], dtype=np.float64)), 
-                                          np.array([0.15, 0.25, 0.25], dtype=np.float64), [1.0, 1.0, 0.0])
+                                          np.array([0.175, 0.275, 0.25], dtype=np.float64), [1.0, 1.0, 0.0])
 ABB_IRB_14000_R_C_Str.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.35, -0.15, 0.075 + 0.02], dtype=np.float64)), 
-                                          np.array([0.10, 0.20, 0.10], dtype=np.float64), [0.0, 1.0, 0.0])
+                                          np.array([0.125, 0.225, 0.10], dtype=np.float64), [0.0, 1.0, 0.0])
 
 # ABB IRB 14000 (Left).
 ABB_IRB_14000_L_C_Str = Configuration_Space_Str(Name='ABB_IRB_14000_L')
 ABB_IRB_14000_L_C_Str.Search = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.35, 0.15, 0.125 + 0.02], dtype=np.float64)), 
-                                          np.array([0.15, 0.25, 0.25], dtype=np.float64), [1.0, 1.0, 0.0])
+                                          np.array([0.175, 0.275, 0.25], dtype=np.float64), [1.0, 1.0, 0.0])
 ABB_IRB_14000_L_C_Str.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.35, 0.15, 0.075 + 0.02], dtype=np.float64)), 
-                                          np.array([0.10, 0.20, 0.10], dtype=np.float64), [0.0, 1.0, 0.0])
+                                          np.array([0.125, 0.225, 0.10], dtype=np.float64), [0.0, 1.0, 0.0])
 
 # Epson LS3-B401S.
 EPSON_LS3_B401S_C_Str = Configuration_Space_Str(Name='EPSON_LS3_B401S')

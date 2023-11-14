@@ -48,11 +48,11 @@ import Lib.Kinematics.Core as Kinematics
 #   ../Lib/Gym/Utilities
 import Lib.Gym.Utilities
 #   ../Lib/Primitives/Core
-from Lib.Primitives.Core import Box_Cls
+from Lib.Primitives.Core import Box_Cls, Point_Cls
 #   ../Lib/Collider/Utilities
 from Lib.Collider.Utilities import Get_Min_Max
 #   ../Lib/Primitives/Core
-from Lib.Collider.Core import OBB_Cls
+from Lib.Collider.Core import OBB_Cls, AABB_Cls
 
 """
 Description:
@@ -161,6 +161,14 @@ class Robot_Cls(object):
         self.__vertices_C_target = Lib.Gym.Utilities.Add_Wireframe_Cuboid(C.Target.T, C.Target.Size, 
                                                                           C.Target.Color, 1.0)
         
+        # ... AABB 
+        #   ...
+        self.__AABB_C_search = AABB_Cls(Box_Cls([0.0, 0.0, 0.0], C.Search.Size))
+        #       ...
+        self.__AABB_C_search.Transformation(C.Search.T)
+        #   ...
+        self.__P_EE = Point_Cls([0.0, 0.0, 0.0])
+
         # Get the homogeneous transformation matrix of the robot end-effector in the 'Home' position.
         T_Home = Kinematics.Forward_Kinematics(self.__Robot_Parameters_Str.Theta.Home, 'Fast', 
                                                self.__Robot_Parameters_Str)[1]

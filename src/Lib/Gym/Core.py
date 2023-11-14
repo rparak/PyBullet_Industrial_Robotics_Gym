@@ -626,12 +626,17 @@ class Robot_Cls(object):
                                                            solver=pb.IK_DLS), dtype=np.float64)
             """
 
-            theta = None
+            # A function to compute the inverse kinematics (IK) using the using the chosen numerical method.
+            (info, theta) = Kinematics.Inverse_Kinematics_Numerical(T, self.Theta, 'Levenberg-Marquardt', self.__Robot_Parameters_Str, 
+                                                            {'delta_time': 0.1, 'num_of_iteration': 500, 'tolerance': 1e-30})
 
-            if mode == 'Reset':
-                return self.Reset('Individual', theta)
+            if info["successful"] == True:
+                if mode == 'Reset':
+                    return self.Reset('Individual', theta)
+                else:
+                    return self.Set_Absolute_Joint_Position(theta, parameters['force'], parameters['t_0'], parameters['t_1'])
             else:
-                return self.Set_Absolute_Joint_Position(theta, parameters['force'], parameters['t_0'], parameters['t_1'])
+                print('[WARNING] A problem occurred during the calculation of the inverse kinematics (IK).')
 
         except AssertionError as error:
             print(f'[ERROR] Information: {error}')

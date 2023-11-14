@@ -614,6 +614,7 @@ class Robot_Cls(object):
             if isinstance(T, (list, np.ndarray)):
                 T = HTM_Cls(T, np.float64)
 
+            """
             # Get the translational and rotational part from the transformation matrix.
             p = T.p.all(); q = T.Get_Rotation('QUATERNION')
 
@@ -623,6 +624,9 @@ class Robot_Cls(object):
                                                            lowerLimits=self.__Robot_Parameters_Str.Theta.Limit[:, 0], upperLimits=self.__Robot_Parameters_Str.Theta.Limit[:, 1], 
                                                            restPoses=self.Theta, jointDamping=[0.01]*self.__Robot_Parameters_Str.Theta.Zero.size, 
                                                            solver=pb.IK_DLS), dtype=np.float64)
+            """
+
+            theta = None
 
             if mode == 'Reset':
                 return self.Reset('Individual', theta)

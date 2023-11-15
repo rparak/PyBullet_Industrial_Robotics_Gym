@@ -11,6 +11,8 @@ import Lib.Primitives.Core as Primitives
 from Lib.Transformation.Core import Homogeneous_Transformation_Matrix_Cls as HTM_Cls, Vector3_Cls
 #   ../Lib/Gym/Configuration/Environment
 import Lib.Gym.Configuration.Environment
+#   ../Lib/Transformation/Utilities/Mathematics
+import Lib.Transformation.Utilities.Mathematics as Mathematics
 
 def Add_Wireframe_Cuboid(T: tp.List[tp.List[float]], size: tp.List[float], color: tp.List[float],
                          line_width: float) -> None:
@@ -61,7 +63,7 @@ def Add_Wireframe_Cuboid(T: tp.List[tp.List[float]], size: tp.List[float], color
         
     return vertices
 
-def Get_Environment_Structure(name: str, Env_ID: int) -> Lib.Gym.Configuration.Environment.Configuration_Space_Str:
+def Get_Environment_Structure(name: str, Env_ID: int) -> Lib.Gym.Configuration.Environment.Environment_Str:
     """
     Description:
         Obtain the structure of the main parameters of the environment for the defined robotic arm.
@@ -74,7 +76,7 @@ def Get_Environment_Structure(name: str, Env_ID: int) -> Lib.Gym.Configuration.E
                                 script ../Configuration/Environment.py. 
 
     Returns:
-        (1) parameter [Configuration_Space_Str(object)]: Defined structure of the main parameters of the environment.
+        (1) parameter [Environment_Str(object)]: Defined structure of the main parameters of the environment.
     """
 
     try:
@@ -97,6 +99,50 @@ def Get_Environment_Structure(name: str, Env_ID: int) -> Lib.Gym.Configuration.E
                 'ABB_IRB_14000_R': Lib.Gym.Configuration.Environment.ABB_IRB_14000_R_Env_ID_1_Str,
                 'ABB_IRB_14000_L': Lib.Gym.Configuration.Environment.ABB_IRB_14000_L_Env_ID_1_Str,
                 'EPSON_LS3_B401S': Lib.Gym.Configuration.Environment.EPSON_LS3_B401S_Env_ID_1_Str
+            }[name]
+    
+    except AssertionError as error:
+        print(f'[ERROR] Information: {error}')
+        print(f'[ERROR] An incorrect identification number (ID) for the environment was selected.')
+
+def Get_Robot_Structure_Theta_Home(name: str, Env_ID: int) -> tp.List[float]:
+    """
+    Description:
+        ....
+    
+    Args:
+        (1) name [string]: Name of the robotic structure.
+        (2) Env_ID [int]: The identification number (ID) of the environment.
+                            Note:
+                                For more information, see the 
+                                script ../Configuration/Environment.py. 
+
+    Returns:
+        (1) parameter [Vector<float> 1xn]: The absolute joint position in radians / meters.
+                                            Note:
+                                                Where n is the number of joints.
+    """
+        
+    try:
+        assert Env_ID in [0, 1]
+
+        if Env_ID == 0:
+            return {
+                'Universal_Robots_UR3': Mathematics.Degree_To_Radian(np.array([-67.95687, -85.77765, -103.11371, -81.12798, 89.83117, 22.30746], dtype=np.float64)),
+                'ABB_IRB_120': Mathematics.Degree_To_Radian(np.array([0.0, 10.95985, 17.63425, 0.0,  61.40631, 0.0], dtype=np.float64)),
+                'ABB_IRB_120_L_Ax': np.append([0.4], Mathematics.Degree_To_Radian(np.array([90.00014, 10.95985, 17.63425, 0.0,  61.40631, 0.0], dtype=np.float64))),
+                'ABB_IRB_14000_R': Mathematics.Degree_To_Radian(np.array([86.5391, -131.7427, -52.98846, 60.71872, -162.0104, 116.87471, 18.89269], dtype=np.float64)),
+                'ABB_IRB_14000_L': Mathematics.Degree_To_Radian(np.array([-86.74652, -131.67072, 53.04848, 60.71646, -197.85701, 117.01122, -19.01974], dtype=np.float64)),
+                'EPSON_LS3_B401S': np.array([Mathematics.Degree_To_Radian(47.16657), Mathematics.Degree_To_Radian(103.77415), 0.02449999, Mathematics.Degree_To_Radian(60.94072)], dtype = np.float64)
+            }[name]
+        else:
+            return {
+                'Universal_Robots_UR3': Mathematics.Degree_To_Radian(np.array([-67.95687, -85.77765, -103.11371, -81.12798, 89.83117, 22.30746], dtype=np.float64)),
+                'ABB_IRB_120': Mathematics.Degree_To_Radian(np.array([0.0, 10.95985, 17.63425, 0.0,  61.40631, 0.0], dtype=np.float64)),
+                'ABB_IRB_120_L_Ax': np.append([0.4], Mathematics.Degree_To_Radian(np.array([90.00014, 10.95985, 17.63425, 0.0,  61.40631, 0.0], dtype=np.float64))),
+                'ABB_IRB_14000_R': Mathematics.Degree_To_Radian(np.array([86.5391, -131.7427, -52.98846, 60.71872, -162.0104, 116.87471, 18.89269], dtype=np.float64)),
+                'ABB_IRB_14000_L': Mathematics.Degree_To_Radian(np.array([-86.74652, -131.67072, 53.04848, 60.71646, -197.85701, 117.01122, -19.01974], dtype=np.float64)),
+                'EPSON_LS3_B401S': np.array([Mathematics.Degree_To_Radian(47.16657), Mathematics.Degree_To_Radian(103.77415), 0.02449999, Mathematics.Degree_To_Radian(60.94072)], dtype = np.float64)
             }[name]
     
     except AssertionError as error:

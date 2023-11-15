@@ -135,7 +135,7 @@ class Robot_Cls(object):
             base_id = pb.loadURDF(properties['External_Base'], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 
                                  useFixedBase=True)
             
-            # Disable all collisions of the object
+            # Disable all collisions of the object.
             pb.setCollisionFilterGroupMask(base_id, -1, 0, 0)
 
             # Load a physics model of the robotic structure.
@@ -185,11 +185,25 @@ class Robot_Cls(object):
         #   of the end-effector is inside the search (configuration) space or not.
         self.__P_EE = Point_Cls([0.0, 0.0, 0.0])
 
+        # ....
+        Robot_Parameters_Str.Theta.Home = Lib.Gym.Utilities.Get_Robot_Structure_Theta_Home(self.__Robot_Parameters_Str.Name, properties['Env_ID'])
+
         # Get the homogeneous transformation matrix of the robot end-effector in the 'Home' position.
         T_Home = Kinematics.Forward_Kinematics(self.__Robot_Parameters_Str.Theta.Home, 'Fast', 
                                                self.__Robot_Parameters_Str)[1]
         #   Get the rotational part from the transformation matrix.
         self.__q_Home = T_Home.Get_Rotation('QUATERNION').all()
+
+        # ...
+        if self.__Env_Structure.Collision_Object != None:
+            # ...
+            self.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Primitives/{self.__Env_Structure.Collision_Object.Type}/{self.__Env_Structure.Collision_Object.Type}.urdf', 
+                                     f'{self.__Env_Structure.Collision_Object.Type}_Collision', self.__Env_Structure.Collision_Object.T, self.__Env_Structure.Collision_Object.Color,
+                                     self.__Env_Structure.Collision_Object.Scale, True, False)
+            
+            # ...
+            _ = Lib.Gym.Utilities.Add_Wireframe_Cuboid(self.__Env_Structure.Collision_Object.T, 3 * [self.__Env_Structure.Collision_Object.Scale * 2.0], 
+                                                       self.__Env_Structure.Collision_Object.Color[0:3], 1.0)
 
     def __Set_Env_Parameters(self, enable_gui: int, camera_parameters: tp.Dict) -> None:
         """
@@ -377,7 +391,7 @@ class Robot_Cls(object):
             (6) fixed_position [bool]: Information about whether the position of the object should 
                                        be fixed (static) or dynamic.
             (7) enable_collision [bool]: Information on whether or not the object is to be exposed 
-                                         to collisions
+                                         to collisions.
         """
 
         # Get the translational and rotational part from the transformation matrix.
@@ -397,15 +411,17 @@ class Robot_Cls(object):
         # Set the object position to the desired position defined by the function 
         # input parameters.
         pb.resetBasePositionAndOrientation(object_id, p, [q.x, q.y, q.z, q.w])
+        # Disable all collisions of the object.
+        #   Note:
+        #       Collisions will be solved internally.
+        pb.setCollisionFilterGroupMask(object_id, -1, 0, 0)
 
         # Set the properties of the added object.
         #   Color.
         if color is not None:
             pb.changeVisualShape(object_id, linkIndex=-1, rgbaColor=color)
         #   Collision.
-        if enable_collision == False:
-            pb.setCollisionFilterGroupMask(object_id, -1, 0, 0)
-
+        if enable_collision == True:
             # Add a collider (type OBB) as a part of the robotic arm structure.
             self.__Robot_Parameters_Str.Collider.External[name] = OBB_Cls(Box_Cls([0.0, 0.0, 0.0], 
                                                                                   [max_AABB[0] - min_AABB[0],
@@ -512,10 +528,12 @@ class Robot_Cls(object):
                                                 Where n is the number of joints.
             (2) visibility [bool]: Visibility of the target position as the 'ghost' of the robotic model.
             (3) info [bool]: Information on whether the result was found within the required tolerance.
+            (4) color [None or Vector<float> 1x4]: The color of the object.
+                                                    Note:
+                                                        Format: rgb(red, green, blue)
         """
 
         alpha = 0.3 if visibility == True else 0.0
-
         for _, (th_i, th_index) in enumerate(zip(theta, self.__theta_index)):
             # Reset the state (position) of the joint.
             pb.resetJointState(self.__robot_id_aux, th_index, th_i) 
@@ -680,7 +698,7 @@ class Robot_Cls(object):
             # A function to compute the inverse kinematics (IK) using the using the chosen numerical method.
             (info, theta) = Kinematics.Inverse_Kinematics_Numerical(T, self.Theta, 'Levenberg-Marquardt', self.__Robot_Parameters_Str, 
                                                                     ik_solver_properties)
-
+            
             if info["successful"] == True:
                 self.__Reset_Aux_Model(theta, visibility_target_position, [0.70, 0.85, 0.60])
 
@@ -692,6 +710,7 @@ class Robot_Cls(object):
             else:
                 self.__Reset_Aux_Model(theta, visibility_target_position, [0.85, 0.60, 0.60])
                 print('[WARNING] A problem occurred during the calculation of the inverse kinematics (IK).')
+                return False
 
         except AssertionError as error:
             print(f'[ERROR] Information: {error}')

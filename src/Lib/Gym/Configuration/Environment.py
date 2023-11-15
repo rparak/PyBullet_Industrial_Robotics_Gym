@@ -42,10 +42,10 @@ class Collision_Object_Str:
     T: tp.List[tp.List[float]] = field(default_factory=list)
     # The scale factor of the object.
     #   Unit [float]
-    scale: float = 0.0
+    Scale: float = 0.0
     # The color of the object. Format: rgba(red, green, blue, alpha).
     #   Unit [Vector<float> 1x4]
-    color: tp.List[float] = field(default_factory=list)
+    Color: tp.List[float] = field(default_factory=list)
     # Type of collision object. 
     #   Note:
     #       Type = 'Cube' or 'Sphere'
@@ -121,9 +121,12 @@ Universal_Robots_UR3_Env_ID_0_Str.Collision_Object = None
 Universal_Robots_UR3_Env_ID_1_Str = Environment_Str(Name='Universal_Robots_UR3')
 Universal_Robots_UR3_Env_ID_1_Str.C.Search = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.30, 0.0, 0.150 + 0.02], dtype=np.float64)), 
                                                         np.array([0.20, 0.30, 0.30], dtype=np.float64), [1.0, 1.0, 0.0])
-Universal_Robots_UR3_Env_ID_1_Str.C.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.30, 0.0, 0.075 + 0.02], dtype=np.float64)), 
-                                                        np.array([0.15, 0.25, 0.10], dtype=np.float64), [0.0, 1.0, 0.0])
-Universal_Robots_UR3_Env_ID_1_Str.Collision_Object = None
+Universal_Robots_UR3_Env_ID_1_Str.C.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.30, 0.1 - 0.02, 0.08 + 0.02], dtype=np.float64)), 
+                                                        np.array([0.10, 0.10, 0.10], dtype=np.float64), [0.0, 1.0, 0.0])
+Universal_Robots_UR3_Env_ID_1_Str.Collision_Object.T = HTM_Cls(None, np.float64).Translation([0.30, -0.025, 0.08 + 0.02])
+Universal_Robots_UR3_Env_ID_1_Str.Collision_Object.Scale = 0.025
+Universal_Robots_UR3_Env_ID_1_Str.Collision_Object.Color = [0.85, 0.60, 0.60, 0.75]
+Universal_Robots_UR3_Env_ID_1_Str.Collision_Object.Type = 'Sphere'
 
 # ABB IRB 120.
 #   Environmnet ID 0.

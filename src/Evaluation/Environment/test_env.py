@@ -24,7 +24,7 @@ CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] 
 #      ABB_IRB_14000_{L, R}_Str:
 #       'External_Base': f'{CONST_PROJECT_FOLDER}/URDFs/Robots/ABB_IRB_14000_Base/ABB_IRB_14000_Base.urdf'
 CONST_PYBULLET_ENV_PROPERTIES = {'Enable_GUI': 0, 'fps': 100, 
-                                 'External_Base': None, 'Env_ID': 0,
+                                 'External_Base': None, 'Env_ID': 1,
                                  'Camera': {'Yaw': 70.0, 'Pitch': -32.0, 'Distance':1.3, 
                                             'Position': [0.05, -0.10, 0.06]}}
 
@@ -50,7 +50,6 @@ def main():
 
     # The physical simulation is in progress.
     while PyBullet_Robot_Cls.is_connected == True:
-        #print(PyBullet_Robot_Cls.Get_Camera_Parameters())
         PyBullet_Robot_Cls.Step()
 
     # Disconnect the created environment from a physical server.

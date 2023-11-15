@@ -136,7 +136,7 @@ class Robot_Cls(object):
 
         # Get the translational and rotational part from the transformation matrix.
         p = self.__Robot_Parameters_Str.T.Base.p.all(); q = self.__Robot_Parameters_Str.T.Base.Get_Rotation('QUATERNION')
-    
+
         if properties['External_Base'] != None:
             # Load a physics model of the robotic structure base.
             base_id = pb.loadURDF(properties['External_Base'], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 
@@ -154,14 +154,27 @@ class Robot_Cls(object):
         else:
             # Load a physics model of the robotic structure.
             self.__robot_id = pb.loadURDF(urdf_file_path, p, [q.x, q.y, q.z, q.w], useFixedBase=True, 
-                                        flags=pb.URDF_ENABLE_CACHED_GRAPHICS_SHAPES)
-        
+                                          flags=pb.URDF_ENABLE_CACHED_GRAPHICS_SHAPES)
+
+        # Load an auxiliary model of the robotic structure.
+        self.__robot_id_aux = pb.loadURDF(urdf_file_path, p, [q.x, q.y, q.z, q.w], useFixedBase=True)
+        #   Disable collision of the robot base.
+        pb.setCollisionFilterGroupMask(self.__robot_id_aux, -1, 0, 0)
+        #   Change the texture of the robot base.
+        pb.changeVisualShape(self.__robot_id_aux, linkIndex=-1, rgbaColor=[0.0, 0.55, 0.0, 0.0])
+
         # Obtain the indices of the movable parts of the robotic structure.
         self.__theta_index = []
         for i in range(pb.getNumJoints(self.__robot_id)):
             info = pb.getJointInfo(self.__robot_id , i)
             if info[2] in [pb.JOINT_REVOLUTE, pb.JOINT_PRISMATIC]:
                 self.__theta_index.append(i)
+
+            # Set the properties of the auxiliary model.
+            #   Disable all collisions of the object.
+            pb.setCollisionFilterGroupMask(self.__robot_id_aux, i, 0, 0)
+            #   Change the texture of the object.
+            pb.changeVisualShape(self.__robot_id_aux, linkIndex=i, rgbaColor=[0.0, 0.75, 0.0, 0.0])
 
         # Obtain the structure of the main parameters of the environment configuration space.
         C = Lib.Gym.Utilities.Get_Configuration_Space(self.__Robot_Parameters_Str.Name)
@@ -485,8 +498,6 @@ class Robot_Cls(object):
                 self.Remove_External_Object('T_EE_Rand_Sphere'); self.Remove_External_Object('T_EE_Rand_Viewpoint')
                 
                 # Adding external objects corresponding to a random point.
-                self.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Primitives/Sphere/Sphere.urdf', 'T_EE_Rand_Sphere', T, 
-                                         [0.0, 1.0, 0.0, 0.25], 0.015, True, False)
                 self.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'T_EE_Rand_Viewpoint', T,
                                          None, 0.3, True, False)
 
@@ -496,6 +507,30 @@ class Robot_Cls(object):
             print(f'[ERROR] Information: {error}')
             print('[ERROR] Incorrect configuration type selected. The selected mode must be chosen from the two options (Search, Target).')
 
+    def __Reset_Aux_Model(self, theta: tp.List[float], visibility: bool, color: tp.Union[None, tp.List[float]]) -> None:
+        """
+        Description:
+            Function to reset the absolute position of the auxiliary robot model, which is represented as a "ghost".
+
+        Args:
+            (1) theta [Vector<float> 1xn]: Desired absolute joint position in radians / meters. Used only in individual 
+                                           mode.
+                                            Note:
+                                                Where n is the number of joints.
+            (2) visibility [bool]: Visibility of the target position as the 'ghost' of the robotic model.
+            (3) info [bool]: Information on whether the result was found within the required tolerance.
+        """
+
+        alpha = 0.3 if visibility == True else 0.0
+
+        for _, (th_i, th_index) in enumerate(zip(theta, self.__theta_index)):
+            # Reset the state (position) of the joint.
+            pb.resetJointState(self.__robot_id_aux, th_index, th_i) 
+
+            # Set the properties of the auxiliary model.
+            #   Change the texture of the object.
+            pb.changeVisualShape(self.__robot_id_aux, linkIndex=th_index, rgbaColor=np.append([color], [alpha]))
+    
     def Reset(self, mode: str, theta: tp.Union[None, tp.List[float]] = None) -> bool:
         """
         Description:
@@ -604,7 +639,7 @@ class Robot_Cls(object):
             print(f'[ERROR] Information: {error}')
             print(f'[ERROR] Incorrect number of values in the input variable theta. The input variable "theta" must contain {self.__Robot_Parameters_Str.Theta.Zero.size} values.')
 
-    def Set_TCP_Position(self, T: tp.List[tp.List[float]], mode: str, ik_solver_properties: tp.Dict, 
+    def Set_TCP_Position(self, T: tp.List[tp.List[float]], mode: str, ik_solver_properties: tp.Dict, visibility_target_position: bool,
                          motion_parameters: tp.Dict = None) -> bool:
         """
         Description:
@@ -627,7 +662,11 @@ class Robot_Cls(object):
                                                                                 'tolerance': The minimum required tolerance per 
                                                                                                 time instant.    
                                                                                 Where time instant is defined by the 'delta_time' variable.
-            (4) parameters [Dictionary {'force': float, 't_0': float, 't_1': float}]: The parameters of the 'Motion' mode. If the mode is equal
+            (4) visibility_target_position [bool]: Visibility of the target position as the 'ghost' of the robotic model.
+                                                    Note:
+                                                        If the "ghost" model is green, everything was successful, otherwise there 
+                                                        was a problem. Please see the warning.
+            (5) parameters [Dictionary {'force': float, 't_0': float, 't_1': float}]: The parameters of the 'Motion' mode. If the mode is equal
                                                                                       to 'Reset', the parameters will be equal to 'None'.
                                                                                         Note:
                                                                                             'force': The maximum motor force used to reach the target value.
@@ -650,12 +689,15 @@ class Robot_Cls(object):
                                                                     ik_solver_properties)
 
             if info["successful"] == True:
+                self.__Reset_Aux_Model(theta, visibility_target_position, [0.70, 0.85, 0.60])
+
                 if mode == 'Reset':
                     return self.Reset('Individual', theta)
                 else:
                     return self.Set_Absolute_Joint_Position(theta, motion_parameters['force'], motion_parameters['t_0'], 
                                                             motion_parameters['t_1'])
             else:
+                self.__Reset_Aux_Model(theta, visibility_target_position, [0.85, 0.60, 0.60])
                 print('[WARNING] A problem occurred during the calculation of the inverse kinematics (IK).')
 
         except AssertionError as error:

@@ -50,6 +50,7 @@ def main():
 
     # The physical simulation is in progress.
     while PyBullet_Robot_Cls.is_connected == True:
+        #print(PyBullet_Robot_Cls.Get_Camera_Parameters())
         PyBullet_Robot_Cls.Step()
 
     # Disconnect the created environment from a physical server.

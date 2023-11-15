@@ -23,6 +23,8 @@ CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 #   The properties of the inverse kinematics solver.
 CONST_IK_PROPERTIES = {'delta_time': 0.1, 'num_of_iteration': 500, 
                        'tolerance': 1e-30}
+# Visibility of the target position as the 'ghost' of the robotic model.
+CONST_VISIBILITY_GHOST = False
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 # The properties of the PyBullet environment.
@@ -58,11 +60,9 @@ def main():
     # Reset the absolute position of the robot joints to the 'Home'.
     PyBullet_Robot_Cls.Reset('Home')
 
-    # Add a viewpoint (+ sphere) with the correct transformation to the end-effector of the structure.
+    # Add a viewpoint with the correct transformation to the end-effector of the structure.
     PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Primitives/Sphere/Sphere.urdf', 'T_EE_Sphere', PyBullet_Robot_Cls.T_EE, 
                                            [0.0, 1.0, 0.0, 0.25], 0.015, True, False)
-    PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'T_EE_Viewpoint', PyBullet_Robot_Cls.T_EE, None, 
-                                           0.3, True, False)
     
     # The physical simulation is in progress.
     while PyBullet_Robot_Cls.is_connected == True:
@@ -71,7 +71,7 @@ def main():
         T_rand = PyBullet_Robot_Cls.Generate_Random_T_EE(CONST_C_TYPE, True)
 
         # Set the TCP (tool center point) of the robot end-effector.
-        in_position = PyBullet_Robot_Cls.Set_TCP_Position(T_rand, CONST_CTRL_MODE, CONST_IK_PROPERTIES, 
+        in_position = PyBullet_Robot_Cls.Set_TCP_Position(T_rand, CONST_CTRL_MODE, CONST_IK_PROPERTIES, CONST_VISIBILITY_GHOST,
                                                           {'force': 100.0, 't_0': 0.0, 't_1': 2.0})
 
         if in_position == False:

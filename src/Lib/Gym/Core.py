@@ -54,17 +54,6 @@ from Lib.Collider.Utilities import Get_Min_Max
 #   ../Lib/Primitives/Core
 from Lib.Collider.Core import OBB_Cls, AABB_Cls
 
-# Addition of the second environment:
-#   1\ Addition of the C in the Environment.py
-#   2\ Re-write the Get_Configuration_Space() function (add information about the type)
-#   3\ Add information about the type to the properties of the input parameters of the class
-#  Note:
-#   The second environment will contain the collision object. 
-#       1\ Add information about the collision object to the Environment.py structure or not? 
-#       2\ If not .. Create a function to generate the collision object in the environment type 2.
-#       3\ If yes ... add collision_object parameter to the structure with 
-#          the parameters as Name, T, and Scale.
-
 """
 Description:
     Initialization of constants.
@@ -85,7 +74,7 @@ class Robot_Cls(object):
             (2) urdf_file_path [string]: The specified path of the robotic structure file with an extension '*.urdf'.
                                             Note:
                                                 urdf - Unified Robotics Description Format
-            (3) properties [Dictionary {'Enable_GUI': int, 'fps': int, 'External_Base': None or string,
+            (3) properties [Dictionary {'Enable_GUI': int, 'fps': int, 'External_Base': None or string, 'Env_ID': int,
                                         'Camera': {'Yaw': float, 
                                                    'Pitch': float, 
                                                    'Distance': float, 
@@ -96,6 +85,10 @@ class Robot_Cls(object):
                                                                                             'External_Base: The specified path of the robotic structure 
                                                                                                             base, if it exists. If not, set the value 
                                                                                                             to "None".
+                                                                                            'Env_ID': The identification number (ID) of the environment.
+                                                                                                        Note:
+                                                                                                            For more information, see the 
+                                                                                                            script ../Configuration/Environment.py.
                                                                                             'Camera': Camera parameters. For more information, please see 
                                                                                                       the 'Get_Camera_Parameters' function of the class.
 
@@ -176,18 +169,18 @@ class Robot_Cls(object):
             #   Change the texture of the object.
             pb.changeVisualShape(self.__robot_id_aux, linkIndex=i, rgbaColor=[0.0, 0.75, 0.0, 0.0])
 
-        # Obtain the structure of the main parameters of the environment configuration space.
-        C = Lib.Gym.Utilities.Get_Configuration_Space(self.__Robot_Parameters_Str.Name)
+        # Obtain the structure of the main parameters of the environment for the defined robotic arm.
+        self.__Env_Structure = Lib.Gym.Utilities.Get_Environment_Structure(self.__Robot_Parameters_Str.Name, properties['Env_ID'])
         #   Add the cube of the search (configuration) space and get the vertices of the defined cube.
-        self.__vertices_C_search = Lib.Gym.Utilities.Add_Wireframe_Cuboid(C.Search.T, C.Search.Size, 
-                                                                          C.Search.Color, 1.0)
+        self.__vertices_C_search = Lib.Gym.Utilities.Add_Wireframe_Cuboid(self.__Env_Structure.C.Search.T, self.__Env_Structure.C.Search.Size, 
+                                                                          self.__Env_Structure.C.Search.Color, 1.0)
         #   Add the cube of the target (configuration) space and get the vertices of the defined cube.
-        self.__vertices_C_target = Lib.Gym.Utilities.Add_Wireframe_Cuboid(C.Target.T, C.Target.Size, 
-                                                                          C.Target.Color, 1.0)
+        self.__vertices_C_target = Lib.Gym.Utilities.Add_Wireframe_Cuboid(self.__Env_Structure.C.Target.T, self.__Env_Structure.C.Target.Size, 
+                                                                          self.__Env_Structure.C.Target.Color, 1.0)
         
         # Represent the search (configuration) space as Axis-aligned Bounding Boxes (AABB).
-        self.__AABB_C_search = AABB_Cls(Box_Cls([0.0, 0.0, 0.0], C.Search.Size))
-        self.__AABB_C_search.Transformation(C.Search.T)
+        self.__AABB_C_search = AABB_Cls(Box_Cls([0.0, 0.0, 0.0], self.__Env_Structure.C.Search.Size))
+        self.__AABB_C_search.Transformation(self.__Env_Structure.C.Search.T)
         #   Initialize a point that will be used to check whether the homogeneous transformation matrix 
         #   of the end-effector is inside the search (configuration) space or not.
         self.__P_EE = Point_Cls([0.0, 0.0, 0.0])

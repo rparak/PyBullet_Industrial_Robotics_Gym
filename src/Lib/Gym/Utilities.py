@@ -61,25 +61,44 @@ def Add_Wireframe_Cuboid(T: tp.List[tp.List[float]], size: tp.List[float], color
         
     return vertices
 
-def Get_Configuration_Space(name: str) -> Lib.Gym.Configuration.Environment.Configuration_Space_Str:
+def Get_Environment_Structure(name: str, Env_ID: int) -> Lib.Gym.Configuration.Environment.Configuration_Space_Str:
     """
     Description:
-        Obtain the structure of the main parameters of the environment configuration 
-        space for the defined robotic arm.
+        Obtain the structure of the main parameters of the environment for the defined robotic arm.
     
     Args:
         (1) name [string]: Name of the robotic structure.
+        (2) Env_ID [int]: The identification number (ID) of the environment.
+                            Note:
+                                For more information, see the 
+                                script ../Configuration/Environment.py. 
 
     Returns:
-        (1) parameter [Configuration_Space_Str(object)]: Defined structure of the main parameters of the environment c
-                                                         onfiguration space.
+        (1) parameter [Configuration_Space_Str(object)]: Defined structure of the main parameters of the environment.
     """
 
-    return {
-        'Universal_Robots_UR3': Lib.Gym.Configuration.Environment.Universal_Robots_UR3_C_Str,
-        'ABB_IRB_120': Lib.Gym.Configuration.Environment.ABB_IRB_120_C_Str,
-        'ABB_IRB_120_L_Ax': Lib.Gym.Configuration.Environment.ABB_IRB_120_L_Ax_C_Str,
-        'ABB_IRB_14000_R': Lib.Gym.Configuration.Environment.ABB_IRB_14000_R_C_Str,
-        'ABB_IRB_14000_L': Lib.Gym.Configuration.Environment.ABB_IRB_14000_L_C_Str,
-        'EPSON_LS3_B401S': Lib.Gym.Configuration.Environment.EPSON_LS3_B401S_C_Str
-    }[name]
+    try:
+        assert Env_ID in [0, 1]
+
+        if Env_ID == 0:
+            return {
+                'Universal_Robots_UR3': Lib.Gym.Configuration.Environment.Universal_Robots_UR3_Env_ID_0_Str,
+                'ABB_IRB_120': Lib.Gym.Configuration.Environment.ABB_IRB_120_Env_ID_0_Str,
+                'ABB_IRB_120_L_Ax': Lib.Gym.Configuration.Environment.ABB_IRB_120_L_Ax_Env_ID_0_Str,
+                'ABB_IRB_14000_R': Lib.Gym.Configuration.Environment.ABB_IRB_14000_R_Env_ID_0_Str,
+                'ABB_IRB_14000_L': Lib.Gym.Configuration.Environment.ABB_IRB_14000_L_Env_ID_0_Str,
+                'EPSON_LS3_B401S': Lib.Gym.Configuration.Environment.EPSON_LS3_B401S_Env_ID_0_Str
+            }[name]
+        else:
+            return {
+                'Universal_Robots_UR3': Lib.Gym.Configuration.Environment.Universal_Robots_UR3_Env_ID_1_Str,
+                'ABB_IRB_120': Lib.Gym.Configuration.Environment.ABB_IRB_120_Env_ID_1_Str,
+                'ABB_IRB_120_L_Ax': Lib.Gym.Configuration.Environment.ABB_IRB_120_L_Ax_Env_ID_1_Str,
+                'ABB_IRB_14000_R': Lib.Gym.Configuration.Environment.ABB_IRB_14000_R_Env_ID_1_Str,
+                'ABB_IRB_14000_L': Lib.Gym.Configuration.Environment.ABB_IRB_14000_L_Env_ID_1_Str,
+                'EPSON_LS3_B401S': Lib.Gym.Configuration.Environment.EPSON_LS3_B401S_Env_ID_1_Str
+            }[name]
+    
+    except AssertionError as error:
+        print(f'[ERROR] Information: {error}')
+        print(f'[ERROR] An incorrect identification number (ID) for the environment was selected.')

@@ -11,12 +11,15 @@ import Lib.Parameters.Robot as Parameters
 #   ../Lib/Gym/Core
 import Lib.Gym.Core
 
+import Lib.Transformation.Core as Transformation
+import numpy as np
+
 """
 Description:
     Initialization of constants.
 """
 # Set the structure of the main parameters of the robot.
-CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
+CONST_ROBOT_TYPE = Parameters.EPSON_LS3_B401S_Str
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 # The properties of the PyBullet environment.
@@ -42,15 +45,21 @@ def main():
                                                 CONST_PYBULLET_ENV_PROPERTIES)
 
     # Reset the absolute position of the robot joints to the 'Home'.
-    PyBullet_Robot_Cls.Reset('Home')
+    PyBullet_Robot_Cls.Reset('Home') 
+
+    print(PyBullet_Robot_Cls.T_EE.p)
+    T = Transformation.Homogeneous_Transformation_Matrix_Cls(None, np.float64).Rotation(PyBullet_Robot_Cls.T_EE.Get_Rotation('QUATERNION').all(), 'QUATERNION').Translation([0.25, -0.1, 0.12])
 
     # Add a viewpoint with the correct transformation to the end-effector of the structure.
-    PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'T_EE_Viewpoint', PyBullet_Robot_Cls.T_EE, None, 
-                                           0.3, False)
-
+    PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'T_EE_Viewpoint', T, None, 0.3, False)
+    
     # The physical simulation is in progress.
     while PyBullet_Robot_Cls.is_connected == True:
-        PyBullet_Robot_Cls.Step()
+        PyBullet_Robot_Cls.Set_TCP_Position(T, 'Reset', {'delta_time': 0.1, 'num_of_iteration': 500, 'tolerance': 1e-30}, False)
+        #print(np.round(np.rad2deg(PyBullet_Robot_Cls.Theta), 5).tolist())
+        #print(np.round(PyBullet_Robot_Cls.Theta, 5).tolist())
+        #PyBullet_Robot_Cls.Step()
+        pass
 
     # Disconnect the created environment from a physical server.
     PyBullet_Robot_Cls.Disconnect()

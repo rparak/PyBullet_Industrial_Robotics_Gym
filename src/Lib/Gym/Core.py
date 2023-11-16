@@ -711,9 +711,8 @@ class Robot_Cls(object):
                                                             motion_parameters['t_1'])
             else:
                 self.__Reset_Aux_Model(theta, visibility_target_position, [0.85, 0.60, 0.60])
-                print('[WARNING] A problem occurred during the calculation of the inverse kinematics (IK).')
                 return False
 
         except AssertionError as error:
             print(f'[ERROR] Information: {error}')
-            print('[ERROR] An incorrect name of the mode was selected for the ...')
+            print('[ERROR] An incorrect name of the mode was selected to perform the transformation.')

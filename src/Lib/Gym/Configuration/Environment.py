@@ -112,18 +112,18 @@ Description:
 # Universal Robots UR3.
 #   Environmnet ID 0.
 Universal_Robots_UR3_Env_ID_0_Str = Environment_Str(Name='Universal_Robots_UR3')
-Universal_Robots_UR3_Env_ID_0_Str.C.Search = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.30, 0.0, 0.170], dtype=np.float64)), 
-                                                        np.array([0.20, 0.30, 0.30], dtype=np.float64), [1.0, 1.0, 0.0])
-Universal_Robots_UR3_Env_ID_0_Str.C.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.30, 0.0, 0.095], dtype=np.float64)), 
-                                                        np.array([0.15, 0.25, 0.10], dtype=np.float64), [0.0, 1.0, 0.0])
+Universal_Robots_UR3_Env_ID_0_Str.C.Search = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.325, 0.0, 0.170], dtype=np.float64)), 
+                                                        np.array([0.20, 0.35, 0.30], dtype=np.float64), [0.975, 1.0, 0.60])
+Universal_Robots_UR3_Env_ID_0_Str.C.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.325, 0.0, 0.095], dtype=np.float64)), 
+                                                        np.array([0.125, 0.25, 0.10], dtype=np.float64), [0.60, 1.0, 0.60])
 Universal_Robots_UR3_Env_ID_0_Str.Collision_Object = None
 #   Environmnet ID 1.
 Universal_Robots_UR3_Env_ID_1_Str = Environment_Str(Name='Universal_Robots_UR3')
-Universal_Robots_UR3_Env_ID_1_Str.C.Search = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.30, 0.0, 0.170], dtype=np.float64)), 
-                                                        np.array([0.20, 0.30, 0.30], dtype=np.float64), [1.0, 1.0, 0.0])
-Universal_Robots_UR3_Env_ID_1_Str.C.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.30, 0.08, 0.075], dtype=np.float64)), 
-                                                        np.array([0.15, 0.10, 0.075], dtype=np.float64), [0.0, 1.0, 0.0])
-Universal_Robots_UR3_Env_ID_1_Str.Collision_Object.T = HTM_Cls(None, np.float64).Translation([0.30, 0.0, 0.170])
+Universal_Robots_UR3_Env_ID_1_Str.C.Search = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.325, 0.0, 0.170], dtype=np.float64)), 
+                                                        np.array([0.20, 0.35, 0.30], dtype=np.float64), [0.975, 1.0, 0.60])
+Universal_Robots_UR3_Env_ID_1_Str.C.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.325, 0.1, 0.055], dtype=np.float64)), 
+                                                        np.array([0.125, 0.075, 0.05], dtype=np.float64), [0.60, 1.0, 0.60])
+Universal_Robots_UR3_Env_ID_1_Str.Collision_Object.T = HTM_Cls(None, np.float64).Translation([0.325, -0.05, 0.22])
 Universal_Robots_UR3_Env_ID_1_Str.Collision_Object.Scale = 0.025
 Universal_Robots_UR3_Env_ID_1_Str.Collision_Object.Color = [0.85, 0.60, 0.60, 0.75]
 Universal_Robots_UR3_Env_ID_1_Str.Collision_Object.Type = 'Sphere'
@@ -131,18 +131,18 @@ Universal_Robots_UR3_Env_ID_1_Str.Collision_Object.Type = 'Sphere'
 # ABB IRB 120.
 #   Environmnet ID 0.
 ABB_IRB_120_Env_ID_0_Str = Environment_Str(Name='ABB_IRB_120')
-ABB_IRB_120_Env_ID_0_Str.C.Search = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.35, 0.0, 0.245], dtype=np.float64)), 
-                                               np.array([0.20, 0.30, 0.40], dtype=np.float64), [1.0, 1.0, 0.0])
-ABB_IRB_120_Env_ID_0_Str.C.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.35, 0.0, 0.140], dtype=np.float64)), 
-                                               np.array([0.15, 0.25, 0.15], dtype=np.float64), [0.0, 1.0, 0.0])
+ABB_IRB_120_Env_ID_0_Str.C.Search = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.375, 0.0, 0.245], dtype=np.float64)), 
+                                               np.array([0.20, 0.35, 0.40], dtype=np.float64), [0.975, 1.0, 0.60])
+ABB_IRB_120_Env_ID_0_Str.C.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.375, 0.0, 0.140], dtype=np.float64)), 
+                                               np.array([0.15, 0.25, 0.15], dtype=np.float64), [0.60, 1.0, 0.60])
 ABB_IRB_120_Env_ID_0_Str.Collision_Object = None
 #   Environmnet ID 1.
 ABB_IRB_120_Env_ID_1_Str = Environment_Str(Name='ABB_IRB_120')
-ABB_IRB_120_Env_ID_1_Str.C.Search = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.35, 0.0, 0.245], dtype=np.float64)), 
-                                               np.array([0.20, 0.30, 0.40], dtype=np.float64), [1.0, 1.0, 0.0])
-ABB_IRB_120_Env_ID_1_Str.C.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.35, 0.08, 0.10], dtype=np.float64)), 
-                                               np.array([0.15, 0.10, 0.075], dtype=np.float64), [0.0, 1.0, 0.0])
-ABB_IRB_120_Env_ID_1_Str.Collision_Object.T = HTM_Cls(None, np.float64).Translation([0.35, 0.0, 0.245])
+ABB_IRB_120_Env_ID_1_Str.C.Search = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.375, 0.0, 0.245], dtype=np.float64)), 
+                                               np.array([0.20, 0.35, 0.40], dtype=np.float64), [0.975, 1.0, 0.60])
+ABB_IRB_120_Env_ID_1_Str.C.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.375, 0.08, 0.10], dtype=np.float64)), 
+                                               np.array([0.15, 0.10, 0.075], dtype=np.float64), [0.60, 1.0, 0.60])
+ABB_IRB_120_Env_ID_1_Str.Collision_Object.T = HTM_Cls(None, np.float64).Translation([0.375, 0.0, 0.245])
 ABB_IRB_120_Env_ID_1_Str.Collision_Object.Scale = 0.025
 ABB_IRB_120_Env_ID_1_Str.Collision_Object.Color = [0.85, 0.60, 0.60, 0.75]
 ABB_IRB_120_Env_ID_1_Str.Collision_Object.Type = 'Sphere'
@@ -150,18 +150,18 @@ ABB_IRB_120_Env_ID_1_Str.Collision_Object.Type = 'Sphere'
 # ABB IRB 120 with SMC Linear Axis (LEJSH63NZA 800)
 #   Environmnet ID 0.
 ABB_IRB_120_L_Ax_Env_ID_0_Str = Environment_Str(Name='ABB_IRB_120_L_Ax')
-ABB_IRB_120_L_Ax_Env_ID_0_Str.C.Search = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.35, 0.4, 0.358], dtype=np.float64)), 
-                                                    np.array([0.20, 0.30, 0.40], dtype=np.float64), [1.0, 1.0, 0.0])
-ABB_IRB_120_L_Ax_Env_ID_0_Str.C.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.35, 0.4, 0.253], dtype=np.float64)), 
-                                                    np.array([0.15, 0.25, 0.15], dtype=np.float64), [0.0, 1.0, 0.0])
+ABB_IRB_120_L_Ax_Env_ID_0_Str.C.Search = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.375, 0.4, 0.358], dtype=np.float64)), 
+                                                    np.array([0.20, 0.35, 0.40], dtype=np.float64), [0.975, 1.0, 0.60])
+ABB_IRB_120_L_Ax_Env_ID_0_Str.C.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.375, 0.4, 0.253], dtype=np.float64)), 
+                                                    np.array([0.15, 0.25, 0.15], dtype=np.float64), [0.60, 1.0, 0.60])
 ABB_IRB_120_L_Ax_Env_ID_0_Str.Collision_Object = None
 #   Environmnet ID 1.
 ABB_IRB_120_L_Ax_Env_ID_1_Str = Environment_Str(Name='ABB_IRB_120_L_Ax')
-ABB_IRB_120_L_Ax_Env_ID_1_Str.C.Search = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.35, 0.4, 0.358], dtype=np.float64)), 
-                                                    np.array([0.20, 0.30, 0.40], dtype=np.float64), [1.0, 1.0, 0.0])
-ABB_IRB_120_L_Ax_Env_ID_1_Str.C.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.35, 0.48, 0.213], dtype=np.float64)), 
-                                                    np.array([0.15, 0.10, 0.075], dtype=np.float64), [0.0, 1.0, 0.0])
-ABB_IRB_120_L_Ax_Env_ID_1_Str.Collision_Object.T = HTM_Cls(None, np.float64).Translation([0.35, 0.4, 0.358])
+ABB_IRB_120_L_Ax_Env_ID_1_Str.C.Search = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.375, 0.4, 0.358], dtype=np.float64)), 
+                                                    np.array([0.20, 0.35, 0.40], dtype=np.float64), [0.975, 1.0, 0.60])
+ABB_IRB_120_L_Ax_Env_ID_1_Str.C.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.375, 0.48, 0.213], dtype=np.float64)), 
+                                                    np.array([0.15, 0.10, 0.075], dtype=np.float64), [0.60, 1.0, 0.60])
+ABB_IRB_120_L_Ax_Env_ID_1_Str.Collision_Object.T = HTM_Cls(None, np.float64).Translation([0.375, 0.4, 0.358])
 ABB_IRB_120_L_Ax_Env_ID_1_Str.Collision_Object.Scale = 0.02
 ABB_IRB_120_L_Ax_Env_ID_1_Str.Collision_Object.Color = [0.85, 0.60, 0.60, 0.75]
 ABB_IRB_120_L_Ax_Env_ID_1_Str.Collision_Object.Type = 'Sphere'
@@ -170,16 +170,16 @@ ABB_IRB_120_L_Ax_Env_ID_1_Str.Collision_Object.Type = 'Sphere'
 #   Environmnet ID 0.
 ABB_IRB_14000_R_Env_ID_0_Str = Environment_Str(Name='ABB_IRB_14000_R')
 ABB_IRB_14000_R_Env_ID_0_Str.C.Search = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.35, -0.15, 0.145], dtype=np.float64)), 
-                                                   np.array([0.175, 0.275, 0.25], dtype=np.float64), [1.0, 1.0, 0.0])
+                                                   np.array([0.175, 0.275, 0.25], dtype=np.float64), [0.975, 1.0, 0.60])
 ABB_IRB_14000_R_Env_ID_0_Str.C.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.35, -0.15, 0.095], dtype=np.float64)), 
-                                                   np.array([0.125, 0.225, 0.10], dtype=np.float64), [0.0, 1.0, 0.0])
+                                                   np.array([0.125, 0.225, 0.10], dtype=np.float64), [0.60, 1.0, 0.60])
 ABB_IRB_14000_R_Env_ID_0_Str.Collision_Object = None
 #   Environmnet ID 1.
 ABB_IRB_14000_R_Env_ID_1_Str = Environment_Str(Name='ABB_IRB_14000_R')
 ABB_IRB_14000_R_Env_ID_1_Str.C.Search = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.35, -0.15, 0.145], dtype=np.float64)), 
-                                                   np.array([0.175, 0.275, 0.25], dtype=np.float64), [1.0, 1.0, 0.0])
+                                                   np.array([0.175, 0.275, 0.25], dtype=np.float64), [0.975, 1.0, 0.60])
 ABB_IRB_14000_R_Env_ID_1_Str.C.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.35, -0.225, 0.075], dtype=np.float64)), 
-                                                   np.array([0.125, 0.075, 0.05], dtype=np.float64), [0.0, 1.0, 0.0])
+                                                   np.array([0.125, 0.075, 0.05], dtype=np.float64), [0.60, 1.0, 0.60])
 ABB_IRB_14000_R_Env_ID_1_Str.Collision_Object.T = HTM_Cls(None, np.float64).Translation([0.35, -0.15, 0.145])
 ABB_IRB_14000_R_Env_ID_1_Str.Collision_Object.Scale = 0.015
 ABB_IRB_14000_R_Env_ID_1_Str.Collision_Object.Color = [0.85, 0.60, 0.60, 0.75]
@@ -189,16 +189,16 @@ ABB_IRB_14000_R_Env_ID_1_Str.Collision_Object.Type = 'Sphere'
 #   Environmnet ID 0.
 ABB_IRB_14000_L_Env_ID_0_Str = Environment_Str(Name='ABB_IRB_14000_L')
 ABB_IRB_14000_L_Env_ID_0_Str.C.Search = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.35, 0.15, 0.145], dtype=np.float64)), 
-                                                   np.array([0.175, 0.275, 0.25], dtype=np.float64), [1.0, 1.0, 0.0])
+                                                   np.array([0.175, 0.275, 0.25], dtype=np.float64), [0.975, 1.0, 0.60])
 ABB_IRB_14000_L_Env_ID_0_Str.C.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.35, 0.15, 0.095], dtype=np.float64)), 
-                                                   np.array([0.125, 0.225, 0.10], dtype=np.float64), [0.0, 1.0, 0.0])
+                                                   np.array([0.125, 0.225, 0.10], dtype=np.float64), [0.60, 1.0, 0.60])
 ABB_IRB_14000_L_Env_ID_0_Str.Collision_Object = None
 #   Environmnet ID 1.
 ABB_IRB_14000_L_Env_ID_1_Str = Environment_Str(Name='ABB_IRB_14000_L')
 ABB_IRB_14000_L_Env_ID_1_Str.C.Search = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.35, 0.15, 0.145], dtype=np.float64)), 
-                                                   np.array([0.175, 0.275, 0.25], dtype=np.float64), [1.0, 1.0, 0.0])
+                                                   np.array([0.175, 0.275, 0.25], dtype=np.float64), [0.975, 1.0, 0.60])
 ABB_IRB_14000_L_Env_ID_1_Str.C.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.35, 0.225, 0.075], dtype=np.float64)), 
-                                                   np.array([0.125, 0.075, 0.05], dtype=np.float64), [0.0, 1.0, 0.0])
+                                                   np.array([0.125, 0.075, 0.05], dtype=np.float64), [0.60, 1.0, 0.60])
 ABB_IRB_14000_L_Env_ID_1_Str.Collision_Object.T = HTM_Cls(None, np.float64).Translation([0.35, 0.15, 0.145])
 ABB_IRB_14000_L_Env_ID_1_Str.Collision_Object.Scale = 0.02
 ABB_IRB_14000_L_Env_ID_1_Str.Collision_Object.Color = [0.85, 0.60, 0.60, 0.75]
@@ -208,17 +208,17 @@ ABB_IRB_14000_L_Env_ID_1_Str.Collision_Object.Type = 'Sphere'
 #   Environmnet ID 0.
 EPSON_LS3_B401S_Env_ID_0_Str = Environment_Str(Name='EPSON_LS3_B401S')
 EPSON_LS3_B401S_Env_ID_0_Str.C.Search = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.25, 0.0, 0.08], dtype=np.float64)), 
-                                                   np.array([0.20, 0.30, 0.12], dtype=np.float64), [1.0, 1.0, 0.0])
+                                                   np.array([0.20, 0.30, 0.12], dtype=np.float64), [0.975, 1.0, 0.60])
 EPSON_LS3_B401S_Env_ID_0_Str.C.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.25, 0.0, 0.06], dtype=np.float64)), 
-                                                   np.array([0.15, 0.25, 0.05], dtype=np.float64), [0.0, 1.0, 0.0])
+                                                   np.array([0.15, 0.25, 0.05], dtype=np.float64), [0.60, 1.0, 0.60])
 EPSON_LS3_B401S_Env_ID_0_Str.Collision_Object = None
 #   Environmnet ID 1.
 EPSON_LS3_B401S_Env_ID_1_Str = Environment_Str(Name='EPSON_LS3_B401S')
 EPSON_LS3_B401S_Env_ID_1_Str.C.Search = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.25, 0.0, 0.08], dtype=np.float64)), 
-                                                   np.array([0.20, 0.30, 0.12], dtype=np.float64), [1.0, 1.0, 0.0])
+                                                   np.array([0.20, 0.30, 0.12], dtype=np.float64), [0.975, 1.0, 0.60])
 EPSON_LS3_B401S_Env_ID_1_Str.C.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.25, 0.08, 0.06], dtype=np.float64)), 
-                                                   np.array([0.125, 0.075, 0.05], dtype=np.float64), [0.0, 1.0, 0.0])
-EPSON_LS3_B401S_Env_ID_1_Str.Collision_Object.T = HTM_Cls(None, np.float64).Translation([0.25, 0.0, 0.08])
-EPSON_LS3_B401S_Env_ID_1_Str.Collision_Object.Scale = 0.02
+                                                   np.array([0.125, 0.075, 0.05], dtype=np.float64), [0.60, 1.0, 0.60])
+EPSON_LS3_B401S_Env_ID_1_Str.Collision_Object.T = HTM_Cls(None, np.float64).Translation([0.25, -0.03, 0.08])
+EPSON_LS3_B401S_Env_ID_1_Str.Collision_Object.Scale = 0.015
 EPSON_LS3_B401S_Env_ID_1_Str.Collision_Object.Color = [0.85, 0.60, 0.60, 0.75]
 EPSON_LS3_B401S_Env_ID_1_Str.Collision_Object.Type = 'Sphere'

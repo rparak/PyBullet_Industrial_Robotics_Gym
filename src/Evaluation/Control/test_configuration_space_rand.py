@@ -81,7 +81,7 @@ def main():
             break
 
         # Pause for a defined time.
-        time.sleep(1.0)
+        time.sleep(2.0)
 
         # Reset the absolute position of the robot joints to the 'Home'.
         PyBullet_Robot_Cls.Reset('Home')

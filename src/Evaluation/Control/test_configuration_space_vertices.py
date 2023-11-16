@@ -22,7 +22,7 @@ Description:
     Initialization of constants.
 """
 # Set the structure of the main parameters of the robot.
-CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
+CONST_ROBOT_TYPE = Parameters.ABB_IRB_120_Str
 # Numerical IK Parameters.
 #   The properties of the inverse kinematics solver.
 CONST_IK_PROPERTIES = {'delta_time': 0.1, 'num_of_iteration': 500, 
@@ -36,7 +36,7 @@ CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] 
 #      ABB_IRB_14000_{L, R}_Str:
 #       'External_Base': f'{CONST_PROJECT_FOLDER}/URDFs/Robots/ABB_IRB_14000_Base/ABB_IRB_14000_Base.urdf'
 CONST_PYBULLET_ENV_PROPERTIES = {'Enable_GUI': 0, 'fps': 100, 
-                                 'External_Base': None, 'Env_ID': 0,
+                                 'External_Base': None, 'Env_ID': 1,
                                  'Camera': {'Yaw': 70.0, 'Pitch': -32.0, 'Distance':1.3, 
                                             'Position': [0.05, -0.10, 0.06]}}
 # Type of the configuration space.
@@ -95,7 +95,7 @@ def main():
             break
 
         # Pause for a defined time.
-        time.sleep(1.0)
+        time.sleep(2.0)
 
         # Reset the absolute position of the robot joints to the 'Home'.
         PyBullet_Robot_Cls.Reset('Home')

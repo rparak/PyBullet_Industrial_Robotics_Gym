@@ -19,7 +19,7 @@ Description:
     Initialization of constants.
 """
 # Set the structure of the main parameters of the robot.
-CONST_ROBOT_TYPE = Parameters.EPSON_LS3_B401S_Str
+CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 # The properties of the PyBullet environment.
@@ -47,7 +47,15 @@ def main():
     # Reset the absolute position of the robot joints to the 'Home'.
     PyBullet_Robot_Cls.Reset('Home') 
 
-    T = Transformation.Homogeneous_Transformation_Matrix_Cls(None, np.float64).Rotation(PyBullet_Robot_Cls.T_EE.Get_Rotation('QUATERNION').all(), 'QUATERNION').Translation([0.35, -0.1, 0.12])
+    # UR [0.30, -0.08, 0.28]
+    # ABB [0.35, -0.08, 0.40]
+    # ABB + L [0.35, 0.32, 0.40 + 0.113]
+    # YUMI L [0.35, 0.15 - 0.075, 0.24]
+    # YUMI R [0.35, -0.15 + 0.075, 0.24]
+    # EPSON [0.25, -0.08, 0.12]
+
+    #print(PyBullet_Robot_Cls.T_EE.p)
+    T = Transformation.Homogeneous_Transformation_Matrix_Cls(None, np.float64).Rotation(PyBullet_Robot_Cls.T_EE.Get_Rotation('QUATERNION').all(), 'QUATERNION').Translation([0.25, -0.08, 0.12])
 
     # Add a viewpoint with the correct transformation to the end-effector of the structure.
     PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'T_EE_Viewpoint', T, None, 

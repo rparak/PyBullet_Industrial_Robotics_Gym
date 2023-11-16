@@ -137,7 +137,7 @@ def Get_Robot_Structure_Theta_Home(name: str, Env_ID: int) -> tp.List[float]:
             }[name]
         else:
             return {
-                'Universal_Robots_UR3': Mathematics.Degree_To_Radian(np.array([-87.57836, -116.62684, -125.13297, -28.20172, 89.83448, 2.68588], dtype=np.float64)),
+                'Universal_Robots_UR3': Mathematics.Degree_To_Radian(np.array([-67.95687, -85.77765, -103.11371, -81.12798, 89.83117, 22.30746], dtype=np.float64)),
                 'ABB_IRB_120': Mathematics.Degree_To_Radian(np.array([0.0, 10.95985, 17.63425, 0.0,  61.40631, 0.0], dtype=np.float64)),
                 'ABB_IRB_120_L_Ax': np.append([0.4], Mathematics.Degree_To_Radian(np.array([90.00014, 10.95985, 17.63425, 0.0,  61.40631, 0.0], dtype=np.float64))),
                 'ABB_IRB_14000_R': Mathematics.Degree_To_Radian(np.array([86.5391, -131.7427, -52.98846, 60.71872, -162.0104, 116.87471, 18.89269], dtype=np.float64)),

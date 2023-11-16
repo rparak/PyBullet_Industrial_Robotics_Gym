@@ -66,7 +66,7 @@ def main():
 
     # Add a viewpoint with the correct transformation to the end-effector of the structure.
     PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'T_EE_Viewpoint', PyBullet_Robot_Cls.T_EE, None, 
-                                           0.3, True, False)
+                                           0.3, False)
     
     # Get the vertices of the selected configuration space.
     C_vertices = PyBullet_Robot_Cls.Get_Configuration_Space_Vertices(CONST_C_TYPE)
@@ -82,7 +82,7 @@ def main():
 
         # Add a viewpoint with the correct transformation to the vertex with index 'i'.
         PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'Viewpoint_i', T_vertex, None, 
-                                               0.3, True, False)
+                                               0.3, False)
 
         # Set the TCP (tool center point) of the robot end-effector.
         in_position = PyBullet_Robot_Cls.Set_TCP_Position(T_vertex, CONST_CTRL_MODE, CONST_IK_PROPERTIES, CONST_VISIBILITY_GHOST,

@@ -46,7 +46,7 @@ def main():
 
     # Add a viewpoint with the correct transformation to the end-effector of the structure.
     PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'T_EE_Viewpoint', PyBullet_Robot_Cls.T_EE, None, 
-                                           0.3, True, False)
+                                           0.3, False)
 
     # The physical simulation is in progress.
     while PyBullet_Robot_Cls.is_connected == True:

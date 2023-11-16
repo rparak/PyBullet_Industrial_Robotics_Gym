@@ -54,6 +54,11 @@ from Lib.Collider.Utilities import Get_Min_Max
 #   ../Lib/Primitives/Core
 from Lib.Collider.Core import OBB_Cls, AABB_Cls
 
+# ....
+#   Get safe theta ...
+#   Set TCP ...
+
+
 """
 Description:
     Initialization of constants.
@@ -185,7 +190,7 @@ class Robot_Cls(object):
         #   of the end-effector is inside the search (configuration) space or not.
         self.__P_EE = Point_Cls([0.0, 0.0, 0.0])
 
-        # ....
+        # Get the home absolute joint positions of a specific environment for a defined robotic arm.
         Robot_Parameters_Str.Theta.Home = Lib.Gym.Utilities.Get_Robot_Structure_Theta_Home(self.__Robot_Parameters_Str.Name, properties['Env_ID'])
 
         # Get the homogeneous transformation matrix of the robot end-effector in the 'Home' position.
@@ -194,14 +199,11 @@ class Robot_Cls(object):
         #   Get the rotational part from the transformation matrix.
         self.__q_Home = T_Home.Get_Rotation('QUATERNION').all()
 
-        # ...
+        # Add an external collision object with the cuboid wireframe to the environment.
         if self.__Env_Structure.Collision_Object != None:
-            # ...
             self.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Primitives/{self.__Env_Structure.Collision_Object.Type}/{self.__Env_Structure.Collision_Object.Type}.urdf', 
                                      f'{self.__Env_Structure.Collision_Object.Type}_Collision', self.__Env_Structure.Collision_Object.T, self.__Env_Structure.Collision_Object.Color,
-                                     self.__Env_Structure.Collision_Object.Scale, True, False)
-            
-            # ...
+                                     self.__Env_Structure.Collision_Object.Scale, False)
             _ = Lib.Gym.Utilities.Add_Wireframe_Cuboid(self.__Env_Structure.Collision_Object.T, 3 * [self.__Env_Structure.Collision_Object.Scale * 2.0], 
                                                        self.__Env_Structure.Collision_Object.Color[0:3], 1.0)
 
@@ -266,7 +268,9 @@ class Robot_Cls(object):
             Get the zero (home) absolute position of the joint in radians/meter.
 
         Returns:
-            (1) parameter [Vector<float>]: Zero (home) absolute joint position in radians / meters.
+            (1) parameter [Vector<float> 1xn]: Zero (home) absolute joint position in radians / meters.
+                                                Note:
+                                                    Where n is the number of joints.
         """
                 
         return self.__Robot_Parameters_Str.Theta.Zero
@@ -374,8 +378,8 @@ class Robot_Cls(object):
         if self.is_connected == True:
             pb.disconnect()
 
-    def Add_External_Object(self, urdf_file_path: str, name: str, T: HTM_Cls, color: tp.Union[None, tp.List[float]], scale: float, 
-                            fixed_position: bool, enable_collision: bool) -> None:
+    def Add_External_Object(self, urdf_file_path: str, name: str, T: HTM_Cls, color: tp.Union[None, tp.List[float]], 
+                            scale: float, enable_collision: bool) -> None:
         """
         Description:
             A function to add external objects with the *.urdf extension to the PyBullet environment.
@@ -388,9 +392,7 @@ class Robot_Cls(object):
                                             Note:
                                                 Format: rgba(red, green, blue, alpha)
             (5) scale [float]: The scale factor of the object.
-            (6) fixed_position [bool]: Information about whether the position of the object should 
-                                       be fixed (static) or dynamic.
-            (7) enable_collision [bool]: Information on whether or not the object is to be exposed 
+            (6) enable_collision [bool]: Information on whether or not the object is to be exposed 
                                          to collisions.
         """
 
@@ -401,7 +403,7 @@ class Robot_Cls(object):
         #   Note:
         #       Set the object position to 'Zero'.
         object_id = pb.loadURDF(urdf_file_path, [0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], globalScaling=scale, useMaximalCoordinates=False, 
-                                useFixedBase=fixed_position)
+                                useFixedBase=True)
         #   Store the object ID and object name into the dictionary.
         self.__external_object[name] = object_id
 
@@ -508,7 +510,7 @@ class Robot_Cls(object):
                 
                 # Adding external objects corresponding to a random point.
                 self.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'T_EE_Rand_Viewpoint', T,
-                                         None, 0.3, True, False)
+                                         None, 0.3, False)
 
             return T
 

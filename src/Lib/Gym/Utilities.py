@@ -133,16 +133,16 @@ def Get_Robot_Structure_Theta_Home(name: str, Env_ID: int) -> tp.List[float]:
                 'ABB_IRB_120_L_Ax': np.append([0.4], Mathematics.Degree_To_Radian(np.array([90.00014, 10.95985, 17.63425, 0.0,  61.40631, 0.0], dtype=np.float64))),
                 'ABB_IRB_14000_R': Mathematics.Degree_To_Radian(np.array([86.5391, -131.7427, -52.98846, 60.71872, -162.0104, 116.87471, 18.89269], dtype=np.float64)),
                 'ABB_IRB_14000_L': Mathematics.Degree_To_Radian(np.array([-86.74652, -131.67072, 53.04848, 60.71646, -197.85701, 117.01122, -19.01974], dtype=np.float64)),
-                'EPSON_LS3_B401S': np.array([Mathematics.Degree_To_Radian(47.16657), Mathematics.Degree_To_Radian(103.77415), 0.02449999, Mathematics.Degree_To_Radian(60.94072)], dtype = np.float64)
+                'EPSON_LS3_B401S': np.array([Mathematics.Degree_To_Radian(47.16657), Mathematics.Degree_To_Radian(103.77415), 0.0245, Mathematics.Degree_To_Radian(60.94072)], dtype = np.float64)
             }[name]
         else:
             return {
-                'Universal_Robots_UR3': Mathematics.Degree_To_Radian(np.array([-67.95687, -85.77765, -103.11371, -81.12798, 89.83117, 22.30746], dtype=np.float64)),
-                'ABB_IRB_120': Mathematics.Degree_To_Radian(np.array([0.0, 10.95985, 17.63425, 0.0,  61.40631, 0.0], dtype=np.float64)),
-                'ABB_IRB_120_L_Ax': np.append([0.4], Mathematics.Degree_To_Radian(np.array([90.00014, 10.95985, 17.63425, 0.0,  61.40631, 0.0], dtype=np.float64))),
-                'ABB_IRB_14000_R': Mathematics.Degree_To_Radian(np.array([86.5391, -131.7427, -52.98846, 60.71872, -162.0104, 116.87471, 18.89269], dtype=np.float64)),
-                'ABB_IRB_14000_L': Mathematics.Degree_To_Radian(np.array([-86.74652, -131.67072, 53.04848, 60.71646, -197.85701, 117.01122, -19.01974], dtype=np.float64)),
-                'EPSON_LS3_B401S': np.array([Mathematics.Degree_To_Radian(47.16657), Mathematics.Degree_To_Radian(103.77415), 0.02449999, Mathematics.Degree_To_Radian(60.94072)], dtype = np.float64)
+                'Universal_Robots_UR3': Mathematics.Degree_To_Radian(np.array([-83.66978, -88.44196, -100.62361, -80.90733, 89.83224, 6.59448], dtype=np.float64)),
+                'ABB_IRB_120': Mathematics.Degree_To_Radian(np.array([-12.87498, 12.8103, 15.43958, -0.0001, 61.75052, -12.87493], dtype=np.float64)),
+                'ABB_IRB_120_L_Ax': np.append([0.32462], Mathematics.Degree_To_Radian(np.array([89.24441, 10.96609, 17.62693, 0.0, 61.40738, -0.75572], dtype=np.float64))),
+                'ABB_IRB_14000_R': Mathematics.Degree_To_Radian(np.array([94.51044, -130.05293, -64.36027, 60.11389, -173.04903, 120.7374, 27.68395], dtype=np.float64)),
+                'ABB_IRB_14000_L': Mathematics.Degree_To_Radian(np.array([-94.73245, -129.96645, 64.40266, 60.10609, -186.86274, 120.90744, -27.82067], dtype=np.float64)),
+                'EPSON_LS3_B401S': np.array([Mathematics.Degree_To_Radian(31.07376), Mathematics.Degree_To_Radian(99.02268), 0.0245, Mathematics.Degree_To_Radian(40.09644)], dtype = np.float64)
             }[name]
     
     except AssertionError as error:

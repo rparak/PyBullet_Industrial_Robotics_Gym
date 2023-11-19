@@ -1,5 +1,8 @@
 # I4C_Gym
 
+Reconfigure the Lib part, to RoLE, I4C_Gym, etc.
+
+
 Use a PyBullet project to train the Reach task.
 
 Configuration / Environment.py

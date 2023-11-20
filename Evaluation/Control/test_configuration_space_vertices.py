@@ -44,7 +44,7 @@ CONST_PYBULLET_ENV_PROPERTIES = {'Enable_GUI': 0, 'fps': 100,
 # Type of the configuration space.
 #   Note:
 #       'Search' or 'Target'
-CONST_C_TYPE = 'Target'
+CONST_C_TYPE = 'Search'
 # The name of the mode to be used to perform the transformation.
 #   Note:
 #       mode = 'Reset' or 'Motion'

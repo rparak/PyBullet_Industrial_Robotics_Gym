@@ -705,9 +705,9 @@ class Robot_Cls(object):
             
 
             # ...
-            is_col = Kinematics.General.Is_External_Collision(theta, self.__Robot_Parameters_Str)
-            print(is_col)
-            print(is_col.any() == True)
+            #is_col = Kinematics.General.Is_External_Collision(theta, self.__Robot_Parameters_Str)
+            #print(is_col)
+            #print(is_col.any() == True)
 
             if info["successful"] == True:
                 self.__Reset_Aux_Model(theta, visibility_target_position, [0.70, 0.85, 0.60])

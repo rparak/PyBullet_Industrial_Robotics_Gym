@@ -142,8 +142,8 @@ def Get_Robot_Structure_Theta_Home(name: str, Env_ID: int) -> tp.List[float]:
                 'Universal_Robots_UR3': Mathematics.Degree_To_Radian(np.array([-92.17399, -97.82379, -90.6596, -81.46499, 89.83809, -1.90976], dtype=np.float64)),
                 'ABB_IRB_120': Mathematics.Degree_To_Radian(np.array([-17.04901, 21.08261, 9.79837, -0.00013, 59.11942, -17.04893], dtype=np.float64)),
                 'ABB_IRB_120_L_Ax': np.append([0.29171], Mathematics.Degree_To_Radian(np.array([88.97502, 17.83082, 14.63065, 0.0, 57.53893, -1.02511], dtype=np.float64))),
-                'ABB_IRB_14000_R': Mathematics.Degree_To_Radian(np.array([94.51044, -130.05293, -64.36027, 60.11389, -173.04903, 120.7374, 27.68395], dtype=np.float64)),
-                'ABB_IRB_14000_L': Mathematics.Degree_To_Radian(np.array([-94.73245, -129.96645, 64.40266, 60.10609, -186.86274, 120.90744, -27.82067], dtype=np.float64)),
+                'ABB_IRB_14000_R': Mathematics.Degree_To_Radian(np.array([97.41684, -129.58253, -67.76966, 58.04787, -176.44575, 120.69353, 30.36447], dtype=np.float64)),
+                'ABB_IRB_14000_L': Mathematics.Degree_To_Radian(np.array([-97.64372, -129.49333, 67.80701, 58.03911, -183.48104, 120.87338, -30.5058], dtype=np.float64)),
                 'EPSON_LS3_B401S': np.array([Mathematics.Degree_To_Radian(27.96471), Mathematics.Degree_To_Radian(96.37937), 0.0245, Mathematics.Degree_To_Radian(34.34408)], dtype = np.float64)
             }[name]
     

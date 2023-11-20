@@ -18,7 +18,7 @@ Description:
     Initialization of constants.
 """
 # Set the structure of the main parameters of the robot.
-CONST_ROBOT_TYPE = Parameters.ABB_IRB_120_L_Ax_Str
+CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 # The properties of the PyBullet environment.
@@ -26,7 +26,7 @@ CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] 
 #      ABB_IRB_14000_{L, R}_Str:
 #       'External_Base': f'{CONST_PROJECT_FOLDER}/URDFs/Robots/ABB_IRB_14000_Base/ABB_IRB_14000_Base.urdf'
 CONST_PYBULLET_ENV_PROPERTIES = {'Enable_GUI': 0, 'fps': 100, 
-                                 'External_Base': None, 'Env_ID': 1,
+                                 'External_Base': None, 'Env_ID': 0,
                                  'Camera': {'Yaw': 70.0, 'Pitch': -32.0, 'Distance':1.3, 
                                             'Position': [0.05, -0.10, 0.06]}}
 

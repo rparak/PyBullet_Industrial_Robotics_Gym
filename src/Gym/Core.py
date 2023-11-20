@@ -51,15 +51,10 @@ from RoLE.Primitives.Core import Box_Cls, Point_Cls
 #       ../RoLE/Collider/Utilities
 from RoLE.Collider.Utilities import Get_Min_Max
 #       ../RoLE/Primitives/Core
-from RoLE.Collider.Core import OBB_Cls, AABB_Cls
+from RoLE.Collider.Core import AABB_Cls
 #   Gym
 #       ../Gym/Utilities
 import Gym.Utilities
-
-# ....
-#   Get safe theta ...
-#   Set TCP ...
-
 
 """
 Description:
@@ -699,25 +694,32 @@ class Robot_Cls(object):
             if isinstance(T, (list, np.ndarray)):
                 T = HTM_Cls(T, np.float64)
 
-            # A function to compute the inverse kinematics (IK) using the using the chosen numerical method.
-            (info, theta) = Kinematics.Inverse_Kinematics_Numerical(T, self.Theta, 'Levenberg-Marquardt', self.__Robot_Parameters_Str, 
-                                                                    ik_solver_properties)
-            
-            # Check whether a part of the robotic structure collides with external objects.
-            is_external_collision = Kinematics.General.Is_External_Collision(theta, self.__Robot_Parameters_Str)
+            # Transformation of point position in X, Y, Z axes.
+            self.__P_EE.Transformation(T.p.all())
 
-            if info['successful'] == True and info['is_self_collision'] == False and info['is_close_singularity'] == False \
-               and not is_external_collision.any() == True:
-                self.__Reset_Aux_Model(theta, visibility_target_position, [0.70, 0.85, 0.60])
+            # Determine if a given point is inside a search area.
+            if self.__AABB_C_search.Is_Point_Inside(self.__P_EE) == True:
+                # A function to compute the inverse kinematics (IK) using the using the chosen numerical method.
+                (info, theta) = Kinematics.Inverse_Kinematics_Numerical(T, self.Theta, 'Levenberg-Marquardt', self.__Robot_Parameters_Str, 
+                                                                        ik_solver_properties)
+                
+                if info['successful'] == True:
+                    # Check whether a part of the robotic structure collides with external objects.
+                    is_external_collision = Kinematics.General.Is_External_Collision(theta, self.__Robot_Parameters_Str)
 
-                if mode == 'Reset':
-                    return self.Reset('Individual', theta)
-                else:
-                    return self.Set_Absolute_Joint_Position(theta, motion_parameters['force'], motion_parameters['t_0'], 
-                                                            motion_parameters['t_1'])
-            else:
+                    if info['is_self_collision'] == False and info['is_close_singularity'] == False \
+                        and not is_external_collision.any() == True:
+                        self.__Reset_Aux_Model(theta, visibility_target_position, [0.70, 0.85, 0.60])
+
+                        if mode == 'Reset':
+                            return self.Reset('Individual', theta)
+                        else:
+                            return self.Set_Absolute_Joint_Position(theta, motion_parameters['force'], motion_parameters['t_0'], 
+                                                                    motion_parameters['t_1'])
+
                 self.__Reset_Aux_Model(theta, visibility_target_position, [0.85, 0.60, 0.60])
                 return False
+            return False
 
         except AssertionError as error:
             print(f'[ERROR] Information: {error}')

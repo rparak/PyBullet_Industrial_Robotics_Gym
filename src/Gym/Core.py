@@ -209,31 +209,6 @@ class Robot_Cls(object):
             _ = Gym.Utilities.Add_Wireframe_Cuboid(self.__Env_Structure.Collision_Object.T, 3 * [self.__Env_Structure.Collision_Object.Scale * 2.0], 
                                                    self.__Env_Structure.Collision_Object.Color[0:3], 1.0)
 
-    def Show_Colliders(self):
-        # Get a list of base and joint colliders.
-        Base_Collider = list(self.__Robot_Parameters_Str.Collider.Base.values()); Theta_Collider = list(self.__Robot_Parameters_Str.Collider.Theta.values())
-        
-        # Transformation of the base collider according to the input homogeneous transformation matrix.
-        Base_Collider[0].Transformation(self.__Robot_Parameters_Str.T.Base)
-
-        # Obtain the individual (theta) configuration of the homogeneous matrix of each joint using forward kinematics
-        T_Arr = RoLE.Kinematics.Core.Get_Individual_Joint_Configuration(self.Theta, 'Modified', self.__Robot_Parameters_Str)[1]
-
-        # Transformation of the joint colliders according to the input homogeneous transformation matrix.
-        for _, (T_i, th_collider_i) in enumerate(zip(T_Arr, Theta_Collider)):
-            th_collider_i.Transformation(T_i)
-
-        # Concatenate all colliders (base, joint) into single array according to a predefined constraint.
-        if self.__Robot_Parameters_Str.External_Axis == True:
-            Base_Collider[1].Transformation(T_Arr[0])
-
-        Coll_X = self.__Robot_Parameters_Str.Collider.Base[f'Base_Collider_{self.__Robot_Parameters_Str.Name}_ID_{self.__Robot_Parameters_Str.Id:03}']
-        _ = Gym.Utilities.Add_Wireframe_Cuboid(Coll_X.T, Coll_X.Size, 
-                                               self.__Env_Structure.C.Target.Color, 1.0)
-        for i in range(6):
-            Coll_Y = self.__Robot_Parameters_Str.Collider.Theta[f'Joint_{i + 1}_Collider_{self.__Robot_Parameters_Str.Name}_ID_{self.__Robot_Parameters_Str.Id:03}']
-            _ = Gym.Utilities.Add_Wireframe_Cuboid(Coll_Y.T, Coll_Y.Size, 
-                                                self.__Env_Structure.C.Target.Color, 1.0)
     def __Set_Env_Parameters(self, enable_gui: int, camera_parameters: tp.Dict) -> None:
         """
         Description:
@@ -451,12 +426,12 @@ class Robot_Cls(object):
             pb.changeVisualShape(object_id, linkIndex=-1, rgbaColor=color)
         #   Collision.
         if enable_collision == True:
-            # Add a collider (type OBB) as a part of the robotic arm structure.
-            self.__Robot_Parameters_Str.Collider.External[name] = OBB_Cls(Box_Cls([0.0, 0.0, 0.0], 
+            # Add a collider (type AABB) as a part of the robotic arm structure.
+            self.__Robot_Parameters_Str.Collider.External[name] = AABB_Cls(Box_Cls([0.0, 0.0, 0.0], 
                                                                                   [max_AABB[0] - min_AABB[0],
                                                                                    max_AABB[1] - min_AABB[1],
                                                                                    max_AABB[2] - min_AABB[2]]))
-            # Oriented Bounding Box (OBB) transformation according to the input homogeneous 
+            # Axis-aligned Bounding Boxe (AABB) transformation according to the input homogeneous 
             # transformation matrix.
             self.__Robot_Parameters_Str.Collider.External[name].Transformation(T)
 
@@ -730,8 +705,9 @@ class Robot_Cls(object):
             
 
             # ...
-            #is_col = Kinematics.General.Is_External_Collision(theta, self.__Robot_Parameters_Str)
-            #print(is_col)
+            is_col = Kinematics.General.Is_External_Collision(theta, self.__Robot_Parameters_Str)
+            print(is_col)
+            print(is_col.any() == True)
 
             if info["successful"] == True:
                 self.__Reset_Aux_Model(theta, visibility_target_position, [0.70, 0.85, 0.60])

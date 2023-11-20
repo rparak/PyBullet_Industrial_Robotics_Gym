@@ -141,6 +141,56 @@ def Is_Close_Singularity(J: tp.List[tp.List[float]]) -> bool:
 
     return any(np.isclose(S, 0.0, atol=1e-10, equal_nan=False))
 
+def Is_External_Collision(theta: tp.List[float], Robot_Parameters_Str: Parameters.Robot_Parameters_Str) -> tp.List[bool]:
+    """
+    Description:
+        A function to obtain information about whether a part of the robotic structure collides with external objects.
+
+    Args:
+        (2) theta [Vector<float> 1xn]: Desired absolute joint position in radians / meters.
+                                        Note:
+                                            Where n is the number of joints.
+        (3) Robot_Parameters_Str [Robot_Parameters_Str(object)]: The structure of the main parameters of the robot. 
+
+    Returns:
+        (1) parameter [Vector<bool> 1xk]: A vector of information about which part of the robotic structure collides with external objects.
+                                            Note:
+                                                Where k is the number of all colliders of the robotic structure.
+    """
+
+    # Get a list of colliders.
+    Base_Collider = list(Robot_Parameters_Str.Collider.Base.values()); Theta_Collider = list(Robot_Parameters_Str.Collider.Theta.values())
+    External_Collider = list(Robot_Parameters_Str.Collider.External.values())
+
+    # Transformation of the base collider according to the input homogeneous transformation matrix.
+    Base_Collider[0].Transformation(Robot_Parameters_Str.T.Base)
+
+    # Obtain the individual (theta) configuration of the homogeneous matrix of each joint using forward kinematics
+    T_Arr = RoLE.Kinematics.Core.Get_Individual_Joint_Configuration(theta, 'Modified', Robot_Parameters_Str)[1]
+
+    # Transformation of the joint colliders according to the input homogeneous transformation matrix.
+    for _, (T_i, th_collider_i) in enumerate(zip(T_Arr, Theta_Collider)):
+        th_collider_i.Transformation(T_i)
+
+    # Concatenate all colliders (base, joint) into single array according to a predefined constraint.
+    if Robot_Parameters_Str.External_Axis == True:
+        Base_Collider[1].Transformation(T_Arr[0])
+        All_Colliders = np.concatenate(([Base_Collider[0], Theta_Collider[0], Base_Collider[1]], 
+                                        Theta_Collider[1::]))
+    else:
+        All_Colliders = np.concatenate((Base_Collider, Theta_Collider))
+        
+    # Check whether the external 3D primitives (bounding boxes AABB, OBB) overlap or do not overlap 
+    # with the robotic structure.
+    is_collision = np.zeros(All_Colliders.size, dtype=bool)
+    for i, collider_i in enumerate(All_Colliders):
+        for _, external_collider_i in enumerate(External_Collider):
+            if collider_i.Overlap(external_collider_i) == True:
+                # Set the part of the robotic structure where the collision occurs.
+                is_collision[i] = True
+
+    return is_collision
+
 def Is_Self_Collision(theta: tp.List[float], Robot_Parameters_Str: Parameters.Robot_Parameters_Str) -> tp.List[bool]:
     """
     Description:
@@ -153,7 +203,7 @@ def Is_Self_Collision(theta: tp.List[float], Robot_Parameters_Str: Parameters.Ro
         (3) Robot_Parameters_Str [Robot_Parameters_Str(object)]: The structure of the main parameters of the robot.
 
     Returns:
-        (1) parameter [Vector<bool> 1xk]: A vector of errors where a collision occurred between the joints of the robotic structure.
+        (1) parameter [Vector<bool> 1xk]: A vector of information where a collision occurred between the joints of the robotic structure.
                                             Note:
                                                 Where k is the number of all colliders of the robotic structure.
     """

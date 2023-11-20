@@ -197,7 +197,8 @@ Universal_Robots_UR3_Str = Robot_Parameters_Str(Name='Universal_Robots_UR3', Id=
 #        [0.0, 1.0, 0.0,  0.0],
 #        [0.0, 0.0, 1.0, 0.02],
 #        [0.0, 0.0, 0.0,  1.0]]
-Universal_Robots_UR3_Str.T.Base = HTM_Cls(None, np.float64).Rotation(np.array([0.0, 0.0, 1.5707963267948966]), 'ZYX')
+# HTM_Cls(None, np.float64).Rotation(np.array([0.0, 0.0, 1.5707963267948966]), 'ZYX')
+Universal_Robots_UR3_Str.T.Base = HTM_Cls(None, np.float64)
 # End-effector (tool):
 #   1\ None: Identity Matrix
 #       [[1.0, 0.0, 0.0, 0.0],

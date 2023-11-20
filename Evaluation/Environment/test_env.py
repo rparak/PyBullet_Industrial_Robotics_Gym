@@ -18,7 +18,7 @@ Description:
     Initialization of constants.
 """
 # Set the structure of the main parameters of the robot.
-CONST_ROBOT_TYPE = Parameters.ABB_IRB_120_L_Ax_Str
+CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 # The properties of the PyBullet environment.
@@ -44,12 +44,13 @@ def main():
                                             CONST_PYBULLET_ENV_PROPERTIES)
 
     # Reset the absolute position of the robot joints to the 'Home'.
-    PyBullet_Robot_Cls.Reset('Home')
+    PyBullet_Robot_Cls.Reset('Zero')
 
     # Add a viewpoint with the correct transformation to the end-effector of the structure.
     PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'T_EE_Viewpoint', PyBullet_Robot_Cls.T_EE, None, 
                                            0.3, False)
 
+    PyBullet_Robot_Cls.Show_Colliders()
     # The physical simulation is in progress.
     while PyBullet_Robot_Cls.is_connected == True:
         PyBullet_Robot_Cls.Step()

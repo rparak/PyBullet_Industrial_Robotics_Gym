@@ -180,10 +180,10 @@ class Robot_Cls(object):
         self.__Env_Structure = Gym.Utilities.Get_Environment_Structure(self.__Robot_Parameters_Str.Name, properties['Env_ID'])
         #   Add the cube of the search (configuration) space and get the vertices of the defined cube.
         self.__vertices_C_search = Gym.Utilities.Add_Wireframe_Cuboid(self.__Env_Structure.C.Search.T, self.__Env_Structure.C.Search.Size, 
-                                                                          self.__Env_Structure.C.Search.Color, 1.0)
+                                                                      self.__Env_Structure.C.Search.Color, 1.0)
         #   Add the cube of the target (configuration) space and get the vertices of the defined cube.
         self.__vertices_C_target = Gym.Utilities.Add_Wireframe_Cuboid(self.__Env_Structure.C.Target.T, self.__Env_Structure.C.Target.Size, 
-                                                                          self.__Env_Structure.C.Target.Color, 1.0)
+                                                                      self.__Env_Structure.C.Target.Color, 1.0)
         
         # Represent the search (configuration) space as Axis-aligned Bounding Boxes (AABB).
         self.__AABB_C_search = AABB_Cls(Box_Cls([0.0, 0.0, 0.0], self.__Env_Structure.C.Search.Size))
@@ -205,10 +205,35 @@ class Robot_Cls(object):
         if self.__Env_Structure.Collision_Object != None:
             self.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Primitives/{self.__Env_Structure.Collision_Object.Type}/{self.__Env_Structure.Collision_Object.Type}.urdf', 
                                      f'{self.__Env_Structure.Collision_Object.Type}_Collision', self.__Env_Structure.Collision_Object.T, self.__Env_Structure.Collision_Object.Color,
-                                     self.__Env_Structure.Collision_Object.Scale, False)
+                                     self.__Env_Structure.Collision_Object.Scale, True)
             _ = Gym.Utilities.Add_Wireframe_Cuboid(self.__Env_Structure.Collision_Object.T, 3 * [self.__Env_Structure.Collision_Object.Scale * 2.0], 
-                                                       self.__Env_Structure.Collision_Object.Color[0:3], 1.0)
+                                                   self.__Env_Structure.Collision_Object.Color[0:3], 1.0)
 
+    def Show_Colliders(self):
+        # Get a list of base and joint colliders.
+        Base_Collider = list(self.__Robot_Parameters_Str.Collider.Base.values()); Theta_Collider = list(self.__Robot_Parameters_Str.Collider.Theta.values())
+        
+        # Transformation of the base collider according to the input homogeneous transformation matrix.
+        Base_Collider[0].Transformation(self.__Robot_Parameters_Str.T.Base)
+
+        # Obtain the individual (theta) configuration of the homogeneous matrix of each joint using forward kinematics
+        T_Arr = RoLE.Kinematics.Core.Get_Individual_Joint_Configuration(self.Theta, 'Modified', self.__Robot_Parameters_Str)[1]
+
+        # Transformation of the joint colliders according to the input homogeneous transformation matrix.
+        for _, (T_i, th_collider_i) in enumerate(zip(T_Arr, Theta_Collider)):
+            th_collider_i.Transformation(T_i)
+
+        # Concatenate all colliders (base, joint) into single array according to a predefined constraint.
+        if self.__Robot_Parameters_Str.External_Axis == True:
+            Base_Collider[1].Transformation(T_Arr[0])
+
+        Coll_X = self.__Robot_Parameters_Str.Collider.Base[f'Base_Collider_{self.__Robot_Parameters_Str.Name}_ID_{self.__Robot_Parameters_Str.Id:03}']
+        _ = Gym.Utilities.Add_Wireframe_Cuboid(Coll_X.T, Coll_X.Size, 
+                                               self.__Env_Structure.C.Target.Color, 1.0)
+        for i in range(6):
+            Coll_Y = self.__Robot_Parameters_Str.Collider.Theta[f'Joint_{i + 1}_Collider_{self.__Robot_Parameters_Str.Name}_ID_{self.__Robot_Parameters_Str.Id:03}']
+            _ = Gym.Utilities.Add_Wireframe_Cuboid(Coll_Y.T, Coll_Y.Size, 
+                                                self.__Env_Structure.C.Target.Color, 1.0)
     def __Set_Env_Parameters(self, enable_gui: int, camera_parameters: tp.Dict) -> None:
         """
         Description:
@@ -508,7 +533,7 @@ class Robot_Cls(object):
 
             if visibility == True:
                 # Removal of external objects corresponding to a random point.
-                self.Remove_External_Object('T_EE_Rand_Sphere'); self.Remove_External_Object('T_EE_Rand_Viewpoint')
+                self.Remove_External_Object('T_EE_Rand_Viewpoint')
                 
                 # Adding external objects corresponding to a random point.
                 self.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'T_EE_Rand_Viewpoint', T,
@@ -703,6 +728,11 @@ class Robot_Cls(object):
             (info, theta) = Kinematics.Inverse_Kinematics_Numerical(T, self.Theta, 'Levenberg-Marquardt', self.__Robot_Parameters_Str, 
                                                                     ik_solver_properties)
             
+
+            # ...
+            #is_col = Kinematics.General.Is_External_Collision(theta, self.__Robot_Parameters_Str)
+            #print(is_col)
+
             if info["successful"] == True:
                 self.__Reset_Aux_Model(theta, visibility_target_position, [0.70, 0.85, 0.60])
 

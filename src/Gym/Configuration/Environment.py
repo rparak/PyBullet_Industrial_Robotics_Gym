@@ -124,7 +124,7 @@ Universal_Robots_UR3_Env_ID_1_Str.C.Search = Cuboid_Str(HTM_Cls(None, np.float64
 Universal_Robots_UR3_Env_ID_1_Str.C.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.325, 0.1, 0.055], dtype=np.float64)), 
                                                         np.array([0.125, 0.075, 0.05], dtype=np.float64), [0.60, 1.0, 0.60])
 Universal_Robots_UR3_Env_ID_1_Str.Collision_Object.T = HTM_Cls(None, np.float64).Translation([0.325, -0.05, 0.22])
-Universal_Robots_UR3_Env_ID_1_Str.Collision_Object.Scale = 0.025
+Universal_Robots_UR3_Env_ID_1_Str.Collision_Object.Scale = 0.05
 Universal_Robots_UR3_Env_ID_1_Str.Collision_Object.Color = [0.85, 0.60, 0.60, 0.75]
 Universal_Robots_UR3_Env_ID_1_Str.Collision_Object.Type = 'Sphere'
 

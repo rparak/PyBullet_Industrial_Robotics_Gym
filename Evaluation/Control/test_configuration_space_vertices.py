@@ -90,13 +90,11 @@ def main():
         in_position = PyBullet_Robot_Cls.Set_TCP_Position(T_vertex, CONST_CTRL_MODE, CONST_IK_PROPERTIES, CONST_VISIBILITY_GHOST,
                                                           {'force': 100.0, 't_0': 0.0, 't_1': 2.0})
         
-        """
         if in_position == False:
             print('[WARNING] There is an issue during the execution of the TCP (tool center point) target.')
             print(f'[WARNING] >> p = {T_vertex.p.all()}')
             print(f'[WARNING] >> Quaternions = {T_vertex.Get_Rotation("QUATERNION").all()}')
             break
-        """
 
         # Pause for a defined time.
         time.sleep(2.0)

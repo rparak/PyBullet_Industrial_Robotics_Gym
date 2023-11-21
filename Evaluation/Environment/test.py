@@ -21,7 +21,7 @@ Description:
     Initialization of constants.
 """
 # Set the structure of the main parameters of the robot.
-CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
+CONST_ROBOT_TYPE = Parameters.ABB_IRB_14000_L_Str
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 # The properties of the PyBullet environment.
@@ -29,7 +29,7 @@ CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] 
 #      ABB_IRB_14000_{L, R}_Str:
 #       'External_Base': f'{CONST_PROJECT_FOLDER}/URDFs/Robots/ABB_IRB_14000_Base/ABB_IRB_14000_Base.urdf'
 CONST_PYBULLET_ENV_PROPERTIES = {'Enable_GUI': 0, 'fps': 100, 
-                                 'External_Base': None, 'Env_ID': 1,
+                                 'External_Base': f'{CONST_PROJECT_FOLDER}/URDFs/Robots/ABB_IRB_14000_Base/ABB_IRB_14000_Base.urdf', 'Env_ID': 0,
                                  'Camera': {'Yaw': 70.0, 'Pitch': -32.0, 'Distance':1.3, 
                                             'Position': [0.05, -0.10, 0.06]}}
 
@@ -58,15 +58,20 @@ def main():
     #T_rand = PyBullet_Robot_Cls.Generate_Random_T_EE('Target', True)
     #T_new = Transformation.Homogeneous_Transformation_Matrix_Cls(None, np.float64).Rotation(PyBullet_Robot_Cls.T_EE.Get_Rotation('QUATERNION').all(), 'QUATERNION').Translation([T_rand.p.x, T_rand.p.y, T_rand.p.z - 0.01])
 
+    # Get the vertices of the selected configuration space.
+    C_vertices = PyBullet_Robot_Cls.Get_Configuration_Space_Vertices('Search')
+
+    T_vertex = Transformation.Homogeneous_Transformation_Matrix_Cls(None, np.float64).Rotation(PyBullet_Robot_Cls.T_EE.Get_Rotation('QUATERNION').all(), 'QUATERNION').Translation(C_vertices[2])
+
     # The physical simulation is in progress.
     while PyBullet_Robot_Cls.is_connected == True:
-        #_ = PyBullet_Robot_Cls.Set_TCP_Position(T_new, 'Reset', {'delta_time': 0.1, 'num_of_iteration': 500, 'tolerance': 1e-30}, False)
+        _ = PyBullet_Robot_Cls.Set_TCP_Position(T_vertex, 'Reset', {'delta_time': 0.1, 'num_of_iteration': 500, 'tolerance': 1e-30}, False)
         #e = Mathematics.Euclidean_Norm((PyBullet_Robot_Cls.T_EE.p - T_rand.p).all())
         #print(e)
         #print(np.round(np.rad2deg(PyBullet_Robot_Cls.Theta), 5).tolist())
         #print(np.round(PyBullet_Robot_Cls.Theta, 5).tolist())
         #PyBullet_Robot_Cls.Step()
-        pass
+        #pass
 
 
     # Disconnect the created environment from a physical server.

@@ -35,7 +35,7 @@ CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] 
 #       'External_Base': f'{CONST_PROJECT_FOLDER}/URDFs/Robots/ABB_IRB_14000_Base/ABB_IRB_14000_Base.urdf'
 CONST_PYBULLET_ENV_PROPERTIES = {'Enable_GUI': 0, 'fps': 100, 
                                  'External_Base': None, 'Env_ID': 0,
-                                 'Camera': {'Yaw': 70.0, 'Pitch': -32.0, 'Distance':1.3, 
+                                 'Camera': {'Yaw': 70.0, 'Pitch': -32.0, 'Distance': 1.3, 
                                             'Position': [0.05, -0.10, 0.06]}}
 # Type of the configuration space.
 #   Note:

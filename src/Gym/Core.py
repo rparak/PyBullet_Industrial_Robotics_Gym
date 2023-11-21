@@ -709,7 +709,8 @@ class Robot_Cls(object):
                     # Check whether a part of the robotic structure collides with external objects.
                     is_external_collision = Kinematics.General.Is_External_Collision(theta, self.__Robot_Parameters_Str)
 
-                    if info['is_self_collision'] == False and info['is_close_singularity'] == False \
+                    #info['is_self_collision'] == False and 
+                    if info['is_close_singularity'] == False \
                         and not is_external_collision.any() == True:
                         self.__Reset_Aux_Model(theta, visibility_target_position, [0.70, 0.85, 0.60])
 

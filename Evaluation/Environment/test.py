@@ -21,7 +21,7 @@ Description:
     Initialization of constants.
 """
 # Set the structure of the main parameters of the robot.
-CONST_ROBOT_TYPE = Parameters.ABB_IRB_14000_R_Str
+CONST_ROBOT_TYPE = Parameters.ABB_IRB_14000_L_Str
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 # The properties of the PyBullet environment.
@@ -60,7 +60,7 @@ def main():
 
     # Get the vertices of the selected configuration space.
     C_vertices = PyBullet_Robot_Cls.Get_Configuration_Space_Vertices('Search')
-    T_vertex = Transformation.Homogeneous_Transformation_Matrix_Cls(None, np.float64).Rotation(PyBullet_Robot_Cls.T_EE.Get_Rotation('QUATERNION').all(), 'QUATERNION').Translation(C_vertices[2])
+    T_vertex = Transformation.Homogeneous_Transformation_Matrix_Cls(None, np.float64).Rotation(PyBullet_Robot_Cls.T_EE.Get_Rotation('QUATERNION').all(), 'QUATERNION').Translation(C_vertices[3])
 
     # The physical simulation is in progress.
     while PyBullet_Robot_Cls.is_connected == True:

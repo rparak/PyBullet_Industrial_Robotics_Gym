@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<robot name="Sphere">
+  <link name="sphere_link">
+    <contact>
+      <rolling_friction value="1.0"/>
+      <spinning_friction value="1.0"/>
+    </contact>
+    <inertial>
+      <origin rpy="0.0 0.0 0.0" xyz="0 0 0"/>
+      <mass value="1.0"/>
+      <inertia ixx="0.4" ixy="0.0" ixz="0.0" 
+               iyy="0.4" iyz="0.0" izz="0.4"/>
+    </inertial>
+    <visual>
+      <geometry>
+	 	     <mesh filename="/Mesh/Visual/Sphere.stl" scale="1 1 1"/>
+      </geometry>
+      <material name="Custom_Color_White">
+        <color rgba="1.0 1.0 1.0 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+	 	     <mesh filename="/Mesh/Visual/Sphere.stl" scale="1 1 1"/>
+      </geometry>
+    </collision>
+  </link>
+</robot>

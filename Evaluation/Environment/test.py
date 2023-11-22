@@ -49,8 +49,8 @@ def main():
     # Reset the absolute position of the robot joints to the 'Home'.
     PyBullet_Robot_Cls.Reset('Home') 
 
-    print(PyBullet_Robot_Cls.T_EE.p)
-    T = Transformation.Homogeneous_Transformation_Matrix_Cls(None, np.float64).Rotation(PyBullet_Robot_Cls.T_EE.Get_Rotation('QUATERNION').all(), 'QUATERNION').Translation([0.40, -0.3, 0.220])
+    #print(PyBullet_Robot_Cls.T_EE.p)
+    #T = Transformation.Homogeneous_Transformation_Matrix_Cls(None, np.float64).Rotation(PyBullet_Robot_Cls.T_EE.Get_Rotation('QUATERNION').all(), 'QUATERNION').Translation([0.40, -0.3, 0.220])
 
     # Add a viewpoint with the correct transformation to the end-effector of the structure.
     #PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'T_EE_Viewpoint', T, None, 0.3, False)
@@ -59,17 +59,17 @@ def main():
     #T_new = Transformation.Homogeneous_Transformation_Matrix_Cls(None, np.float64).Rotation(PyBullet_Robot_Cls.T_EE.Get_Rotation('QUATERNION').all(), 'QUATERNION').Translation([T_rand.p.x, T_rand.p.y, T_rand.p.z - 0.01])
 
     # Get the vertices of the selected configuration space.
-    #C_vertices = PyBullet_Robot_Cls.Get_Configuration_Space_Vertices('Search')
-    #T_vertex = Transformation.Homogeneous_Transformation_Matrix_Cls(None, np.float64).Rotation(PyBullet_Robot_Cls.T_EE.Get_Rotation('QUATERNION').all(), 'QUATERNION').Translation(C_vertices[3])
+    C_vertices = PyBullet_Robot_Cls.Get_Configuration_Space_Vertices('Target')
+    T_vertex = Transformation.Homogeneous_Transformation_Matrix_Cls(None, np.float64).Rotation(PyBullet_Robot_Cls.T_EE.Get_Rotation('QUATERNION').all(), 'QUATERNION').Translation(C_vertices[7])
 
     # The physical simulation is in progress.
     while PyBullet_Robot_Cls.is_connected == True:
-        #_ = PyBullet_Robot_Cls.Set_TCP_Position(T_vertex, 'Reset', {'delta_time': 0.1, 'num_of_iteration': 500, 'tolerance': 1e-30}, False)
+        _ = PyBullet_Robot_Cls.Set_TCP_Position(T_vertex, 'Reset', {'delta_time': 0.1, 'num_of_iteration': 500, 'tolerance': 1e-30}, False)
         #e = Mathematics.Euclidean_Norm((PyBullet_Robot_Cls.T_EE.p - T_rand.p).all())
         #print(e)
-        _ = PyBullet_Robot_Cls.Set_TCP_Position(T, 'Reset', {'delta_time': 0.1, 'num_of_iteration': 500, 'tolerance': 1e-30}, False)
-        print(np.round(np.rad2deg(PyBullet_Robot_Cls.Theta), 5).tolist())
-        print(np.round(PyBullet_Robot_Cls.Theta, 5).tolist())
+        #_ = PyBullet_Robot_Cls.Set_TCP_Position(T, 'Reset', {'delta_time': 0.1, 'num_of_iteration': 500, 'tolerance': 1e-30}, False)
+        #print(np.round(np.rad2deg(PyBullet_Robot_Cls.Theta), 5).tolist())
+        #print(np.round(PyBullet_Robot_Cls.Theta, 5).tolist())
         #PyBullet_Robot_Cls.Step()
 
 

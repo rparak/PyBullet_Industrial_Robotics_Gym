@@ -704,7 +704,7 @@ class Robot_Cls(object):
                 # A function to compute the inverse kinematics (IK) using the using the chosen numerical method.
                 (info, theta) = Kinematics.Inverse_Kinematics_Numerical(T, self.Theta, 'Levenberg-Marquardt', self.__Robot_Parameters_Str, 
                                                                         ik_solver_properties)
-
+                print(info['is_self_collision'])
                 if info['successful'] == True:
                     # Check whether a part of the robotic structure collides with external objects.
                     is_external_collision = Kinematics.General.Is_External_Collision(theta, self.__Robot_Parameters_Str)

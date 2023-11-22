@@ -24,7 +24,7 @@ Description:
     Initialization of constants.
 """
 # Set the structure of the main parameters of the robot.
-CONST_ROBOT_TYPE = Parameters.ABB_IRB_14000_L_Str
+CONST_ROBOT_TYPE = Parameters.ABB_IRB_14000_R_Str
 # Numerical IK Parameters.
 #   The properties of the inverse kinematics solver.
 CONST_IK_PROPERTIES = {'delta_time': 0.1, 'num_of_iteration': 500, 
@@ -44,11 +44,11 @@ CONST_PYBULLET_ENV_PROPERTIES = {'Enable_GUI': 0, 'fps': 100,
 # Type of the configuration space.
 #   Note:
 #       'Search' or 'Target'
-CONST_C_TYPE = 'Search'
+CONST_C_TYPE = 'Target'
 # The name of the mode to be used to perform the transformation.
 #   Note:
 #       mode = 'Reset' or 'Motion'
-CONST_CTRL_MODE = 'Reset'
+CONST_CTRL_MODE = 'Motion'
 
 def main():
     """
@@ -97,7 +97,7 @@ def main():
             break
 
         # Pause for a defined time.
-        time.sleep(0.5)
+        time.sleep(2.0)
 
         # Reset the absolute position of the robot joints to the 'Home'.
         PyBullet_Robot_Cls.Reset('Home')

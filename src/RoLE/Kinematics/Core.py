@@ -689,8 +689,6 @@ def Inverse_Kinematics_Numerical(TCP_Position: tp.List[tp.List[float]], theta_0:
         # between the joints.
         is_close_singularity = General.Is_Close_Singularity(J)
         is_self_collision = General.Is_Self_Collision(th_i, Robot_Parameters_Str).any() == True
-        print(is_self_collision)
-        print(General.Is_Self_Collision(th_i, Robot_Parameters_Str))
 
         # Obtain the absolute error of position and orientation.
         error = {'position': Mathematics.Euclidean_Norm((TCP_Position.p - T.p).all()), 

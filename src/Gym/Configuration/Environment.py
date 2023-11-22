@@ -180,7 +180,7 @@ ABB_IRB_14000_R_Env_ID_1_Str.C.Search = Cuboid_Str(HTM_Cls(None, np.float64).Tra
                                                    np.array([0.175, 0.25, 0.225], dtype=np.float64), [0.975, 1.0, 0.60])
 ABB_IRB_14000_R_Env_ID_1_Str.C.Target = Cuboid_Str(HTM_Cls(None, np.float64).Translation(np.array([0.40, -0.115, 0.065], dtype=np.float64)), 
                                                    np.array([0.100, 0.075, 0.050], dtype=np.float64), [0.60, 1.0, 0.60])
-ABB_IRB_14000_R_Env_ID_1_Str.Collision_Object.T = HTM_Cls(None, np.float64).Translation([0.40, -0.245, 0.195])
+ABB_IRB_14000_R_Env_ID_1_Str.Collision_Object.T = HTM_Cls(None, np.float64).Translation([0.40, -0.245, 0.175])
 ABB_IRB_14000_R_Env_ID_1_Str.Collision_Object.Scale = 0.015
 ABB_IRB_14000_R_Env_ID_1_Str.Collision_Object.Color = [0.85, 0.60, 0.60, 0.75]
 ABB_IRB_14000_R_Env_ID_1_Str.Collision_Object.Type = 'Sphere'

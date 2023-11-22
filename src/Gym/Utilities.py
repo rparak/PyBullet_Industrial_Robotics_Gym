@@ -133,8 +133,8 @@ def Get_Robot_Structure_Theta_Home(name: str, Env_ID: int) -> tp.List[float]:
                 'Universal_Robots_UR3': Mathematics.Degree_To_Radian(np.array([-71.23467, -98.2801, -90.10467, -81.62488, 89.83034, 19.02965], dtype=np.float64)),
                 'ABB_IRB_120': Mathematics.Degree_To_Radian(np.array([0.0, 16.08758, 11.42564, 0.0, 62.48719, 0.0], dtype=np.float64)),
                 'ABB_IRB_120_L_Ax': np.append([0.4], Mathematics.Degree_To_Radian(np.array([90.00011, 16.08758, 11.42564, 0.0, 62.48719, 0.0], dtype=np.float64))),
-                'ABB_IRB_14000_R': Mathematics.Degree_To_Radian(np.array([89.66732, -123.1162, -41.22154, 46.64433, -153.2956, 111.81997, 14.13115], dtype=np.float64)),
-                'ABB_IRB_14000_L': Mathematics.Degree_To_Radian(np.array([-89.86457, -123.05667, 41.28711, 46.64346, 153.4319, 111.93099, -14.26005], dtype=np.float64)),
+                'ABB_IRB_14000_R': Mathematics.Degree_To_Radian(np.array([88.56735, -125.90928, -44.852, 50.191, -155.82782, 112.16203, 15.57825], dtype=np.float64)),
+                'ABB_IRB_14000_L': Mathematics.Degree_To_Radian(np.array([-88.7635, -125.84271, 44.91978, 50.18878, 155.95918, 112.27825, -15.71322], dtype=np.float64)),
                 'EPSON_LS3_B401S': np.array([Mathematics.Degree_To_Radian(47.16657), Mathematics.Degree_To_Radian(103.77415), 0.0245, Mathematics.Degree_To_Radian(60.94072)], dtype = np.float64)
             }[name]
         else:
@@ -142,8 +142,8 @@ def Get_Robot_Structure_Theta_Home(name: str, Env_ID: int) -> tp.List[float]:
                 'Universal_Robots_UR3': Mathematics.Degree_To_Radian(np.array([-92.17399, -97.82379, -90.6596, -81.46499, 89.83809, -1.90976], dtype=np.float64)),
                 'ABB_IRB_120': Mathematics.Degree_To_Radian(np.array([-17.04901, 21.08261, 9.79837, -0.00013, 59.11942, -17.04893], dtype=np.float64)),
                 'ABB_IRB_120_L_Ax': np.append([0.29171], Mathematics.Degree_To_Radian(np.array([88.97502, 17.83082, 14.63065, 0.0, 57.53893, -1.02511], dtype=np.float64))),
-                'ABB_IRB_14000_R': Mathematics.Degree_To_Radian(np.array([83.74617, -120.37621, -30.00761, 36.76001, -143.40389, 106.47041, 2.08674], dtype=np.float64)),
-                'ABB_IRB_14000_L': Mathematics.Degree_To_Radian(np.array([-83.94081, -120.33715, 30.07512, 36.76856, 143.56799, 106.53779, -2.21348], dtype=np.float64)),
+                'ABB_IRB_14000_R': Mathematics.Degree_To_Radian(np.array([81.90704, -123.155, -30.81905, 39.44353, -143.478, 106.16026, 1.64038], dtype=np.float64)),
+                'ABB_IRB_14000_L': Mathematics.Degree_To_Radian(np.array([-82.09966, -123.11487, 30.88971, 39.45265, 143.64482, 106.22565, -1.76956], dtype=np.float64)),
                 'EPSON_LS3_B401S': np.array([Mathematics.Degree_To_Radian(27.96471), Mathematics.Degree_To_Radian(96.37937), 0.0245, Mathematics.Degree_To_Radian(34.34408)], dtype = np.float64)
             }[name]
     

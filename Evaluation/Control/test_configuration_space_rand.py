@@ -80,10 +80,9 @@ def main():
             print('[WARNING] There is an issue during the execution of the TCP (tool center point) target.')
             print(f'[WARNING] >> p = {T_rand.p.all()}')
             print(f'[WARNING] >> Quaternions = {T_rand.Get_Rotation("QUATERNION").all()}')
-            break
 
         # Pause for a defined time.
-        time.sleep(2.0)
+        time.sleep(1.0)
 
         # Reset the absolute position of the robot joints to the 'Home'.
         PyBullet_Robot_Cls.Reset('Home')

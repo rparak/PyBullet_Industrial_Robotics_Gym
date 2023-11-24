@@ -24,13 +24,13 @@ Description:
     Initialization of constants.
 """
 # Set the structure of the main parameters of the robot.
-CONST_ROBOT_TYPE = Parameters.ABB_IRB_14000_R_Str
+CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 # Numerical IK Parameters.
 #   The properties of the inverse kinematics solver.
 CONST_IK_PROPERTIES = {'delta_time': 0.1, 'num_of_iteration': 500, 
                        'tolerance': 1e-30}
 # Visibility of the target position as the 'ghost' of the robotic model.
-CONST_VISIBILITY_GHOST = False
+CONST_VISIBILITY_GHOST = True
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 # The properties of the PyBullet environment.
@@ -38,13 +38,13 @@ CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] 
 #      ABB_IRB_14000_{L, R}_Str:
 #       'External_Base': f'{CONST_PROJECT_FOLDER}/URDFs/Robots/ABB_IRB_14000_Base/ABB_IRB_14000_Base.urdf'
 CONST_PYBULLET_ENV_PROPERTIES = {'Enable_GUI': 0, 'fps': 100, 
-                                 'External_Base': f'{CONST_PROJECT_FOLDER}/URDFs/Robots/ABB_IRB_14000_Base/ABB_IRB_14000_Base.urdf', 'Env_ID': 0,
+                                 'External_Base': f'{CONST_PROJECT_FOLDER}/URDFs/Robots/ABB_IRB_14000_Base/ABB_IRB_14000_Base.urdf', 'Env_ID': 1,
                                  'Camera': {'Yaw': 70.0, 'Pitch': -32.0, 'Distance': 1.3, 
                                             'Position': [0.05, -0.10, 0.06]}}
 # Type of the configuration space.
 #   Note:
 #       'Search' or 'Target'
-CONST_C_TYPE = 'Search'
+CONST_C_TYPE = 'Target'
 # The name of the mode to be used to perform the transformation.
 #   Note:
 #       mode = 'Reset' or 'Motion'
@@ -94,7 +94,6 @@ def main():
             print('[WARNING] There is an issue during the execution of the TCP (tool center point) target.')
             print(f'[WARNING] >> p = {T_vertex.p.all()}')
             print(f'[WARNING] >> Quaternions = {T_vertex.Get_Rotation("QUATERNION").all()}')
-            #break
 
         # Pause for a defined time.
         time.sleep(1.0)

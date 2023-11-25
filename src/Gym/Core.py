@@ -529,7 +529,7 @@ class Robot_Cls(object):
                                                 Where n is the number of joints.
             (2) visibility [bool]: Visibility of the target position as the 'ghost' of the robotic model.
             (3) info [bool]: Information on whether the result was found within the required tolerance.
-            (4) color [None or Vector<float> 1x4]: The color of the object.
+            (4) color [None or Vector<float> 1x3]: The color of the object.
                                                     Note:
                                                         Format: rgb(red, green, blue)
         """

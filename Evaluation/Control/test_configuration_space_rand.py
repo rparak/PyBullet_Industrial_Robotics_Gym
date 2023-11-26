@@ -79,7 +79,7 @@ def main():
         if in_position == False:
             print('[WARNING] There is an issue during the execution of the TCP (tool center point) target.')
             print(f'[WARNING] >> p = {T_rand.p.all()}')
-            print(f'[WARNING] >> Quaternions = {T_rand.Get_Rotation("QUATERNION").all()}')
+            print(f'[WARNING] >> Quaternion = {T_rand.Get_Rotation("QUATERNION").all()}')
 
         # Pause for a defined time.
         time.sleep(1.0)

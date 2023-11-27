@@ -376,6 +376,7 @@ def Get_Geometric_Jacobian(theta: tp.List[float], Robot_Parameters_Str: Paramete
             if th_i_ax == 'Z':
                 J_P = z_i
             else:
+                # Translation along the X axis.
                 J_P = np.float64(-1.0) * Vector3_Cls(T_Cfg_i[0:3, 0], T_n_p_ee.Type)
             J_O = Vector3_Cls([0.0, 0.0, 0.0], z_i.Type)
 

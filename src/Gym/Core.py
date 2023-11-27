@@ -151,12 +151,15 @@ class Robot_Cls(object):
             self.__robot_id = pb.loadURDF(urdf_file_path, p, [q.x, q.y, q.z, q.w], useFixedBase=True, 
                                           flags=pb.URDF_ENABLE_CACHED_GRAPHICS_SHAPES)
 
-        # Load an auxiliary model of the robotic structure.
-        self.__robot_id_aux = pb.loadURDF(urdf_file_path, p, [q.x, q.y, q.z, q.w], useFixedBase=True)
+        # Load an auxiliary model of the robotic structure, which is represented as a 'ghost'.
+        self.__robot_id_ghost = pb.loadURDF(urdf_file_path, p, [q.x, q.y, q.z, q.w], useMaximalCoordinates=False, 
+                                          useFixedBase=True)
         #   Disable collision of the robot base.
-        pb.setCollisionFilterGroupMask(self.__robot_id_aux, -1, 0, 0)
+        pb.setCollisionFilterGroupMask(self.__robot_id_ghost, -1, 0, 0)
         #   Change the texture of the robot base.
-        pb.changeVisualShape(self.__robot_id_aux, linkIndex=-1, rgbaColor=[0.0, 0.55, 0.0, 0.0])
+        pb.changeVisualShape(self.__robot_id_ghost, linkIndex=-1, rgbaColor=[0.0, 0.55, 0.0, 0.0])
+        #   Disable dynamic parameters of the robot base.
+        pb.changeDynamics(self.__robot_id_ghost, linkIndex=-1, linearDamping=0, angularDamping=0, jointDamping=0, mass=0)
 
         # Obtain the indices of the movable parts of the robotic structure.
         self.__theta_index = []
@@ -165,11 +168,13 @@ class Robot_Cls(object):
             if info[2] in [pb.JOINT_REVOLUTE, pb.JOINT_PRISMATIC]:
                 self.__theta_index.append(i)
 
-            # Set the properties of the auxiliary model.
+            # Set the properties of the auxiliary robot structure.
             #   Disable all collisions of the object.
-            pb.setCollisionFilterGroupMask(self.__robot_id_aux, i, 0, 0)
+            pb.setCollisionFilterGroupMask(self.__robot_id_ghost, i, 0, 0)
             #   Change the texture of the object.
-            pb.changeVisualShape(self.__robot_id_aux, linkIndex=i, rgbaColor=[0.0, 0.75, 0.0, 0.0])
+            pb.changeVisualShape(self.__robot_id_ghost, linkIndex=i, rgbaColor=[0.0, 0.75, 0.0, 0.0])
+            #   Disable dynamic parameters of the object.
+            pb.changeDynamics(self.__robot_id_ghost, linkIndex=i, linearDamping=0, angularDamping=0, jointDamping=0, mass=0)
 
         # Obtain the structure of the main parameters of the environment for the defined robotic arm.
         self.__Env_Structure = Gym.Utilities.Get_Environment_Structure(self.__Robot_Parameters_Str.Name, properties['Env_ID'])
@@ -508,19 +513,17 @@ class Robot_Cls(object):
                 
                 # Adding external objects corresponding to a random point.
                 self.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'T_EE_Rand_Viewpoint', T,
-                                         None, 0.15, False)
-                self.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Primitives/Sphere/Sphere.urdf', 'T_EE_Rand_Tolerance', T,
-                                         [0.60, 1.0, 0.60, 0.50], 0.01, False)
+                                         None, 0.3, False)
             return T
 
         except AssertionError as error:
             print(f'[ERROR] Information: {error}')
             print('[ERROR] Incorrect configuration type selected. The selected mode must be chosen from the two options (Search, Target).')
 
-    def __Reset_Aux_Model(self, theta: tp.List[float], visibility: bool, color: tp.Union[None, tp.List[float]]) -> None:
+    def __Reset_Ghost_Structure(self, theta: tp.List[float], visibility: bool, color: tp.Union[None, tp.List[float]]) -> None:
         """
         Description:
-            Function to reset the absolute position of the auxiliary robot model, which is represented as a "ghost".
+            Function to reset the absolute position of the auxiliary robot structure, which is represented as a 'ghost'.
 
         Args:
             (1) theta [Vector<float> 1xn]: Desired absolute joint position in radians / meters. Used only in individual 
@@ -537,11 +540,11 @@ class Robot_Cls(object):
         alpha = 0.3 if visibility == True else 0.0
         for _, (th_i, th_index) in enumerate(zip(theta, self.__theta_index)):
             # Reset the state (position) of the joint.
-            pb.resetJointState(self.__robot_id_aux, th_index, th_i) 
+            pb.resetJointState(self.__robot_id_ghost, th_index, th_i) 
 
             # Set the properties of the auxiliary model.
             #   Change the texture of the object.
-            pb.changeVisualShape(self.__robot_id_aux, linkIndex=th_index, rgbaColor=np.append([color], [alpha]))
+            pb.changeVisualShape(self.__robot_id_ghost, linkIndex=th_index, rgbaColor=np.append([color], [alpha]))
     
     def Reset(self, mode: str, theta: tp.Union[None, tp.List[float]] = None) -> bool:
         """
@@ -651,18 +654,19 @@ class Robot_Cls(object):
             print(f'[ERROR] Information: {error}')
             print(f'[ERROR] Incorrect number of values in the input variable theta. The input variable "theta" must contain {self.__Robot_Parameters_Str.Theta.Zero.size} values.')
 
-    def Set_TCP_Position(self, T: tp.List[tp.List[float]], mode: str, ik_solver_properties: tp.Dict, visibility_target_position: bool,
-                         motion_parameters: tp.Dict = None) -> bool:
+    def Get_Inverse_Kinematics_Solution(self, T: tp.List[tp.List[float]], ik_solver_properties: tp.Dict, enable_ghost: bool) -> tp.Dict[bool, tp.List[float]]:
         """
         Description:
-            Set the TCP (tool center point) of the robot end-effector.
+            A function to compute the inverse kinematics (IK) solution of the individual robotic 
+            structure using the numerical method.
+
+            Note:
+                The function also includes verification to determine if the TCP input position 
+                is within the search area.
 
         Args:
             (1) T [Matrix<float> 4x4]: Homogeneous transformation matrix of the desired TCP position.
-            (2) mode [string]: The name of the mode to be used to perform the transformation.
-                                Note:
-                                    mode = 'Reset' or 'Motion'
-            (3) ik_solver_properties [Dictionary {'delta_time': float or None, 'num_of_iteration': float, 
+            (2) ik_solver_properties [Dictionary {'delta_time': float or None, 'num_of_iteration': float, 
                                                   'tolerance': float}]: The properties of the inverse kinematics solver.
                                                                             Note:
                                                                                 'delta_time': The difference (spacing) between 
@@ -674,55 +678,57 @@ class Robot_Cls(object):
                                                                                 'tolerance': The minimum required tolerance per 
                                                                                                 time instant.    
                                                                                 Where time instant is defined by the 'delta_time' variable.
-            (4) visibility_target_position [bool]: Visibility of the target position as the 'ghost' of the robotic model.
-                                                    Note:
-                                                        If the "ghost" model is green, everything was successful, otherwise there 
-                                                        was a problem. Please see the warning.
-            (5) parameters [Dictionary {'force': float, 't_0': float, 't_1': float}]: The parameters of the 'Motion' mode. If the mode is equal
-                                                                                      to 'Reset', the parameters will be equal to 'None'.
-                                                                                        Note:
-                                                                                            'force': The maximum motor force used to reach the target value.
-                                                                                            't_0': Animation start time in seconds.
-                                                                                            't_1': Animation stop time in seconds.
+            (3) enable_ghost [bool]: Enable visibility of the auxiliary robotic structure, which is represented as a 'ghost'.
 
         Returns:
-            (1) parameter [bool]: The result is 'True' if the robot is in the desired position,
-                                  and 'False' if it is not.
-        """ 
+            (1) parameter [bool]: The result is 'True' if the inverse kinematics (IK) has a solution, and 'False' if 
+                                  it does not.
+            (2) parameter [Vector<float> 1xn]: Obtained solution of the absolute positions of the joints in radians / meters.
+                                                Note:
+                                                    Where n is the number of joints.
+        """
 
-        try:
-            assert mode in ['Reset', 'Motion']
+        if isinstance(T, (list, np.ndarray)):
+            T = HTM_Cls(T, np.float64)
 
-            if isinstance(T, (list, np.ndarray)):
-                T = HTM_Cls(T, np.float64)
+        # Transformation of point position in X, Y, Z axes.
+        self.__P_EE.Transformation(T.p.all())
 
-            # Transformation of point position in X, Y, Z axes.
-            self.__P_EE.Transformation(T.p.all())
-
-            # Determine if a given point is inside a search area.
-            if self.__AABB_C_search.Is_Point_Inside(self.__P_EE) == True:
-                # A function to compute the inverse kinematics (IK) using the using the chosen numerical method.
-                (info, theta) = Kinematics.Inverse_Kinematics_Numerical(T, self.Theta, 'Levenberg-Marquardt', self.__Robot_Parameters_Str, 
-                                                                        ik_solver_properties)
+        # Determine if a given point is inside a search area.
+        if self.__AABB_C_search.Is_Point_Inside(self.__P_EE) == True:
+            # A function to compute the inverse kinematics (IK) using the using the chosen numerical method.
+            (info, theta) = Kinematics.Inverse_Kinematics_Numerical(T, self.Theta, 'Levenberg-Marquardt', self.__Robot_Parameters_Str, 
+                                                                    ik_solver_properties)
                 
-                if info['successful'] == True:
-                    # Check whether a part of the robotic structure collides with external objects.
-                    is_external_collision = Kinematics.General.Is_External_Collision(theta, self.__Robot_Parameters_Str)
+            # Check whether the inverse kinematics (IK) has a solution or not.
+            #   Conditions:
+            #       1\ IK solution within limits.
+            #       2\ Collision-free.
+            #       3\ No singularities.
+            if info['successful'] == True:
+                # Check whether a part of the robotic structure collides with external objects.
+                (is_external_collision, _) = Kinematics.General.Is_External_Collision(theta, self.__Robot_Parameters_Str)
 
-                    if info['is_self_collision'] == False and info['is_close_singularity'] == False \
-                       and not is_external_collision.any() == True:
-                        self.__Reset_Aux_Model(theta, visibility_target_position, [0.70, 0.85, 0.60])
+                if info['is_self_collision'] == False and info['is_close_singularity'] == False \
+                    and is_external_collision == False:
+                        successful = True
+                else:
+                    successful = False
+            else:
+                successful = False
 
-                        if mode == 'Reset':
-                            return self.Reset('Individual', theta)
-                        else:
-                            return self.Set_Absolute_Joint_Position(theta, motion_parameters['force'], motion_parameters['t_0'], 
-                                                                    motion_parameters['t_1'])
+            # Reset the absolute position of the auxiliary robot structure, which is represented as a 'ghost'.
+            #   Note:
+            #       'Red': Collision.
+            #       'Green': No collision.
+            if successful:
+                self.__Reset_Ghost_Structure(theta, enable_ghost, [0.70, 0.85, 0.60])
+            else:
+                self.__Reset_Ghost_Structure(theta, enable_ghost, [0.85, 0.60, 0.60])
 
-                self.__Reset_Aux_Model(theta, visibility_target_position, [0.85, 0.60, 0.60])
-                return False
-            return False
+            return (successful, theta)
+        else:
+            # Set the color of the 'ghost' structure to 'red' to indicate that something is wrong.
+            self.__Reset_Ghost_Structure(self.Theta, enable_ghost, [0.85, 0.60, 0.60])
 
-        except AssertionError as error:
-            print(f'[ERROR] Information: {error}')
-            print('[ERROR] An incorrect name of the mode was selected to perform the transformation.')
+            return (False, self.Theta)

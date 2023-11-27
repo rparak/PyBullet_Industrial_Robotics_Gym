@@ -44,7 +44,7 @@ CONST_PYBULLET_ENV_PROPERTIES = {'Enable_GUI': 0, 'fps': 100,
 # Type of the configuration space.
 #   Note:
 #       'Search' or 'Target'
-CONST_C_TYPE = 'Target'
+CONST_C_TYPE = 'Search'
 # The name of the mode to be used to perform the transformation.
 #   Note:
 #       mode = 'Reset' or 'Motion'
@@ -86,11 +86,15 @@ def main():
         PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'Viewpoint_i', T_vertex, None, 
                                                0.3, False)
 
-        # Set the TCP (tool center point) of the robot end-effector.
-        in_position = PyBullet_Robot_Cls.Set_TCP_Position(T_vertex, CONST_CTRL_MODE, CONST_IK_PROPERTIES, CONST_VISIBILITY_GHOST,
-                                                          {'force': 100.0, 't_0': 0.0, 't_1': 2.0})
-        
-        if in_position == False:
+        # Obtain the inverse kinematics (IK) solution of the robotic structure from the desired TCP (tool center point).
+        (successful, theta) = PyBullet_Robot_Cls.Get_Inverse_Kinematics_Solution(T_vertex, CONST_IK_PROPERTIES, CONST_VISIBILITY_GHOST)
+
+        # Set the absolute position of the robot joints.
+        in_position = False
+        if successful == True:
+            in_position = PyBullet_Robot_Cls.Set_Absolute_Joint_Position(theta, 100.0, 0.0, 2.0)
+
+        if in_position == False or successful == False:
             print('[WARNING] There is an issue during the execution of the TCP (tool center point) target.')
             print(f'[WARNING] >> p = {T_vertex.p.all()}')
             print(f'[WARNING] >> Quaternion = {T_vertex.Get_Rotation("QUATERNION").all()}')

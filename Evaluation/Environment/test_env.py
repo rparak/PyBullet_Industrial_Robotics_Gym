@@ -10,7 +10,7 @@ import os
 #       ../RoLE/Parameters/Robot
 import RoLE.Parameters.Robot as Parameters
 #   Gym
-#       ../Lib/Gym/Core
+#       ../Gym/Core
 import Gym.Core
 
 """

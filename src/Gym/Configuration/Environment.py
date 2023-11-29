@@ -52,7 +52,6 @@ class Collision_Object_Str:
     #   Unit [string]
     Type: str = ''
 
-
 @dataclass
 class Configuration_Space_Str:
     """

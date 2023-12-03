@@ -1,17 +1,17 @@
 # System (Default)
 import sys
 #   Add access if it is not in the system path.
-if '../../' + 'src' not in sys.path:
-    sys.path.append('../../' + 'src')
+if '../../../' + 'src' not in sys.path:
+    sys.path.append('../../../' + 'src')
 # OS (Operating system interfaces)
 import os
 # Custom Lib.:
 #   Robotics Library for Everyone (RoLE)
 #       ../RoLE/Parameters/Robot
 import RoLE.Parameters.Robot as Parameters
-#   Gym
-#       ../Gym/Core
-import Gym.Core
+#   PyBullet
+#       ../PyBullet/Core
+import PyBullet.Core
 
 """
 Description:
@@ -40,7 +40,7 @@ def main():
     Robot_Str = CONST_ROBOT_TYPE
 
     # Initialization of the class to work with a robotic arm object in a PyBullet environment.
-    PyBullet_Robot_Cls = Gym.Core.Robot_Cls(Robot_Str, f'{CONST_PROJECT_FOLDER}/URDFs/Robots/{Robot_Str.Name}/{Robot_Str.Name}.urdf', 
+    PyBullet_Robot_Cls = PyBullet.Core.Robot_Cls(Robot_Str, f'{CONST_PROJECT_FOLDER}/URDFs/Robots/{Robot_Str.Name}/{Robot_Str.Name}.urdf', 
                                             CONST_PYBULLET_ENV_PROPERTIES)
 
     # Reset the absolute position of the robot joints to the 'Home'.

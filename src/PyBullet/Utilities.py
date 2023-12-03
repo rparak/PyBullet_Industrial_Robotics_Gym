@@ -12,9 +12,9 @@ import RoLE.Primitives.Core as Primitives
 from RoLE.Transformation.Core import Homogeneous_Transformation_Matrix_Cls as HTM_Cls, Vector3_Cls
 #       ../RoLE/Transformation/Utilities/Mathematics
 import RoLE.Transformation.Utilities.Mathematics as Mathematics
-#   Gym
-#       ../Gym/Configuration/Environment
-import Gym.Configuration.Environment
+#   PyBullet
+#       ../PyBullet/Configuration/Environment
+import PyBullet.Configuration.Environment
 
 def Add_Wireframe_Cuboid(T: tp.List[tp.List[float]], size: tp.List[float], color: tp.List[float],
                          line_width: float) -> None:
@@ -65,7 +65,7 @@ def Add_Wireframe_Cuboid(T: tp.List[tp.List[float]], size: tp.List[float], color
         
     return vertices
 
-def Get_Environment_Structure(name: str, Env_ID: int) -> Gym.Configuration.Environment.Environment_Str:
+def Get_Environment_Structure(name: str, Env_ID: int) -> PyBullet.Configuration.Environment.Environment_Str:
     """
     Description:
         Obtain the structure of the main parameters of the environment for the defined robotic arm.
@@ -86,21 +86,21 @@ def Get_Environment_Structure(name: str, Env_ID: int) -> Gym.Configuration.Envir
 
         if Env_ID == 0:
             return {
-                'Universal_Robots_UR3': Gym.Configuration.Environment.Universal_Robots_UR3_Env_ID_0_Str,
-                'ABB_IRB_120': Gym.Configuration.Environment.ABB_IRB_120_Env_ID_0_Str,
-                'ABB_IRB_120_L_Ax': Gym.Configuration.Environment.ABB_IRB_120_L_Ax_Env_ID_0_Str,
-                'ABB_IRB_14000_R': Gym.Configuration.Environment.ABB_IRB_14000_R_Env_ID_0_Str,
-                'ABB_IRB_14000_L': Gym.Configuration.Environment.ABB_IRB_14000_L_Env_ID_0_Str,
-                'EPSON_LS3_B401S': Gym.Configuration.Environment.EPSON_LS3_B401S_Env_ID_0_Str
+                'Universal_Robots_UR3': PyBullet.Configuration.Environment.Universal_Robots_UR3_Env_ID_0_Str,
+                'ABB_IRB_120': PyBullet.Configuration.Environment.ABB_IRB_120_Env_ID_0_Str,
+                'ABB_IRB_120_L_Ax': PyBullet.Configuration.Environment.ABB_IRB_120_L_Ax_Env_ID_0_Str,
+                'ABB_IRB_14000_R': PyBullet.Configuration.Environment.ABB_IRB_14000_R_Env_ID_0_Str,
+                'ABB_IRB_14000_L': PyBullet.Configuration.Environment.ABB_IRB_14000_L_Env_ID_0_Str,
+                'EPSON_LS3_B401S': PyBullet.Configuration.Environment.EPSON_LS3_B401S_Env_ID_0_Str
             }[name]
         else:
             return {
-                'Universal_Robots_UR3': Gym.Configuration.Environment.Universal_Robots_UR3_Env_ID_1_Str,
-                'ABB_IRB_120': Gym.Configuration.Environment.ABB_IRB_120_Env_ID_1_Str,
-                'ABB_IRB_120_L_Ax': Gym.Configuration.Environment.ABB_IRB_120_L_Ax_Env_ID_1_Str,
-                'ABB_IRB_14000_R': Gym.Configuration.Environment.ABB_IRB_14000_R_Env_ID_1_Str,
-                'ABB_IRB_14000_L': Gym.Configuration.Environment.ABB_IRB_14000_L_Env_ID_1_Str,
-                'EPSON_LS3_B401S': Gym.Configuration.Environment.EPSON_LS3_B401S_Env_ID_1_Str
+                'Universal_Robots_UR3': PyBullet.Configuration.Environment.Universal_Robots_UR3_Env_ID_1_Str,
+                'ABB_IRB_120': PyBullet.Configuration.Environment.ABB_IRB_120_Env_ID_1_Str,
+                'ABB_IRB_120_L_Ax': PyBullet.Configuration.Environment.ABB_IRB_120_L_Ax_Env_ID_1_Str,
+                'ABB_IRB_14000_R': PyBullet.Configuration.Environment.ABB_IRB_14000_R_Env_ID_1_Str,
+                'ABB_IRB_14000_L': PyBullet.Configuration.Environment.ABB_IRB_14000_L_Env_ID_1_Str,
+                'EPSON_LS3_B401S': PyBullet.Configuration.Environment.EPSON_LS3_B401S_Env_ID_1_Str
             }[name]
     
     except AssertionError as error:

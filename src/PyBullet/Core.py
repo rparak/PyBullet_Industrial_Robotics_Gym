@@ -52,9 +52,9 @@ from RoLE.Primitives.Core import Box_Cls, Point_Cls
 from RoLE.Collider.Utilities import Get_Min_Max
 #       ../RoLE/Primitives/Core
 from RoLE.Collider.Core import AABB_Cls
-#   Gym
-#       ../Gym/Utilities
-import Gym.Utilities
+#   PyBullet
+#       ../PyBullet/Utilities
+import PyBullet.Utilities
 
 """
 Description:
@@ -177,12 +177,12 @@ class Robot_Cls(object):
             pb.changeDynamics(self.__robot_id_ghost, linkIndex=i, linearDamping=0, angularDamping=0, jointDamping=0, mass=0)
 
         # Obtain the structure of the main parameters of the environment for the defined robotic arm.
-        self.__Env_Structure = Gym.Utilities.Get_Environment_Structure(self.__Robot_Parameters_Str.Name, properties['Env_ID'])
+        self.__Env_Structure = PyBullet.Utilities.Get_Environment_Structure(self.__Robot_Parameters_Str.Name, properties['Env_ID'])
         #   Add the cube of the search (configuration) space and get the vertices of the defined cube.
-        self.__vertices_C_search = Gym.Utilities.Add_Wireframe_Cuboid(self.__Env_Structure.C.Search.T, self.__Env_Structure.C.Search.Size, 
+        self.__vertices_C_search = PyBullet.Utilities.Add_Wireframe_Cuboid(self.__Env_Structure.C.Search.T, self.__Env_Structure.C.Search.Size, 
                                                                       self.__Env_Structure.C.Search.Color, 1.0)
         #   Add the cube of the target (configuration) space and get the vertices of the defined cube.
-        self.__vertices_C_target = Gym.Utilities.Add_Wireframe_Cuboid(self.__Env_Structure.C.Target.T, self.__Env_Structure.C.Target.Size, 
+        self.__vertices_C_target = PyBullet.Utilities.Add_Wireframe_Cuboid(self.__Env_Structure.C.Target.T, self.__Env_Structure.C.Target.Size, 
                                                                       self.__Env_Structure.C.Target.Color, 1.0)
         
         # Represent the search (configuration) space as Axis-aligned Bounding Boxes (AABB).
@@ -193,7 +193,7 @@ class Robot_Cls(object):
         self.__P_EE = Point_Cls([0.0, 0.0, 0.0])
 
         # Get the home absolute joint positions of a specific environment for a defined robotic arm.
-        Robot_Parameters_Str.Theta.Home = Gym.Utilities.Get_Robot_Structure_Theta_Home(self.__Robot_Parameters_Str.Name, properties['Env_ID'])
+        Robot_Parameters_Str.Theta.Home = PyBullet.Utilities.Get_Robot_Structure_Theta_Home(self.__Robot_Parameters_Str.Name, properties['Env_ID'])
 
         # Get the homogeneous transformation matrix of the robot end-effector in the 'Home' position.
         T_Home = Kinematics.Forward_Kinematics(self.__Robot_Parameters_Str.Theta.Home, 'Fast', 
@@ -206,7 +206,7 @@ class Robot_Cls(object):
             self.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Primitives/{self.__Env_Structure.Collision_Object.Type}/{self.__Env_Structure.Collision_Object.Type}.urdf', 
                                      f'{self.__Env_Structure.Collision_Object.Type}_Collision', self.__Env_Structure.Collision_Object.T, self.__Env_Structure.Collision_Object.Color,
                                      self.__Env_Structure.Collision_Object.Scale, True)
-            _ = Gym.Utilities.Add_Wireframe_Cuboid(self.__Env_Structure.Collision_Object.T, 3 * [self.__Env_Structure.Collision_Object.Scale * 2.0], 
+            _ = PyBullet.Utilities.Add_Wireframe_Cuboid(self.__Env_Structure.Collision_Object.T, 3 * [self.__Env_Structure.Collision_Object.Scale * 2.0], 
                                                    self.__Env_Structure.Collision_Object.Color[0:3], 1.0)
 
     def __Set_Env_Parameters(self, enable_gui: int, camera_parameters: tp.Dict) -> None:

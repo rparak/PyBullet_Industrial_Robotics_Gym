@@ -41,7 +41,7 @@ def main():
 
     # Initialization of the class to work with a robotic arm object in a PyBullet environment.
     PyBullet_Robot_Cls = PyBullet.Core.Robot_Cls(Robot_Str, f'{CONST_PROJECT_FOLDER}/URDFs/Robots/{Robot_Str.Name}/{Robot_Str.Name}.urdf', 
-                                            CONST_PYBULLET_ENV_PROPERTIES)
+                                                 CONST_PYBULLET_ENV_PROPERTIES)
 
     # Reset the absolute position of the robot joints to the 'Home'.
     PyBullet_Robot_Cls.Reset('Home')

@@ -34,7 +34,7 @@ import typing as tp
 import RoLE.Collider.Utilities as Utilities
 #  ../RoLE/Primitives/Core
 import RoLE.Primitives.Core as Primitives
-#  ../Lib/Transformation/Core
+#  ../RoLE/Transformation/Core
 from RoLE.Transformation.Core import Homogeneous_Transformation_Matrix_Cls as HTM_Cls, Vector3_Cls, Get_Matrix_Identity
 #   ../RoLE/Transformation/Utilities/Mathematics
 import RoLE.Transformation.Utilities.Mathematics as Mathematics

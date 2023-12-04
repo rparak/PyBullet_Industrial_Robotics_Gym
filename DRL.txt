@@ -3,3 +3,8 @@
 # DRL methods: 
 #   DDPG+HER, TD3+HER: Off-Policy DRL
 #   PPO, TRPO: On-Policy DRL
+
+conda install -c conda-forge tensorboard
+https://stable-baselines3.readthedocs.io/en/master/guide/tensorboard.html
+
+https://colab.research.google.com/github/huggingface/deep-rl-class/blob/main/notebooks/unit6/unit6.ipynb#scrollTo=-UnlKLmpg80p

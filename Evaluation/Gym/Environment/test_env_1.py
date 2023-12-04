@@ -29,16 +29,12 @@ def main():
     # ..
     observations, informations = gym_environment.reset()
 
-    # ...
-    for _ in range(1000):
-        # ...
-        action = gym_environment.action_space.sample()
-
-        # ...
+    successful = False
+    while not successful:
+        current_position = observations['p'][0:3]
+        desired_position = observations['p_1'][0:3]
+        action = 5.0 * (desired_position - current_position)
         observations, reward, successful, warning, informations = gym_environment.step(action)
-
-        if successful == True or warning == True:
-            observations, informations = gym_environment.reset()
 
     gym_environment.close()
 

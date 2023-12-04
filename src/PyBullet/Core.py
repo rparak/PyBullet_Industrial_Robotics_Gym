@@ -509,7 +509,6 @@ class Robot_Cls(object):
             if visibility == True:
                 # Removal of external objects corresponding to a random point.
                 self.Remove_External_Object('T_EE_Rand_Viewpoint')
-                self.Remove_External_Object('T_EE_Rand_Tolerance')
                 
                 # Adding external objects corresponding to a random point.
                 self.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'T_EE_Rand_Viewpoint', T,

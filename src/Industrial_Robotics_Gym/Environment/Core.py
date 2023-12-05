@@ -102,11 +102,10 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         (successful, theta) = self.__PyBullet_Robot_Cls.Get_Inverse_Kinematics_Solution(HTM_Cls(None, np.float32).Rotation(self.__q_0, 'QUATERNION').Translation(self.__p), 
                                                                                         self.__ik_properties, False)
         
-        if successful == True:
-            self.__PyBullet_Robot_Cls.Reset('Individual', theta)
+        self.__PyBullet_Robot_Cls.Reset('Individual', theta)
 
         # ...
-        truncated = False
+        truncated = not successful
 
         # ...
         reward = self.compute_reward(self.__p, self.__p_1)
@@ -129,18 +128,6 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
 
         # ...
         self.__p_1 = self.np_random.uniform(self.__min_vec3, self.__max_vec3).astype(np.float32)
-
-        # ...
-        self.__PyBullet_Robot_Cls.Remove_External_Object('T_EE_Rand_Viewpoint')
-        self.__PyBullet_Robot_Cls.Remove_External_Object('T_EE_Rand_Sphere')
-
-        # ...
-        self.__PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'T_EE_Rand_Viewpoint', 
-                                                      HTM_Cls(None, np.float32).Rotation(self.__q_0, 'QUATERNION').Translation(self.__p_1),
-                                                      None, 0.3, False)
-        self.__PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Primitives/Sphere/Sphere.urdf', 'T_EE_Rand_Sphere', 
-                                                      HTM_Cls(None, np.float32).Rotation(self.__q_0, 'QUATERNION').Translation(self.__p_1),
-                                                      [0.0, 1.0, 0.0, 0.25], self.__distance_threshold, False)
 
         # Reset the absolute position of the auxiliary robotic structure, which is represented 
         # as a 'ghost', to 'Home'.

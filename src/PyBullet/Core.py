@@ -537,6 +537,8 @@ class Robot_Cls(object):
         """
 
         alpha = 0.3 if visibility == True else 0.0
+        pb.setJointMotorControlArray(self.__robot_id_ghost, self.__theta_index, pb.POSITION_CONTROL, targetPositions=theta)
+
         for _, (th_i, th_index) in enumerate(zip(theta, self.__theta_index)):
             # Reset the state (position) of the joint.
             pb.resetJointState(self.__robot_id_ghost, th_index, th_i) 

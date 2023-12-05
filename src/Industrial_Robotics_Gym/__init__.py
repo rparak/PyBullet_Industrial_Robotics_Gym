@@ -25,6 +25,6 @@ gymnasium.envs.registration.register(
     kwargs={'mode': 'Default',
             'Robot_Str': Parameters.Universal_Robots_UR3_Str,
             'reward_type': 'Dense', 
-            'distance_threshold': 0.01},
+            'distance_threshold': 0.05},
     max_episode_steps=100,
 )

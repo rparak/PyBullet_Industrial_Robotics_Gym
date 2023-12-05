@@ -14,6 +14,8 @@ import RoLE.Parameters.Robot as Parameters
 import RoLE.Kinematics.Core as Kinematics
 #       ../RoLE/Transformation/Core
 from RoLE.Transformation.Core import Homogeneous_Transformation_Matrix_Cls as HTM_Cls
+#       ../RoLE/Collider/Utilities
+from RoLE.Collider.Utilities import Get_Min_Max
 #   PyBullet
 #       ../PyBullet/Core
 import PyBullet.Core
@@ -35,12 +37,12 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
 
         # ...
         self.action_space = gym.spaces.Box(-1.0, 1.0, shape=(3, ), dtype=np.float32)
-        self.observation_space = gym.spaces.Dict({'p_0': gym.spaces.Box(-10.0, 10.0, shape=(3, ), dtype=np.float32),
-                                                  'p_1': gym.spaces.Box(-10.0, 10.0, shape=(3, ), dtype=np.float32),
-                                                  'p': gym.spaces.Box(-10.0, 10.0, shape=(3, ), dtype=np.float32)})
+        self.observation_space = gym.spaces.Dict({'observation': gym.spaces.Box(-10.0, 10.0, shape=(3, ), dtype=np.float32),
+                                                  'achieved_goal': gym.spaces.Box(-10.0, 10.0, shape=(3, ), dtype=np.float32),
+                                                  'desired_goal': gym.spaces.Box(-10.0, 10.0, shape=(3, ), dtype=np.float32)})
 
         # ...
-        self.__T_1 = None; self.__T = None
+        self.__p_1 = None; self.__p = None
 
         # Numerical IK Parameters.
         #   The properties of the inverse kinematics solver.
@@ -71,62 +73,66 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         #   Get the translational and rotational part from the transformation matrix.
         self.__p_0 = self.__T_0.p.all(); self.__q_0 = self.__T_0.Get_Rotation('QUATERNION').all()
 
-    def __Calculate_Reward(self, T, T_1):
-        d = Mathematics.Euclidean_Norm((T_1.p - T.p).all())
+        # ...
+        vertices_C_target = self.__PyBullet_Robot_Cls.Get_Configuration_Space_Vertices('Target')
+
+        # Get the minimum and maximum X, Y, Z values of the input vertices.
+        (self.__min_vec3, self.__max_vec3) = Get_Min_Max(vertices_C_target)
+
+    def compute_reward(self, p, p_1, info = {}):
+        d = Mathematics.Euclidean_Norm(p - p_1)
         if self.__reward_type == 'Sparse':
             return -np.array(d > self.__distance_threshold, dtype=np.float32)
         else:
             return -d.astype(np.float32)
         
-    def __Is_Successful(self, T, T_1):
-        return (Mathematics.Euclidean_Norm((T_1.p - T.p).all()) < self.__distance_threshold).astype(dtype=bool)
+    def is_success(self, p, p_1):
+        return (Mathematics.Euclidean_Norm(p - p_1) < self.__distance_threshold).astype(dtype=bool)
 
     def step(self, action):
         # ...
-        p = np.array(self.__T.p.all(), dtype=np.float32) + action * self.__distance_threshold
-        #   ...
-        self.__T = HTM_Cls(None, np.float32).Rotation(self.__q_0, 'QUATERNION').Translation(p)
+        self.__p += action * np.float32(0.05)
         
         # Obtain the inverse kinematics (IK) solution of the robotic structure from the desired TCP (tool center point).
-        (successful, _) = self.__PyBullet_Robot_Cls.Get_Inverse_Kinematics_Solution(self.__T, self.__ik_properties, True)
+        (successful, _) = self.__PyBullet_Robot_Cls.Get_Inverse_Kinematics_Solution(HTM_Cls(None, np.float32).Rotation(self.__q_0, 'QUATERNION').Translation(self.__p), 
+                                                                                    self.__ik_properties, True)
 
         # ...
         truncated = not successful
 
         # ...
-        reward = self.__Calculate_Reward(self.__T, self.__T_1)
+        reward = self.compute_reward(self.__p, self.__p_1)
 
         # ...
-        terminated = self.__Is_Successful(self.__T, self.__T_1)
+        terminated = self.is_success(self.__p, self.__p_1)
 
-        return ({'p_0': np.array(self.__T_0.p.all(), dtype=np.float32),
-                 'p_1': np.array(self.__T_1.p.all(), dtype=np.float32),
-                 'p': np.array(self.__T.p.all(), dtype=np.float32)}, 
+        return ({'observation': self.__p_0.astype('float32'),
+                 'achieved_goal': self.__p.astype('float32'),
+                 'desired_goal': self.__p_1.astype('float32')}, 
                  reward,
                  terminated,
                  truncated,
-                {'is_success': self.__Is_Successful(self.__T, self.__T_1)})
+                {'is_success': self.is_success(self.__p, self.__p_1)})
     
     def  reset(self, seed=None, options=None):
         # ...
         super().reset(seed=seed, options=options)
         self.np_random, seed = gym.utils.seeding.np_random(seed)
 
-        # Generate the homogeneous transformation matrix of a random end-effector position 
-        # within the defined configuration space.
-        self.__T_1 = self.__PyBullet_Robot_Cls.Generate_Random_T_EE('Target', True)
+        # ...
+        self.__p_1 = self.np_random.uniform(self.__min_vec3, self.__max_vec3)
 
         # Reset the absolute position of the auxiliary robotic structure, which is represented 
         # as a 'ghost', to 'Home'.
         self.__PyBullet_Robot_Cls.Reset(mode='Home', enable_ghost=True)
 
         # ...
-        self.__T = HTM_Cls(None, np.float32).Rotation(self.__q_0, 'QUATERNION').Translation(self.__p_0)
+        self.__p = self.__p_0.copy()
 
-        return ({'p_0': np.array(self.__T_0.p.all(), dtype=np.float32),
-                 'p_1': np.array(self.__T_1.p.all(), dtype=np.float32),
-                 'p': np.array(self.__T.p.all(), dtype=np.float32)}, 
-                {'is_success': self.__Is_Successful(self.__T, self.__T_1)})
+        return ({'observation': self.__p_0.astype('float32'),
+                 'achieved_goal': self.__p.astype('float32'),
+                 'desired_goal': self.__p_1.astype('float32')}, 
+                {'is_success': self.is_success(self.__p_0, self.__p_1)})
 
     def close(self):
         # Disconnect the created environment from a physical server.

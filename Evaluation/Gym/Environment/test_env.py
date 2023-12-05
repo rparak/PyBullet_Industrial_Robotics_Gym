@@ -24,7 +24,7 @@ CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 
 def main():
     # ...
-    gym_environment = gym.make('IndustrialRoboticsReach-v0', mode='Default', Robot_Str=CONST_ROBOT_TYPE, reward_type='Dense', distance_threshold=0.04)
+    gym_environment = gym.make('IndustrialRoboticsReach-v0', mode='Default', Robot_Str=CONST_ROBOT_TYPE, reward_type='Sparse', distance_threshold=0.01)
 
     # ..
     observations, informations = gym_environment.reset()
@@ -39,7 +39,7 @@ def main():
 
         if terminated == True or truncated == True:
             if terminated == True:
-                print('Done!')
+                print('Done!'); print(reward)
                 break
             observations, informations = gym_environment.reset()
 

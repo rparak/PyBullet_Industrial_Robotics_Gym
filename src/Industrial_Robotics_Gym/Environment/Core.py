@@ -34,10 +34,10 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         self.__distance_threshold = distance_threshold
 
         # ...
-        self.action_space = gym.spaces.Box(-1.0, 1.0, shape=(3, ), dtype=np.float64)
-        self.observation_space = gym.spaces.Dict({'p_0': gym.spaces.Box(-10.0, 10.0, shape=(3, ), dtype=np.float64),
-                                                  'p_1': gym.spaces.Box(-10.0, 10.0, shape=(3, ), dtype=np.float64),
-                                                  'p': gym.spaces.Box(-10.0, 10.0, shape=(3, ), dtype=np.float64)})
+        self.action_space = gym.spaces.Box(-1.0, 1.0, shape=(3, ), dtype=np.float32)
+        self.observation_space = gym.spaces.Dict({'p_0': gym.spaces.Box(-10.0, 10.0, shape=(3, ), dtype=np.float32),
+                                                  'p_1': gym.spaces.Box(-10.0, 10.0, shape=(3, ), dtype=np.float32),
+                                                  'p': gym.spaces.Box(-10.0, 10.0, shape=(3, ), dtype=np.float32)})
 
         # ...
         self.__T_1 = None; self.__T = None
@@ -63,6 +63,9 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         self.__PyBullet_Robot_Cls = PyBullet.Core.Robot_Cls(Robot_Str, f'{CONST_PROJECT_FOLDER}/URDFs/Robots/{Robot_Str.Name}/{Robot_Str.Name}.urdf', 
                                                             pybullet_env_properties)
         
+        # Reset the absolute position of the robot joints to the 'Home'.
+        self.__PyBullet_Robot_Cls.Reset(mode='Home', enable_ghost=False)
+
         # Get the homogeneous transformation matrix of the robot end-effector in the 'Home' position.
         self.__T_0 = Kinematics.Forward_Kinematics(Robot_Str.Theta.Home, 'Fast', Robot_Str)[1]
         #   Get the translational and rotational part from the transformation matrix.
@@ -71,38 +74,38 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
     def __Calculate_Reward(self, T, T_1):
         d = Mathematics.Euclidean_Norm((T_1.p - T.p).all())
         if self.__reward_type == 'Sparse':
-            return -np.array(d > self.__distance_threshold, dtype=np.float64)
+            return -np.array(d > self.__distance_threshold, dtype=np.float32)
         else:
-            return -d.astype(np.float64)
+            return -d.astype(np.float32)
         
     def __Is_Successful(self, T, T_1):
-        return np.array(Mathematics.Euclidean_Norm((T_1.p - T.p).all()) < self.__distance_threshold, dtype=bool)
+        return (Mathematics.Euclidean_Norm((T_1.p - T.p).all()) < self.__distance_threshold).astype(dtype=bool)
 
     def step(self, action):
         # ...
-        p = np.array(self.__T.p.all(), dtype=np.float64) + action * self.__distance_threshold
+        p = np.array(self.__T.p.all(), dtype=np.float32) + action * self.__distance_threshold
         #   ...
-        self.__T = HTM_Cls(None, np.float64).Rotation(self.__q_0, 'QUATERNION').Translation(p)
+        self.__T = HTM_Cls(None, np.float32).Rotation(self.__q_0, 'QUATERNION').Translation(p)
         
         # Obtain the inverse kinematics (IK) solution of the robotic structure from the desired TCP (tool center point).
         (successful, _) = self.__PyBullet_Robot_Cls.Get_Inverse_Kinematics_Solution(self.__T, self.__ik_properties, True)
 
         # ...
-        warning = not successful
+        truncated = not successful
 
         # ...
         reward = self.__Calculate_Reward(self.__T, self.__T_1)
 
         # ...
-        successful = self.__Is_Successful(self.__T, self.__T_1)
+        terminated = self.__Is_Successful(self.__T, self.__T_1)
 
-        return ({'p_0': np.array(self.__T_0.p.all(), dtype=np.float64),
-                 'p_1': np.array(self.__T_1.p.all(), dtype=np.float64),
-                 'p': np.array(self.__T.p.all(), dtype=np.float64)}, 
+        return ({'p_0': np.array(self.__T_0.p.all(), dtype=np.float32),
+                 'p_1': np.array(self.__T_1.p.all(), dtype=np.float32),
+                 'p': np.array(self.__T.p.all(), dtype=np.float32)}, 
                  reward,
-                 successful, 
-                 warning,
-                {'is_successful': self.__Is_Successful(self.__T, self.__T_1)})
+                 terminated,
+                 truncated,
+                {'is_success': self.__Is_Successful(self.__T, self.__T_1)})
     
     def  reset(self, seed=None, options=None):
         # ...
@@ -113,16 +116,17 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         # within the defined configuration space.
         self.__T_1 = self.__PyBullet_Robot_Cls.Generate_Random_T_EE('Target', True)
 
-        # Reset the absolute position of the robot joints to the 'Home'.
-        self.__PyBullet_Robot_Cls.Reset('Home')
+        # Reset the absolute position of the auxiliary robotic structure, which is represented 
+        # as a 'ghost', to 'Home'.
+        self.__PyBullet_Robot_Cls.Reset(mode='Home', enable_ghost=True)
 
         # ...
-        self.__T = HTM_Cls(None, np.float64).Rotation(self.__q_0, 'QUATERNION').Translation(self.__p_0)
+        self.__T = HTM_Cls(None, np.float32).Rotation(self.__q_0, 'QUATERNION').Translation(self.__p_0)
 
-        return ({'p_0': np.array(self.__T_0.p.all(), dtype=np.float64),
-                 'p_1': np.array(self.__T_1.p.all(), dtype=np.float64),
-                 'p': np.array(self.__T.p.all(), dtype=np.float64)}, 
-                {'is_successful': self.__Is_Successful(self.__T, self.__T_1)})
+        return ({'p_0': np.array(self.__T_0.p.all(), dtype=np.float32),
+                 'p_1': np.array(self.__T_1.p.all(), dtype=np.float32),
+                 'p': np.array(self.__T.p.all(), dtype=np.float32)}, 
+                {'is_success': self.__Is_Successful(self.__T, self.__T_1)})
 
     def close(self):
         # Disconnect the created environment from a physical server.

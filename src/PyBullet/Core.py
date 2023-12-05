@@ -545,7 +545,7 @@ class Robot_Cls(object):
             #   Change the texture of the object.
             pb.changeVisualShape(self.__robot_id_ghost, linkIndex=th_index, rgbaColor=np.append([color], [alpha]))
     
-    def Reset(self, mode: str, theta: tp.Union[None, tp.List[float]] = None) -> bool:
+    def Reset(self, mode: str, theta: tp.Union[None, tp.List[float]] = None, enable_ghost: bool = False) -> bool:
         """
         Description:
             Function to reset the absolute position of the robot joints from the selected mode.
@@ -562,6 +562,7 @@ class Robot_Cls(object):
                                            mode.
                                             Note:
                                                 Where n is the number of joints.
+            (3) enable_ghost [bool]: Enable visibility of the auxiliary robotic structure, which is represented as a 'ghost'.
 
         Returns:
             (1) parameter [bool]: The result is 'True' if the robot is in the desired position,
@@ -569,7 +570,7 @@ class Robot_Cls(object):
         """
                 
         try:
-            assert mode in ['Zero', 'Home', 'Individual'] 
+            assert mode in ['Zero', 'Home', 'Individual']
 
             if mode == 'Individual':
                 assert self.__Robot_Parameters_Str.Theta.Zero.size == theta.size
@@ -578,14 +579,17 @@ class Robot_Cls(object):
             else:
                 theta_internal = self.Theta_0 if mode == 'Zero' else self.__Robot_Parameters_Str.Theta.Home
 
-            for i, (th_i, th_i_limit, th_index) in enumerate(zip(theta_internal, self.__Robot_Parameters_Str.Theta.Limit, 
-                                                                 self.__theta_index)):
-                if th_i_limit[0] <= th_i <= th_i_limit[1]:
-                    # Reset the state (position) of the joint.
-                    pb.resetJointState(self.__robot_id, th_index, th_i) 
-                else:
-                    print(f'[WARNING] The desired input joint {th_i} in index {i} is out of limit.')
-                    return False
+            if enable_ghost == True:
+                self.__Reset_Ghost_Structure(theta_internal, True, [0.70, 0.85, 0.60])
+            else:
+                for i, (th_i, th_i_limit, th_index) in enumerate(zip(theta_internal, self.__Robot_Parameters_Str.Theta.Limit, 
+                                                                     self.__theta_index)):
+                    if th_i_limit[0] <= th_i <= th_i_limit[1]:
+                        # Reset the state (position) of the joint.
+                        pb.resetJointState(self.__robot_id, th_index, th_i) 
+                    else:
+                        print(f'[WARNING] The desired input joint {th_i} in index {i} is out of limit.')
+                        return False
                 
             return True
 

@@ -24,18 +24,20 @@ CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 
 def main():
     # ...
-    gym_environment = gym.make('IndustrialRoboticsReach-v0', mode='Default', Robot_Str=CONST_ROBOT_TYPE, reward_type='Sparse', distance_threshold=0.05)
+    gym_environment = gym.make('IndustrialRoboticsReach-v0', mode='Default', Robot_Str=CONST_ROBOT_TYPE, reward_type='Dense', distance_threshold=0.05)
 
     # ..
     observations, informations = gym_environment.reset()
 
-    successful = False
-    while not successful:
+    terminated = False; i = 0
+    while not terminated:
         current_position = observations['p'][0:3]
         desired_position = observations['p_1'][0:3]
-        action = 5.0 * (desired_position - current_position)
-        observations, reward, successful, warning, informations = gym_environment.step(action)
+        action = desired_position - current_position
+        observations, reward, terminated, truncated, informations = gym_environment.step(action)
+        i += 1
 
+    print(i)
     gym_environment.close()
 
 if __name__ == '__main__':

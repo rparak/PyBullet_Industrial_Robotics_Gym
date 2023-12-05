@@ -24,7 +24,8 @@ CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 
 def main():
     # ...
-    gym_environment = gym.make('IndustrialRoboticsReach-v0', mode='Default', Robot_Str=CONST_ROBOT_TYPE, reward_type='Sparse', distance_threshold=0.01)
+    gym_environment = gym.make('IndustrialRoboticsReach-v0', mode='Default', Robot_Str=CONST_ROBOT_TYPE, reward_type='Dense', 
+                               action_step_factor=0.03, distance_threshold=0.015)
 
     # ..
     observations, informations = gym_environment.reset()

@@ -28,18 +28,19 @@ Description:
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 
 class Industrial_Robotics_Gym_Env_Cls(gym.Env):
-    def __init__(self, mode='Default', Robot_Str=Parameters.Universal_Robots_UR3_Str, reward_type='Dense', distance_threshold=0.01):
+    def __init__(self, mode='Default', Robot_Str=Parameters.Universal_Robots_UR3_Str, reward_type='Dense', action_step_factor=0.05, distance_threshold=0.05):
         super(Industrial_Robotics_Gym_Env_Cls, self).__init__()
 
         # ...
         self.__reward_type = reward_type
-        self.__distance_threshold = distance_threshold
+        self.__distance_threshold = np.float32(distance_threshold)
+        self.__action_step_factor = np.float32(action_step_factor)
 
         # ...
         self.action_space = gym.spaces.Box(-1.0, 1.0, shape=(3, ), dtype=np.float32)
-        self.observation_space = gym.spaces.Dict({'observation': gym.spaces.Box(-10.0, 10.0, shape=(3, ), dtype=np.float32),
-                                                  'achieved_goal': gym.spaces.Box(-10.0, 10.0, shape=(3, ), dtype=np.float32),
-                                                  'desired_goal': gym.spaces.Box(-10.0, 10.0, shape=(3, ), dtype=np.float32)})
+        self.observation_space = gym.spaces.Dict({'observation': gym.spaces.Box(-1.0, 1.0, shape=(3, ), dtype=np.float32),
+                                                  'achieved_goal': gym.spaces.Box(-1.0, 1.0, shape=(3, ), dtype=np.float32),
+                                                  'desired_goal': gym.spaces.Box(-1.0, 1.0, shape=(3, ), dtype=np.float32)})
 
         # ...
         self.__p_1 = None; self.__p = None
@@ -91,14 +92,21 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
 
     def step(self, action):
         # ...
-        self.__p += action * np.float32(0.05)
+        action = action.copy()
+        action = np.clip(action, self.action_space.low, self.action_space.high)
+    
+        # ...
+        self.__p = self.__PyBullet_Robot_Cls.T_EE.p.all().copy() + action[:3] * self.__action_step_factor
         
         # Obtain the inverse kinematics (IK) solution of the robotic structure from the desired TCP (tool center point).
-        (successful, _) = self.__PyBullet_Robot_Cls.Get_Inverse_Kinematics_Solution(HTM_Cls(None, np.float32).Rotation(self.__q_0, 'QUATERNION').Translation(self.__p), 
-                                                                                    self.__ik_properties, True)
+        (successful, theta) = self.__PyBullet_Robot_Cls.Get_Inverse_Kinematics_Solution(HTM_Cls(None, np.float32).Rotation(self.__q_0, 'QUATERNION').Translation(self.__p), 
+                                                                                        self.__ik_properties, False)
+        
+        if successful == True:
+            self.__PyBullet_Robot_Cls.Reset('Individual', theta)
 
         # ...
-        truncated = not successful
+        truncated = False
 
         # ...
         reward = self.compute_reward(self.__p, self.__p_1)
@@ -106,9 +114,9 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         # ...
         terminated = self.is_success(self.__p, self.__p_1)
 
-        return ({'observation': self.__p_0.astype('float32'),
-                 'achieved_goal': self.__p.astype('float32'),
-                 'desired_goal': self.__p_1.astype('float32')}, 
+        return ({'observation': self.__p.astype(np.float32),
+                 'achieved_goal': self.__p.astype(np.float32),
+                 'desired_goal': self.__p_1.astype(np.float32)}, 
                  reward,
                  terminated,
                  truncated,
@@ -120,18 +128,30 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         self.np_random, seed = gym.utils.seeding.np_random(seed)
 
         # ...
-        self.__p_1 = self.np_random.uniform(self.__min_vec3, self.__max_vec3)
+        self.__p_1 = self.np_random.uniform(self.__min_vec3, self.__max_vec3).astype(np.float32)
+
+        # ...
+        self.__PyBullet_Robot_Cls.Remove_External_Object('T_EE_Rand_Viewpoint')
+        self.__PyBullet_Robot_Cls.Remove_External_Object('T_EE_Rand_Sphere')
+
+        # ...
+        self.__PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'T_EE_Rand_Viewpoint', 
+                                                      HTM_Cls(None, np.float32).Rotation(self.__q_0, 'QUATERNION').Translation(self.__p_1),
+                                                      None, 0.3, False)
+        self.__PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Primitives/Sphere/Sphere.urdf', 'T_EE_Rand_Sphere', 
+                                                      HTM_Cls(None, np.float32).Rotation(self.__q_0, 'QUATERNION').Translation(self.__p_1),
+                                                      [0.0, 1.0, 0.0, 0.25], self.__distance_threshold, False)
 
         # Reset the absolute position of the auxiliary robotic structure, which is represented 
         # as a 'ghost', to 'Home'.
-        self.__PyBullet_Robot_Cls.Reset(mode='Home', enable_ghost=True)
+        self.__PyBullet_Robot_Cls.Reset(mode='Home', enable_ghost=False)
 
         # ...
-        self.__p = self.__p_0.copy()
+        self.__p = self.__p_0.copy().astype(np.float32)
 
-        return ({'observation': self.__p_0.astype('float32'),
-                 'achieved_goal': self.__p.astype('float32'),
-                 'desired_goal': self.__p_1.astype('float32')}, 
+        return ({'observation': self.__p,
+                 'achieved_goal': self.__p,
+                 'desired_goal': self.__p_1}, 
                 {'is_success': self.is_success(self.__p_0, self.__p_1)})
 
     def close(self):

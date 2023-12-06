@@ -15,6 +15,7 @@ import stable_baselines3.common.noise
 import stable_baselines3.common.logger
 import stable_baselines3.common.monitor
 import stable_baselines3.common.env_util
+import stable_baselines3.common.vec_env
 
 # Custom Lib.:
 #   Robotics Library for Everyone (RoLE)
@@ -40,17 +41,21 @@ def main():
     # Initialization of the structure of the main parameters of the robot.
     Robot_Str = CONST_ROBOT_TYPE
 
-    tmp_path = "./DDPG_results"
+    tmp_path = "./PPO"
     # set up logger
     new_logger = stable_baselines3.common.logger.configure(tmp_path, ['stdout', 'csv'])
 
     # ...
-    env = stable_baselines3.common.monitor.Monitor(gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID(Robot_Str.Name, CONST_MODE)), tmp_path)
-    #env = stable_baselines3.common.vec_env.DummyVecEnv([lambda: env])
+    env = gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID(Robot_Str.Name, CONST_MODE))
+    env = stable_baselines3.common.vec_env.DummyVecEnv([lambda: env])
 
     t_0 = time.time()
+
     model = stable_baselines3.PPO(policy="MultiInputPolicy", env=env, n_steps=512, n_epochs=10, gamma=0.99, gae_lambda=0.95, learning_rate=0.0003, device='cuda', 
                                   batch_size=256, policy_kwargs=dict(net_arch=dict(pi=[256, 256], vf=[256, 256])), verbose=1)
+
+    #model = stable_baselines3.A2C("MultiInputPolicy", env, verbose=1)
+
     model.set_logger(new_logger)
     model.learn(total_timesteps=100000, log_interval=10)
     model.save('model')

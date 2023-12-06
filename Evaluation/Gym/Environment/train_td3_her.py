@@ -47,13 +47,15 @@ def main():
     env = stable_baselines3.common.monitor.Monitor(gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID(Robot_Str.Name, CONST_MODE)), tmp_path)
     env = stable_baselines3.common.vec_env.DummyVecEnv([lambda: env])
 
-    # The noise objects for DDPG
+    # ...
     n_actions = env.action_space.shape[-1]
     action_noise = stable_baselines3.common.noise.NormalActionNoise(mean=np.zeros(n_actions), sigma=0.1*np.ones(n_actions))
 
     t_0 = time.time()
-    model = stable_baselines3.DDPG(policy="MultiInputPolicy", env=env, gamma=0.95, learning_rate=0.001, action_noise=action_noise, device='cuda', 
-                                   batch_size=256, policy_kwargs=dict(net_arch=[256, 256, 256]), verbose=1)
+
+    model = stable_baselines3.TD3(policy="MultiInputPolicy", env=env, replay_buffer_class=stable_baselines3.HerReplayBuffer, gamma=0.95, learning_rate=0.001, action_noise=action_noise, device='cuda', 
+                                  batch_size=256, replay_buffer_kwargs={'goal_selection_strategy' : 'future', 'n_sampled_goal' : 4}, policy_kwargs={'net_arch' : [256, 256, 256], 'n_critics' : 2}, verbose=1)
+
     model.set_logger(new_logger)
     model.learn(total_timesteps=100000, log_interval=10)
     model.save('model')

@@ -1,5 +1,7 @@
 # Numpy (Array computing) [pip3 install numpy]
 import numpy as np
+# Typing (Support for type hints)
+import typing as tp
 # OS (Operating system interfaces)
 import os
 # Gymnasium (Developing and comparing reinforcement learning algorithms) [pip3 install gymnasium]
@@ -86,15 +88,15 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         self.__PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Primitives/Sphere/Sphere.urdf', 'T_EE_Rand_Sphere', HTM_Cls(None, np.float32),
                                                       [0.0, 1.0, 0.0, 0.2], self.__distance_threshold, False)
 
-    def compute_reward(self, p, p_1, info = {}):
+    def compute_reward(self, p, p_1, info: tp.Dict[str, tp.Any]) -> np.ndarray:
         d = Mathematics.Euclidean_Norm(p - p_1)
         if self.__reward_type == 'Sparse':
             return -np.array(d > self.__distance_threshold, dtype=np.float32)
         else:
-            return -d.astype(np.float32)
+            return -np.array(d, dtype=np.float32)
         
     def is_success(self, p, p_1):
-        return (Mathematics.Euclidean_Norm(p - p_1) < self.__distance_threshold).astype(dtype=bool)
+        return np.array(Mathematics.Euclidean_Norm(p - p_1) < self.__distance_threshold, dtype=bool)
 
     def step(self, action):
         # ...
@@ -114,20 +116,23 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         truncated = not successful
 
         # ...
-        reward = self.compute_reward(self.__p, self.__p_1)
+        terminated = self.is_success(self.__p, self.__p_1)
 
         # ...
-        terminated = self.is_success(self.__p, self.__p_1)
+        info = {'is_success': terminated}
+
+        # ...
+        reward = self.compute_reward(self.__p, self.__p_1, info)
 
         return ({'observation': self.__p.astype(np.float32),
                  'achieved_goal': self.__p.astype(np.float32),
                  'desired_goal': self.__p_1.astype(np.float32)}, 
-                 reward,
-                 terminated,
-                 truncated,
-                {'is_success': self.is_success(self.__p, self.__p_1)})
+                reward,
+                terminated,
+                truncated,
+                info)
     
-    def  reset(self, seed=None, options=None):
+    def reset(self, seed=None, options=None):
         # ...
         super().reset(seed=seed, options=options)
         self.np_random, seed = gym.utils.seeding.np_random(seed)

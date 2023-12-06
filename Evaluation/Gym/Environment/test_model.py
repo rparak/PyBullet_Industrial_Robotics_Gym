@@ -29,20 +29,15 @@ Description:
 # Set the structure of the main parameters of the robot.
 CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 
-env = gym.make('IndustrialRoboticsReach-v0', mode='Default', Robot_Str=CONST_ROBOT_TYPE, reward_type='Dense', distance_threshold=0.05)
-
-# Load the saved statistics
-eval_env = DummyVecEnv([lambda: env])
-eval_env = VecNormalize.load("./logs/rl_model_vecnormalize_214000_steps.pkl", eval_env)
+env = gym.make('IndustrialRoboticsReach-v0', mode='Default', Robot_Str=CONST_ROBOT_TYPE, reward_type='Dense', 
+               action_step_factor=0.04, distance_threshold=0.02)
 
 #  do not update them at test time
-eval_env.training = False
-# reward normalization is not needed at test time
-eval_env.norm_reward = False
+#env.training = False
 
 # Load the agent
-model = DDPG.load('./logs/rl_model_214000_steps')
+model = DDPG.load('model')
 
-mean_reward, std_reward = evaluate_policy(model, eval_env)
+mean_reward, std_reward = evaluate_policy(model, env)
 
-#print(f"Mean reward = {mean_reward:.2f} +/- {std_reward:.2f}")
+print(f"Mean reward = {mean_reward:.2f} +/- {std_reward:.2f}")

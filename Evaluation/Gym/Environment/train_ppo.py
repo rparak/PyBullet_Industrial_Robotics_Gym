@@ -14,7 +14,8 @@ import stable_baselines3
 import stable_baselines3.common.noise
 import stable_baselines3.common.logger
 import stable_baselines3.common.monitor
-import stable_baselines3.common.vec_env
+import stable_baselines3.common.env_util
+
 # Custom Lib.:
 #   Robotics Library for Everyone (RoLE)
 #       ../RoLE/Parameters/Robot
@@ -45,15 +46,11 @@ def main():
 
     # ...
     env = stable_baselines3.common.monitor.Monitor(gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID(Robot_Str.Name, CONST_MODE)), tmp_path)
-    env = stable_baselines3.common.vec_env.DummyVecEnv([lambda: env])
-
-    # ...
-    n_actions = env.action_space.shape[-1]
-    action_noise = stable_baselines3.common.noise.NormalActionNoise(mean=np.zeros(n_actions), sigma=0.1*np.ones(n_actions))
+    #env = stable_baselines3.common.vec_env.DummyVecEnv([lambda: env])
 
     t_0 = time.time()
-    model = stable_baselines3.PPO(policy="MultiInputPolicy", env=env, gamma=0.99, gae_lambda=0.95, learning_rate=0.0003, action_noise=action_noise, device='cuda', 
-                                   batch_size=256, policy_kwargs=dict(net_arch=[256, 256, 256]), verbose=1)
+    model = stable_baselines3.PPO(policy="MultiInputPolicy", env=env, n_steps=512, n_epochs=10, gamma=0.99, gae_lambda=0.95, learning_rate=0.0003, device='cuda', 
+                                  batch_size=256, policy_kwargs=dict(net_arch=dict(pi=[256, 256], vf=[256, 256])), verbose=1)
     model.set_logger(new_logger)
     model.learn(total_timesteps=100000, log_interval=10)
     model.save('model')

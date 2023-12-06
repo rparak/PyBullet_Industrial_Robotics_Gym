@@ -435,6 +435,37 @@ class Robot_Cls(object):
             # transformation matrix.
             self.__Robot_Parameters_Str.Collider.External[name].Transformation(T)
 
+    def Transformation_External_Object(self, name: str, T: HTM_Cls, enable_collision: bool) -> None:
+        """
+        Description:
+            A function to transform external objects that have been added by the 'Add_External_Object' 
+            function into the PyBullet environment.
+
+        Args:
+            (1) name [string]: The name of the object.
+            (2) T [Matrix<float> 4x4]: Homogeneous transformation matrix of the object.
+            (3) enable_collision [bool]: Information on whether or not the object is to be exposed 
+                                         to collisions.
+        """
+
+        try:
+            assert name in self.__external_object.keys()
+
+            # Get the translational and rotational part from the transformation matrix.
+            p = T.p.all(); q = T.Get_Rotation('QUATERNION')
+
+            # Set the object position to the desired position defined by the function 
+            # input parameters.
+            pb.resetBasePositionAndOrientation(self.__external_object[name], p, [q.x, q.y, q.z, q.w])
+            
+            # Axis-aligned Bounding Boxe (AABB) transformation according to the input homogeneous 
+            # transformation matrix.
+            if enable_collision == True:
+                self.__Robot_Parameters_Str.Collider.External[name].Transformation(T)
+
+        except AssertionError as error:
+            print(f'[ERROR] Information: {error}')
+
     def Remove_External_Object(self, name: str) -> None:
         """
         Description:

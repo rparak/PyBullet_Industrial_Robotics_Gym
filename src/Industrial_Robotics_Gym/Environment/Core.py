@@ -47,7 +47,7 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
 
         # Numerical IK Parameters.
         #   The properties of the inverse kinematics solver.
-        self.__ik_properties = {'delta_time': 0.1, 'num_of_iteration': 500, 
+        self.__ik_properties = {'delta_time': 0.20, 'num_of_iteration': 500, 
                                 'tolerance': 1e-30}
 
         # ...
@@ -79,6 +79,12 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
 
         # Get the minimum and maximum X, Y, Z values of the input vertices.
         (self.__min_vec3, self.__max_vec3) = Get_Min_Max(vertices_C_target)
+
+        # ...
+        self.__PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'T_EE_Rand_Viewpoint', HTM_Cls(None, np.float32),
+                                                      None, 0.3, False)
+        self.__PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Primitives/Sphere/Sphere.urdf', 'T_EE_Rand_Sphere', HTM_Cls(None, np.float32),
+                                                      [0.0, 1.0, 0.0, 0.2], self.__distance_threshold, False)
 
     def compute_reward(self, p, p_1, info = {}):
         d = Mathematics.Euclidean_Norm(p - p_1)
@@ -132,6 +138,11 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         # Reset the absolute position of the auxiliary robotic structure, which is represented 
         # as a 'ghost', to 'Home'.
         self.__PyBullet_Robot_Cls.Reset(mode='Home', enable_ghost=False)
+
+        # ...
+        T_rand = HTM_Cls(None, np.float32).Rotation(self.__q_0, 'QUATERNION').Translation(self.__p_1)
+        self.__PyBullet_Robot_Cls.Transformation_External_Object('T_EE_Rand_Viewpoint', T_rand, False)
+        self.__PyBullet_Robot_Cls.Transformation_External_Object('T_EE_Rand_Sphere', T_rand, False)
 
         # ...
         self.__p = self.__p_0.copy().astype(np.float32)

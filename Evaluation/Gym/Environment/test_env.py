@@ -3,8 +3,6 @@ import sys
 #   Add access if it is not in the system path.
 if '../../../' + 'src' not in sys.path:
     sys.path.append('../../../' + 'src')
-# OS (Operating system interfaces)
-import os
 # Gymnasium (Developing and comparing reinforcement learning algorithms) [pip3 install gymnasium]
 import gymnasium as gym
 # Custom Lib.:
@@ -14,6 +12,8 @@ import RoLE.Parameters.Robot as Parameters
 #   Industrial_Robotics_Gym
 #       ../Industrial_Robotics_Gym
 import Industrial_Robotics_Gym
+#       ../Industrial_Robotics_Gym/Utilities
+import Industrial_Robotics_Gym.Utilities
 
 """
 Description:
@@ -21,11 +21,16 @@ Description:
 """
 # Set the structure of the main parameters of the robot.
 CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
+# ...
+CONST_MODE = 'Default'
 
 def main():
+
+    # Initialization of the structure of the main parameters of the robot.
+    Robot_Str = CONST_ROBOT_TYPE
+
     # ...
-    gym_environment = gym.make('IndustrialRoboticsReach-v0', mode='Default', Robot_Str=CONST_ROBOT_TYPE, reward_type='Dense', 
-                               action_step_factor=0.03, distance_threshold=0.015)
+    gym_environment = gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID(Robot_Str.Name, CONST_MODE))
 
     # ..
     observations, informations = gym_environment.reset()

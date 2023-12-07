@@ -32,7 +32,7 @@ Description:
 # Set the structure of the main parameters of the robot.
 CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 # ...
-CONST_MODE = 'Safe'
+CONST_MODE = 'Default'
 
 def main():
 

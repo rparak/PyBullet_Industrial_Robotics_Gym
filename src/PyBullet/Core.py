@@ -153,7 +153,7 @@ class Robot_Cls(object):
 
         # Load an auxiliary model of the robotic structure, which is represented as a 'ghost'.
         self.__robot_id_ghost = pb.loadURDF(urdf_file_path, p, [q.x, q.y, q.z, q.w], useMaximalCoordinates=False, 
-                                          useFixedBase=True)
+                                            useFixedBase=True)
         #   Disable collision of the robot base.
         pb.setCollisionFilterGroupMask(self.__robot_id_ghost, -1, 0, 0)
         #   Change the texture of the robot base.
@@ -207,7 +207,7 @@ class Robot_Cls(object):
                                      f'{self.__Env_Structure.Collision_Object.Type}_Collision', self.__Env_Structure.Collision_Object.T, self.__Env_Structure.Collision_Object.Color,
                                      self.__Env_Structure.Collision_Object.Scale, True)
             _ = PyBullet.Utilities.Add_Wireframe_Cuboid(self.__Env_Structure.Collision_Object.T, 3 * [self.__Env_Structure.Collision_Object.Scale * 2.0], 
-                                                   self.__Env_Structure.Collision_Object.Color[0:3], 1.0)
+                                                        self.__Env_Structure.Collision_Object.Color[0:3], 1.0)
 
     def __Set_Env_Parameters(self, enable_gui: int, camera_parameters: tp.Dict) -> None:
         """
@@ -297,6 +297,15 @@ class Robot_Cls(object):
         return theta_out
     
     @property
+    def Theta_v(self) -> tp.List[float]:
+        theta_v_out = np.zeros(self.__Robot_Parameters_Str.Theta.Zero.size, 
+                               dtype=np.float64)
+        for i, th_index in enumerate(self.__theta_index):
+            theta_v_out[i] = pb.getJointState(self.__robot_id, th_index)[1]
+
+        return theta_v_out
+
+    @property
     def T_EE(self) -> tp.List[tp.List[float]]:
         """
         Description:
@@ -308,6 +317,24 @@ class Robot_Cls(object):
                 
         return Kinematics.Forward_Kinematics(self.Theta, 'Fast', self.__Robot_Parameters_Str)[1]
 
+    @property
+    def T_EE_v(self):
+        """
+        Description:
+            ...
+
+        Returns:
+            (1) paramter [Vector<float> 1x3]: 
+        """
+
+        # ...
+        J = Kinematics.Get_Geometric_Jacobian(self.Theta, self.__Robot_Parameters_Str)
+        #   ...
+        J_P = J[0:3, 0::]; J_O = J[3::, 0::]
+
+        return np.concatenate(((J_P @ self.Theta_v).flatten(), 
+                               (J_O @ self.Theta_v).flatten()))
+    
     def Get_Camera_Parameters(self) -> tp.Dict:
         """
         Description:

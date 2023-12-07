@@ -39,14 +39,18 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         self.__action_step_factor = np.float32(action_step_factor)
 
         # ...
-        self.action_space = gym.spaces.Box(-1.0, 1.0, shape=(3, ), dtype=np.float32)
-        self.observation_space = gym.spaces.Dict({'observation': gym.spaces.Box(-1.0, 1.0, shape=(3, ), dtype=np.float32),
-                                                  'achieved_goal': gym.spaces.Box(-1.0, 1.0, shape=(3, ), dtype=np.float32),
-                                                  'desired_goal': gym.spaces.Box(-1.0, 1.0, shape=(3, ), dtype=np.float32)})
+        self.__Set_Env_Parameters(mode, Robot_Str)
 
         # ...
-        self.__p_1 = None; self.__p = None
+        observation, _ = self.reset()
 
+        # ...
+        self.action_space = gym.spaces.Box(-1.0, 1.0, shape=(3, ), dtype=np.float32)
+        self.observation_space = gym.spaces.Dict({'observation': gym.spaces.Box(-1.0, 1.0, shape=observation['observation'].shape, dtype=np.float32),
+                                                  'achieved_goal': gym.spaces.Box(-1.0, 1.0, shape=observation['achieved_goal'].shape, dtype=np.float32),
+                                                  'desired_goal': gym.spaces.Box(-1.0, 1.0, shape=observation['desired_goal'].shape, dtype=np.float32)})
+
+    def __Set_Env_Parameters(self, mode, Robot_Str):
         # Numerical IK Parameters.
         #   The properties of the inverse kinematics solver.
         self.__ik_properties = {'delta_time': 0.20, 'num_of_iteration': 500, 
@@ -104,27 +108,30 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         action = np.clip(action, self.action_space.low, self.action_space.high)
     
         # ...
-        self.__p = self.__PyBullet_Robot_Cls.T_EE.p.all().copy() + action[:3] * self.__action_step_factor
+        self.__p = self.__PyBullet_Robot_Cls.T_EE.p.all().copy() + action * self.__action_step_factor
         
         # Obtain the inverse kinematics (IK) solution of the robotic structure from the desired TCP (tool center point).
         (successful, theta) = self.__PyBullet_Robot_Cls.Get_Inverse_Kinematics_Solution(HTM_Cls(None, np.float32).Rotation(self.__q_0, 'QUATERNION').Translation(self.__p), 
                                                                                         self.__ik_properties, False)
         
-        self.__PyBullet_Robot_Cls.Reset('Individual', theta)
+        self.__PyBullet_Robot_Cls.Set_Absolute_Joint_Position(theta, 100.0, 0.0, 0.1)
 
         # ...
         truncated = not successful
 
         # ...
-        terminated = self.is_success(self.__p, self.__p_1)
+        terminated = bool(self.is_success(self.__p, self.__p_1))
 
         # ...
         info = {'is_success': terminated}
 
         # ...
-        reward = self.compute_reward(self.__p, self.__p_1, info)
+        reward = float(self.compute_reward(self.__p, self.__p_1, info))
 
-        return ({'observation': self.__p.astype(np.float32),
+        # ...
+        observation = np.concatenate([self.__p, self.__PyBullet_Robot_Cls.T_EE_v[0:3]], dtype=np.float32)
+
+        return ({'observation': observation,
                  'achieved_goal': self.__p.astype(np.float32),
                  'desired_goal': self.__p_1.astype(np.float32)}, 
                 reward,
@@ -152,7 +159,10 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         # ...
         self.__p = self.__p_0.copy().astype(np.float32)
 
-        return ({'observation': self.__p,
+        # ...
+        observation = np.concatenate([self.__p, self.__PyBullet_Robot_Cls.T_EE_v[0:3]], dtype=np.float32)
+
+        return ({'observation': observation,
                  'achieved_goal': self.__p,
                  'desired_goal': self.__p_1}, 
                 {'is_success': self.is_success(self.__p_0, self.__p_1)})

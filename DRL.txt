@@ -1,8 +1,8 @@
 # Deep Reinforcement Learning (DRL) for the "Reach" task.
-# Rewards: Sparse and Dense  
+# Rewards: Sparse and Dense  -> Dense
 # DRL methods: 
-#   DDPG, TD3: Off-Policy DRL
-#   PPO, TRPO: On-Policy DRL
+#   DDPG, TD3, SAC: Off-Policy DLR
+#       + HER
 
 
 https://colab.research.google.com/github/huggingface/deep-rl-class/blob/main/notebooks/unit6/unit6.ipynb#scrollTo=-UnlKLmpg80p

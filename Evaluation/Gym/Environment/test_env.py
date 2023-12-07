@@ -36,7 +36,7 @@ def main():
     observations, informations = gym_environment.reset()
 
     # ...
-    for _ in range(1000):
+    for _ in range(10):
         # ...
         action = gym_environment.action_space.sample()
 
@@ -44,9 +44,6 @@ def main():
         observations, reward, terminated, truncated, informations = gym_environment.step(action)
 
         if terminated == True or truncated == True:
-            if terminated == True:
-                print('Done!'); print(reward)
-                break
             observations, informations = gym_environment.reset()
 
     gym_environment.close()

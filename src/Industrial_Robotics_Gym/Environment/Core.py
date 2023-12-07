@@ -30,11 +30,10 @@ Description:
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 
 class Industrial_Robotics_Gym_Env_Cls(gym.Env):
-    def __init__(self, mode='Default', Robot_Str=Parameters.Universal_Robots_UR3_Str, reward_type='Dense', action_step_factor=0.05, distance_threshold=0.05):
+    def __init__(self, mode='Default', Robot_Str=Parameters.Universal_Robots_UR3_Str, action_step_factor=0.05, distance_threshold=0.05):
         super(Industrial_Robotics_Gym_Env_Cls, self).__init__()
 
         # ...
-        self.__reward_type = reward_type
         self.__distance_threshold = np.float32(distance_threshold)
         self.__action_step_factor = np.float32(action_step_factor)
 
@@ -53,7 +52,7 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
     def __Set_Env_Parameters(self, mode, Robot_Str):
         # Numerical IK Parameters.
         #   The properties of the inverse kinematics solver.
-        self.__ik_properties = {'delta_time': 0.20, 'num_of_iteration': 500, 
+        self.__ik_properties = {'delta_time': 0.20, 'num_of_iteration': 100, 
                                 'tolerance': 1e-30}
 
         # ...
@@ -63,7 +62,7 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
             external_base = None
 
         # The properties of the PyBullet environment. 
-        pybullet_env_properties = {'Enable_GUI': 0, 'fps': 100, 
+        pybullet_env_properties = {'Enable_GUI': 0, 'fps': 500, 
                                    'External_Base': external_base, 'Env_ID': 0 if mode == 'Default' else 1,
                                    'Camera': {'Yaw': 70.0, 'Pitch': -32.0, 'Distance': 1.3, 
                                               'Position': [0.05, -0.10, 0.06]}}
@@ -102,15 +101,10 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         return np.linalg.norm(x, axis=-1)
 
     def compute_reward(self, p: tp.List[float], p_1: tp.List[float], info: tp.Dict[str, tp.Any] = {}) -> tp.List[float]:
-        d = self.__Euclidean_Norm(p - p_1)
-        if self.__reward_type == 'Sparse':
-            return -np.array(d > self.__distance_threshold, dtype=np.float32)
-        else:
-            return -d.astype(np.float32)
+        return -self.__Euclidean_Norm(p - p_1).astype(np.float32)
     
     def is_success(self, p, p_1):
         return np.array(self.__Euclidean_Norm(p - p_1) < self.__distance_threshold, dtype=bool)
-    
     
     def step(self, action):
         # ...
@@ -124,6 +118,7 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         (successful, theta) = self.__PyBullet_Robot_Cls.Get_Inverse_Kinematics_Solution(HTM_Cls(None, np.float32).Rotation(self.__q_0, 'QUATERNION').Translation(self.__p), 
                                                                                         self.__ik_properties, False)
         
+        # ...
         self.__PyBullet_Robot_Cls.Set_Absolute_Joint_Position(theta, 100.0, 0.0, 0.1)
 
         # ...

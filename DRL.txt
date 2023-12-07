@@ -1,5 +1,5 @@
 # Deep Reinforcement Learning (DRL) for the "Reach" task.
-# Rewards: Sparse and Dense  -> Dense
+# Rewards: Sparse and Dense -> Dense
 # DRL methods: 
 #   DDPG, TD3, SAC: Off-Policy DLR
 #       + HER

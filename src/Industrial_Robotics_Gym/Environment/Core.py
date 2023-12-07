@@ -78,13 +78,15 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         # Get the homogeneous transformation matrix of the robot end-effector in the 'Home' position.
         self.__T_0 = Kinematics.Forward_Kinematics(Robot_Str.Theta.Home, 'Fast', Robot_Str)[1]
         #   Get the translational and rotational part from the transformation matrix.
-        self.__p_0 = self.__T_0.p.all(); self.__q_0 = self.__T_0.Get_Rotation('QUATERNION').all()
+        self.__p_0 = self.__T_0.p.all().astype(np.float32); self.__q_0 = self.__T_0.Get_Rotation('QUATERNION').all().astype(np.float32)
 
         # ...
         vertices_C_target = self.__PyBullet_Robot_Cls.Get_Configuration_Space_Vertices('Target')
 
         # Get the minimum and maximum X, Y, Z values of the input vertices.
-        (self.__min_vec3, self.__max_vec3) = Get_Min_Max(vertices_C_target)
+        (min_vec3, max_vec3) = Get_Min_Max(vertices_C_target)
+        self.__min_vec3 = min_vec3.astype(np.float32)
+        self.__max_vec3 = max_vec3.astype(np.float32)
 
         # ...
         self.__PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'T_EE_Rand_Viewpoint', HTM_Cls(None, np.float32),
@@ -92,23 +94,31 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         self.__PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Primitives/Sphere/Sphere.urdf', 'T_EE_Rand_Sphere', HTM_Cls(None, np.float32),
                                                       [0.0, 1.0, 0.0, 0.2], self.__distance_threshold, False)
 
-    def compute_reward(self, p, p_1, info: tp.Dict[str, tp.Any]) -> np.ndarray:
-        d = Mathematics.Euclidean_Norm(p - p_1)
+    @staticmethod
+    def __Euclidean_Norm(x: tp.List[float]) -> tp.List[float]:
+        """
+            ...
+        """
+        return np.linalg.norm(x, axis=-1)
+
+    def compute_reward(self, p: tp.List[float], p_1: tp.List[float], info: tp.Dict[str, tp.Any] = {}) -> tp.List[float]:
+        d = self.__Euclidean_Norm(p - p_1)
         if self.__reward_type == 'Sparse':
             return -np.array(d > self.__distance_threshold, dtype=np.float32)
         else:
-            return -np.array(d, dtype=np.float32)
-        
+            return -d.astype(np.float32)
+    
     def is_success(self, p, p_1):
-        return np.array(Mathematics.Euclidean_Norm(p - p_1) < self.__distance_threshold, dtype=bool)
-
+        return np.array(self.__Euclidean_Norm(p - p_1) < self.__distance_threshold, dtype=bool)
+    
+    
     def step(self, action):
         # ...
         action = action.copy()
         action = np.clip(action, self.action_space.low, self.action_space.high)
     
         # ...
-        self.__p = self.__PyBullet_Robot_Cls.T_EE.p.all().copy() + action * self.__action_step_factor
+        self.__p = self.__PyBullet_Robot_Cls.T_EE.p.all().copy().astype(np.float32) + action * self.__action_step_factor
         
         # Obtain the inverse kinematics (IK) solution of the robotic structure from the desired TCP (tool center point).
         (successful, theta) = self.__PyBullet_Robot_Cls.Get_Inverse_Kinematics_Solution(HTM_Cls(None, np.float32).Rotation(self.__q_0, 'QUATERNION').Translation(self.__p), 

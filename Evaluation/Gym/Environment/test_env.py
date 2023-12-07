@@ -15,6 +15,8 @@ import Industrial_Robotics_Gym
 #       ../Industrial_Robotics_Gym/Utilities
 import Industrial_Robotics_Gym.Utilities
 
+from stable_baselines3.common.env_checker import check_env
+
 """
 Description:
     Initialization of constants.
@@ -32,11 +34,31 @@ def main():
     # ...
     gym_environment = gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID(Robot_Str.Name, CONST_MODE))
 
+    check_env(gym_environment, warn=True)
+
+    """
     # ..
     observations, informations = gym_environment.reset()
 
     # ...
-    for _ in range(10):
+    action = gym_environment.action_space.sample()
+
+    # ...
+    print(action, type(action))
+    # ...
+    observations, reward, terminated, truncated, informations = gym_environment.step(action)
+    print(observations, type(observations))
+    print(reward, type(reward))
+    print(terminated, type(terminated))
+    print(truncated, type(truncated))
+    print(informations, type(informations))
+    
+    """
+
+    """
+    # ...
+    observations, informations = gym_environment.reset()
+    for _ in range(1000):
         # ...
         action = gym_environment.action_space.sample()
 
@@ -47,6 +69,7 @@ def main():
             observations, informations = gym_environment.reset()
 
     gym_environment.close()
+    """
 
 if __name__ == '__main__':
     main()

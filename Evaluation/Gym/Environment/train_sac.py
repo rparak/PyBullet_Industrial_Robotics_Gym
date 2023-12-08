@@ -39,12 +39,15 @@ def main():
     # Initialization of the structure of the main parameters of the robot.
     Robot_Str = CONST_ROBOT_TYPE
 
-    tmp_path = "./DDPG_results"
+    tmp_path = "./SAC"
     # set up logger
     new_logger = stable_baselines3.common.logger.configure(tmp_path, ['stdout', 'csv'])
 
     # ...
-    env = stable_baselines3.common.monitor.Monitor(gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID(Robot_Str.Name, CONST_MODE)), tmp_path)
+    env = gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID(Robot_Str.Name, CONST_MODE))
+
+    # ...
+    env = stable_baselines3.common.monitor.Monitor(env, tmp_path)
     env = stable_baselines3.common.vec_env.DummyVecEnv([lambda: env])
 
     t_0 = time.time()

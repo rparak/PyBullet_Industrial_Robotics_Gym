@@ -9,6 +9,8 @@ R = [[-75.0556,-142.5,59.1416,171.923,103.913,-13.9756],[67.7383,9E+9,9E+9,9E+9,
 
 https://robotics.farama.org/envs/fetch/reach/
 
+plot, train (+ HER), add static point ...
+
 ```
 Create:
 conda create -n env_robotics_gym python=3.9

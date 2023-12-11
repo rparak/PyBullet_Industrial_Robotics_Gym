@@ -35,6 +35,7 @@ for _, env_mode_i in enumerate(env_mode):
             kwargs={'mode': env_mode_i,
                     'Robot_Str': r_str_i,
                     'action_step_factor': 0.04,
-                    'distance_threshold': 0.01},
+                    'distance_threshold': 0.01,
+                    'target': None},
             max_episode_steps=100,
     )

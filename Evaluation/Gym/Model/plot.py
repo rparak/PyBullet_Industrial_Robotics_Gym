@@ -24,9 +24,9 @@ Description:
 CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 
 # ...
-data = read_csv('./DDPG_results/progress.csv')
+data = read_csv('./SAC/progress.csv')
 
-print(data)
+#print(data)
 #print(data['time/episodes'])
 
 fig, ax = plt.subplots()

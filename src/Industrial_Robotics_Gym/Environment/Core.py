@@ -16,11 +16,17 @@ import RoLE.Parameters.Robot as Parameters
 import RoLE.Kinematics.Core as Kinematics
 #       ../RoLE/Transformation/Core
 from RoLE.Transformation.Core import Homogeneous_Transformation_Matrix_Cls as HTM_Cls
+#       ../RoLE/Primitives/Core
+from RoLE.Primitives.Core import Box_Cls, Point_Cls
 #       ../RoLE/Collider/Utilities
 from RoLE.Collider.Utilities import Get_Min_Max
+#       ../RoLE/Primitives/Core
+from RoLE.Collider.Core import AABB_Cls
 #   PyBullet
 #       ../PyBullet/Core
 import PyBullet.Core
+#       ../PyBullet/Utilities
+import PyBullet.Utilities
 
 """
 Description:
@@ -30,12 +36,17 @@ Description:
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 
 class Industrial_Robotics_Gym_Env_Cls(gym.Env):
-    def __init__(self, mode='Default', Robot_Str=Parameters.Universal_Robots_UR3_Str, action_step_factor=0.05, distance_threshold=0.05):
+    def __init__(self, mode='Default', Robot_Str=Parameters.Universal_Robots_UR3_Str, action_step_factor=0.05, distance_threshold=0.05,
+                 target=None):
         super(Industrial_Robotics_Gym_Env_Cls, self).__init__()
 
         # ...
         self.__distance_threshold = np.float32(distance_threshold)
         self.__action_step_factor = np.float32(action_step_factor)
+        #   ...
+        if target is not None:
+            # Get the translational and rotational part from the transformation matrix.
+            pass
 
         # ...
         self.__Set_Env_Parameters(mode, Robot_Str)
@@ -52,7 +63,7 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
     def __Set_Env_Parameters(self, mode, Robot_Str):
         # Numerical IK Parameters.
         #   The properties of the inverse kinematics solver.
-        self.__ik_properties = {'delta_time': 0.20, 'num_of_iteration': 100, 
+        self.__ik_properties = {'delta_time': 0.2, 'num_of_iteration': 100, 
                                 'tolerance': 1e-30}
 
         # ...
@@ -62,7 +73,7 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
             external_base = None
 
         # The properties of the PyBullet environment. 
-        pybullet_env_properties = {'Enable_GUI': 0, 'fps': 100, 
+        pybullet_env_properties = {'Enable_GUI': 0, 'fps': 1000, 
                                    'External_Base': external_base, 'Env_ID': 0 if mode == 'Default' else 1,
                                    'Camera': {'Yaw': 70.0, 'Pitch': -32.0, 'Distance': 1.3, 
                                               'Position': [0.05, -0.10, 0.06]}}
@@ -78,6 +89,16 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         self.__T_0 = Kinematics.Forward_Kinematics(Robot_Str.Theta.Home, 'Fast', Robot_Str)[1]
         #   Get the translational and rotational part from the transformation matrix.
         self.__p_0 = self.__T_0.p.all().astype(np.float32); self.__q_0 = self.__T_0.Get_Rotation('QUATERNION').all().astype(np.float32)
+
+        # Obtain the structure of the main parameters of the environment for the defined robotic arm.
+        self.__Env_Structure = PyBullet.Utilities.Get_Environment_Structure(Robot_Str.Name, pybullet_env_properties['Env_ID'])
+
+        # Represent the search (configuration) space as Axis-aligned Bounding Boxes (AABB).
+        self.__AABB_C_search = AABB_Cls(Box_Cls([0.0, 0.0, 0.0], self.__Env_Structure.C.Search.Size))
+        self.__AABB_C_search.Transformation(self.__Env_Structure.C.Search.T)
+        #   Initialize a point that will be used to check whether the homogeneous transformation matrix 
+        #   of the end-effector is inside the search (configuration) space or not.
+        self.__P_EE = Point_Cls([0.0, 0.0, 0.0])
 
         # ...
         vertices_C_target = self.__PyBullet_Robot_Cls.Get_Configuration_Space_Vertices('Target')
@@ -95,9 +116,6 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
 
     @staticmethod
     def __Euclidean_Norm(x: tp.List[float]) -> tp.List[float]:
-        """
-            ...
-        """
         return np.linalg.norm(x, axis=-1)
 
     def compute_reward(self, p: tp.List[float], p_1: tp.List[float], info: tp.Dict[str, tp.Any] = {}) -> tp.List[float]:
@@ -112,17 +130,27 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         action = np.clip(action, self.action_space.low, self.action_space.high)
     
         # ...
-        self.__p = self.__PyBullet_Robot_Cls.T_EE.p.all().copy().astype(np.float32) + action * self.__action_step_factor
+        p_tmp = self.__PyBullet_Robot_Cls.T_EE.p.all().copy().astype(np.float32) + action * self.__action_step_factor
         
-        # Obtain the inverse kinematics (IK) solution of the robotic structure from the desired TCP (tool center point).
-        (successful, theta) = self.__PyBullet_Robot_Cls.Get_Inverse_Kinematics_Solution(HTM_Cls(None, np.float32).Rotation(self.__q_0, 'QUATERNION').Translation(self.__p), 
-                                                                                        self.__ik_properties, False)
-        
-        # ...
-        self.__PyBullet_Robot_Cls.Set_Absolute_Joint_Position(theta, 100.0, 0.0, 0.1)
+        # Transformation of point position in X, Y, Z axes.
+        self.__P_EE.Transformation(p_tmp)
+
+        # Determine if a given point is inside a search area.
+        if self.__AABB_C_search.Is_Point_Inside(self.__P_EE) == True:
+            # Obtain the inverse kinematics (IK) solution of the robotic structure from the desired TCP (tool center point).
+            (successful, theta) = self.__PyBullet_Robot_Cls.Get_Inverse_Kinematics_Solution(HTM_Cls(None, np.float32).Rotation(self.__q_0, 'QUATERNION').Translation(p_tmp), 
+                                                                                            self.__ik_properties, False)
+            
+            # ...
+            self.__PyBullet_Robot_Cls.Set_Absolute_Joint_Position(theta, {'force': 100.0, 't_0': 0.0, 't_1': 0.1})
+
+            # ...
+            truncated = not successful
+        else:
+            truncated = True
 
         # ...
-        truncated = not successful
+        self.__p = self.__PyBullet_Robot_Cls.T_EE.p.all().copy().astype(np.float32)
 
         # ...
         terminated = bool(self.is_success(self.__p, self.__p_1))
@@ -133,11 +161,14 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         # ...
         reward = float(self.compute_reward(self.__p, self.__p_1, info))
 
+        print(truncated, self.__Euclidean_Norm(p_tmp - self.__p))
+
         # ...
-        observation = np.concatenate([self.__p, self.__PyBullet_Robot_Cls.T_EE_v[0:3]], dtype=np.float32)
+        observation = np.concatenate([self.__p, 
+                                      self.__PyBullet_Robot_Cls.T_EE_v[0:3]], dtype=np.float32)
 
         return ({'observation': observation,
-                 'achieved_goal': self.__p.astype(np.float32),
+                 'achieved_goal': self.__p,
                  'desired_goal': self.__p_1.astype(np.float32)}, 
                 reward,
                 terminated,
@@ -162,10 +193,11 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         self.__PyBullet_Robot_Cls.Transformation_External_Object('T_EE_Rand_Sphere', T_rand, False)
 
         # ...
-        self.__p = self.__p_0.copy().astype(np.float32)
+        self.__p = self.__PyBullet_Robot_Cls.T_EE.p.all().copy().astype(np.float32)
 
         # ...
-        observation = np.concatenate([self.__p, self.__PyBullet_Robot_Cls.T_EE_v[0:3]], dtype=np.float32)
+        observation = np.concatenate([self.__p, 
+                                      self.__PyBullet_Robot_Cls.T_EE_v[0:3]], dtype=np.float32)
 
         return ({'observation': observation,
                  'achieved_goal': self.__p,

@@ -47,7 +47,7 @@ from RoLE.Transformation.Core import Homogeneous_Transformation_Matrix_Cls as HT
 #       ../RoLE/Kinematics/Core
 import RoLE.Kinematics.Core as Kinematics
 #       ../RoLE/Primitives/Core
-from RoLE.Primitives.Core import Box_Cls, Point_Cls
+from RoLE.Primitives.Core import Box_Cls
 #       ../RoLE/Collider/Utilities
 from RoLE.Collider.Utilities import Get_Min_Max
 #       ../RoLE/Primitives/Core
@@ -180,17 +180,10 @@ class Robot_Cls(object):
         self.__Env_Structure = PyBullet.Utilities.Get_Environment_Structure(self.__Robot_Parameters_Str.Name, properties['Env_ID'])
         #   Add the cube of the search (configuration) space and get the vertices of the defined cube.
         self.__vertices_C_search = PyBullet.Utilities.Add_Wireframe_Cuboid(self.__Env_Structure.C.Search.T, self.__Env_Structure.C.Search.Size, 
-                                                                      self.__Env_Structure.C.Search.Color, 1.0)
+                                                                           self.__Env_Structure.C.Search.Color, 1.0)
         #   Add the cube of the target (configuration) space and get the vertices of the defined cube.
         self.__vertices_C_target = PyBullet.Utilities.Add_Wireframe_Cuboid(self.__Env_Structure.C.Target.T, self.__Env_Structure.C.Target.Size, 
-                                                                      self.__Env_Structure.C.Target.Color, 1.0)
-        
-        # Represent the search (configuration) space as Axis-aligned Bounding Boxes (AABB).
-        self.__AABB_C_search = AABB_Cls(Box_Cls([0.0, 0.0, 0.0], self.__Env_Structure.C.Search.Size))
-        self.__AABB_C_search.Transformation(self.__Env_Structure.C.Search.T)
-        #   Initialize a point that will be used to check whether the homogeneous transformation matrix 
-        #   of the end-effector is inside the search (configuration) space or not.
-        self.__P_EE = Point_Cls([0.0, 0.0, 0.0])
+                                                                           self.__Env_Structure.C.Target.Color, 1.0)
 
         # Get the home absolute joint positions of a specific environment for a defined robotic arm.
         Robot_Parameters_Str.Theta.Home = PyBullet.Utilities.Get_Robot_Structure_Theta_Home(self.__Robot_Parameters_Str.Name, properties['Env_ID'])
@@ -298,6 +291,16 @@ class Robot_Cls(object):
     
     @property
     def Theta_v(self) -> tp.List[float]:
+        """
+        Description:
+            Get the velocity of the robot's joints.
+
+        Returns:
+            (1) parameter [Vector<float> 1xn]: Current velocities in radians / meters per second.
+                                                Note:
+                                                    Where n is the number of joints.
+        """
+
         theta_v_out = np.zeros(self.__Robot_Parameters_Str.Theta.Zero.size, 
                                dtype=np.float64)
         for i, th_index in enumerate(self.__theta_index):
@@ -321,16 +324,19 @@ class Robot_Cls(object):
     def T_EE_v(self):
         """
         Description:
-            ...
+            Get the linear and angular velocity of the robot's end-effector.
 
         Returns:
-            (1) paramter [Vector<float> 1x3]: 
+            (1) paramter [Vector<float> 1x6]: The linear (Vector<float> 1x3) and angular (Vector<float> 1x3) velocity 
+                                              of the robot's end effector.
         """
 
-        # ...
+        # Get the matrix of the geometric Jacobian.
         J = Kinematics.Get_Geometric_Jacobian(self.Theta, self.__Robot_Parameters_Str)
-        #   ...
-        J_P = J[0:3, 0::]; J_O = J[3::, 0::]
+        #   Linear Velocity of the End-Effector.
+        J_P = J[0:3, 0::]
+        #   Angular Velocity of the End-Effector.
+        J_O = J[3::, 0::]
 
         return np.concatenate(((J_P @ self.Theta_v).flatten(), 
                                (J_O @ self.Theta_v).flatten()))
@@ -595,8 +601,6 @@ class Robot_Cls(object):
         """
 
         alpha = 0.3 if visibility == True else 0.0
-        pb.setJointMotorControlArray(self.__robot_id_ghost, self.__theta_index, pb.POSITION_CONTROL, targetPositions=theta)
-
         for _, (th_i, th_index) in enumerate(zip(theta, self.__theta_index)):
             # Reset the state (position) of the joint.
             pb.resetJointState(self.__robot_id_ghost, th_index, th_i) 
@@ -660,7 +664,7 @@ class Robot_Cls(object):
             if self.__Robot_Parameters_Str.Theta.Zero.size != theta.size:
                 print(f'[ERROR] Incorrect number of values in the input variable theta. The input variable "theta" must contain {self.__Robot_Parameters_Str.Theta.Zero.size} values.')
 
-    def Set_Absolute_Joint_Position(self, theta: tp.List[float], force: float, t_0: float, t_1: float) -> bool:
+    def Set_Absolute_Joint_Position(self, theta: tp.List[float], properties: tp.Dict = None) -> bool:
         """
         Description:
             Set the absolute position of the robot joints.
@@ -678,9 +682,13 @@ class Robot_Cls(object):
             (1) theta [Vector<float> 1xn]: Desired absolute joint position in radians / meters.
                                             Note:
                                                 Where n is the number of joints.
-            (2) force [float]: The maximum motor force used to reach the target value.
-            (3) t_0 [float]: Animation start time in seconds.
-            (4) t_1 [float]: Animation stop time in seconds.
+            (2) properties [Dictionary {'force': float, 
+                                        't_0': float, 't_1': float}] The properties of a function to control the absolute 
+                                                                     position of the robot's joints.
+                                                                        Note:
+                                                                            'force': The maximum motor force used to reach the target value.
+                                                                            't_0': Animation start time in seconds.
+                                                                            't_1': Animation stop time in seconds.
 
         Returns:
             (1) parameter [bool]: The result is 'True' if the robot is in the desired position,
@@ -694,16 +702,16 @@ class Robot_Cls(object):
             theta_arr = []
             for _, (th_actual, th_desired) in enumerate(zip(self.Theta, theta)):
                 (theta_arr_i, _, _) = self.__Polynomial_Cls.Generate(th_actual, th_desired, 0.0, 0.0, 0.0, 0.0,
-                                                                     t_0, t_1)
+                                                                     properties['t_0'], properties['t_1'])
                 theta_arr.append(theta_arr_i)
 
             for _, theta_arr_i in enumerate(np.array(theta_arr, dtype=np.float64).T):
                 for i, (th_i, th_i_limit, th_index) in enumerate(zip(theta_arr_i, self.__Robot_Parameters_Str.Theta.Limit, 
-                                                                     self.__theta_index)): 
+                                                                    self.__theta_index)): 
                     if th_i_limit[0] <= th_i <= th_i_limit[1]:
                         # Control of the robot's joint positions.
                         pb.setJointMotorControl2(self.__robot_id, th_index, pb.POSITION_CONTROL, targetPosition=th_i, 
-                                                 force=force)
+                                                 positionGain=1.0, velocityGain=1.0,force=properties['force'])
                     else:
                         print(f'[WARNING] The desired input joint {th_i} in index {i} is out of limit.')
                         return False
@@ -754,44 +762,34 @@ class Robot_Cls(object):
         if isinstance(T, (list, np.ndarray)):
             T = HTM_Cls(T, np.float64)
 
-        # Transformation of point position in X, Y, Z axes.
-        self.__P_EE.Transformation(T.p.all())
+        # A function to compute the inverse kinematics (IK) using the using the chosen numerical method.
+        (info, theta) = Kinematics.Inverse_Kinematics_Numerical(T, self.Theta, 'Levenberg-Marquardt', self.__Robot_Parameters_Str, 
+                                                                ik_solver_properties)
+            
+        # Check whether the inverse kinematics (IK) has a solution or not.
+        #   Conditions:
+        #       1\ IK solution within limits.
+        #       2\ Collision-free.
+        #       3\ No singularities.
+        if info['successful'] == True:
+            # Check whether a part of the robotic structure collides with external objects.
+            (is_external_collision, _) = Kinematics.General.Is_External_Collision(theta, self.__Robot_Parameters_Str)
 
-        # Determine if a given point is inside a search area.
-        if self.__AABB_C_search.Is_Point_Inside(self.__P_EE) == True:
-            # A function to compute the inverse kinematics (IK) using the using the chosen numerical method.
-            (info, theta) = Kinematics.Inverse_Kinematics_Numerical(T, self.Theta, 'Levenberg-Marquardt', self.__Robot_Parameters_Str, 
-                                                                    ik_solver_properties)
-                
-            # Check whether the inverse kinematics (IK) has a solution or not.
-            #   Conditions:
-            #       1\ IK solution within limits.
-            #       2\ Collision-free.
-            #       3\ No singularities.
-            if info['successful'] == True:
-                # Check whether a part of the robotic structure collides with external objects.
-                (is_external_collision, _) = Kinematics.General.Is_External_Collision(theta, self.__Robot_Parameters_Str)
-
-                if info['is_self_collision'] == False and info['is_close_singularity'] == False \
-                    and is_external_collision == False:
-                        successful = True
-                else:
-                    successful = False
+            if info['is_self_collision'] == False and info['is_close_singularity'] == False \
+                and is_external_collision == False:
+                    successful = True
             else:
                 successful = False
-
-            # Reset the absolute position of the auxiliary robot structure, which is represented as a 'ghost'.
-            #   Note:
-            #       'Red': Collision.
-            #       'Green': No collision.
-            if successful:
-                self.__Reset_Ghost_Structure(theta, enable_ghost, [0.70, 0.85, 0.60])
-            else:
-                self.__Reset_Ghost_Structure(theta, enable_ghost, [0.85, 0.60, 0.60])
-
-            return (successful, theta)
         else:
-            # Set the color of the 'ghost' structure to 'red' to indicate that something is wrong.
-            self.__Reset_Ghost_Structure(self.Theta, enable_ghost, [0.85, 0.60, 0.60])
+            successful = False
 
-            return (False, self.Theta)
+        # Reset the absolute position of the auxiliary robot structure, which is represented as a 'ghost'.
+        #   Note:
+        #       'Red': Collision.
+        #       'Green': No collision.
+        if successful:
+            self.__Reset_Ghost_Structure(theta, enable_ghost, [0.70, 0.85, 0.60])
+        else:
+            self.__Reset_Ghost_Structure(theta, enable_ghost, [0.85, 0.60, 0.60])
+
+        return (successful, theta)

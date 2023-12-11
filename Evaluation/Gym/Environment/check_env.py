@@ -34,20 +34,7 @@ def main():
     # ...
     gym_environment = gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID(Robot_Str.Name, CONST_MODE))
 
-    # ...
-    observations, informations = gym_environment.reset()
-    for _ in range(1000):
-        # ...
-        action = gym_environment.action_space.sample()
-
-        # ...
-        observations, reward, terminated, truncated, informations = gym_environment.step(action)
-
-        if terminated == True or truncated == True:
-            observations, informations = gym_environment.reset()
-
-    gym_environment.close()
-
+    check_env(gym_environment, warn=True)
 
 if __name__ == '__main__':
     main()

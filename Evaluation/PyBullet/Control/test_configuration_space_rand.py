@@ -78,7 +78,7 @@ def main():
         # Set the absolute position of the robot joints.
         in_position = False
         if successful == True:
-            in_position = PyBullet_Robot_Cls.Set_Absolute_Joint_Position(theta, 100.0, 0.0, 2.0)
+            in_position = PyBullet_Robot_Cls.Set_Absolute_Joint_Position(theta, {'force': 100.0, 't_0': 0.0, 't_1': 2.0})
 
         if in_position == False or successful == False:
             print('[WARNING] There is an issue during the execution of the TCP (tool center point) target.')

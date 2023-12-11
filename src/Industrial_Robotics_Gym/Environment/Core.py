@@ -34,6 +34,11 @@ Description:
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 
 class Industrial_Robotics_Gym_Env_Cls(gym.Env):
+    """
+    Description:
+        ...
+    """
+
     def __init__(self, mode: str = 'Default', Robot_Str: Parameters = Parameters.Universal_Robots_UR3_Str, action_step_factor: float = 1.0, 
                  distance_threshold: float = 1.0, target: HTM_Cls = None) -> None:
         try:
@@ -71,6 +76,15 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
             print(f'[ERROR] Information: {error}')
 
     def __Set_Env_Parameters(self, mode: str, Robot_Str: Parameters) -> None:
+        """
+        Description:
+            ...
+
+        Args:
+            (1) mode [string]: 
+            (2) Robot_Str []: 
+        """
+            
         if 'ABB_IRB_14000' in Robot_Str.Name:
             external_base = f'{CONST_PROJECT_FOLDER}/URDFs/Robots/ABB_IRB_14000_Base/ABB_IRB_14000_Base.urdf'
         else:
@@ -122,15 +136,63 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
 
     @staticmethod
     def __Euclidean_Norm(x: tp.List[float]) -> tp.List[float]:
+        """
+        Description:
+            The square root of the sum of the squares of the x-coordinates.
+
+            Equation: 
+                ||x||_{2} = sqrt(x_{1}^2 + ... + x_{n}^2)
+
+        Args:
+            (1) x [Vector<float>]: Input coordinates.
+
+        Returns:
+            (1) parameter [float]: Ordinary distance from the origin to the point {x} a consequence of 
+                                   the Pythagorean theorem.
+        """
+            
         return np.linalg.norm(x, axis=-1)
 
     def compute_reward(self, p: tp.List[float], p_1: tp.List[float], info: tp.Dict[str, tp.Any] = {}) -> tp.List[float]:
+        """
+        Description:
+            ...
+
+        Args:
+            (1) ...
+
+        Returns:
+            (1) ...
+        """
+                
         return -self.__Euclidean_Norm(p - p_1).astype(np.float32)
     
     def is_success(self, p: tp.List[float], p_1: tp.List[float]) -> tp.List[float]:
+        """
+        Description:
+            ...
+
+        Args:
+            (1) ...
+
+        Returns:
+            (1) ...
+        """
+                
         return np.array(self.__Euclidean_Norm(p - p_1) < self.__distance_threshold, dtype=bool)
     
     def step(self, action: gym.spaces.Box) -> tp.Tuple[gym.spaces.Dict, float, bool, bool, tp.Dict]:
+        """
+        Description:
+            ...
+
+        Args:
+            (1) ...
+
+        Returns:
+            (1) ...
+        """
+                
         # ...
         action = action.copy()
         action = np.clip(action, self.action_space.low, self.action_space.high)
@@ -178,7 +240,19 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
                 truncated,
                 info)
     
-    def reset(self, seed=None, options=None) -> tp.Tuple[gym.spaces.Dict, tp.Dict]:
+    def reset(self, seed: tp.Optional[int] = None, options: tp.Optional[tp.Dict] = None) -> tp.Tuple[gym.spaces.Dict, tp.Dict]:
+        """
+        Description:
+            ...
+
+            https://www.gymlibrary.dev/api/core/
+        Args:
+            (1) ...
+
+        Returns:
+            (1) ...
+        """
+                
         # ...
         super().reset(seed=seed, options=options)
         self.np_random, seed = gym.utils.seeding.np_random(seed)
@@ -186,8 +260,7 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         # ...
         self.__p_1 = self.np_random.uniform(self.__min_vec3, self.__max_vec3).astype(np.float32)
 
-        # Reset the absolute position of the auxiliary robotic structure, which is represented 
-        # as a 'ghost', to 'Home'.
+        # Reset the absolute position of the robotic structure to 'Home'.
         self.__PyBullet_Robot_Cls.Reset(mode='Home', enable_ghost=False)
 
         # ...

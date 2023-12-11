@@ -1,8 +1,8 @@
 # System (Default)
 import sys
 #   Add access if it is not in the system path.
-if '../../../' + 'src' not in sys.path:
-    sys.path.append('../../../' + 'src')
+if '../' + 'src' not in sys.path:
+    sys.path.append('../' + 'src')
 # Numpy (Array computing) [pip3 install numpy]
 import numpy as np
 # Time (Time access and conversions)
@@ -28,6 +28,15 @@ import Industrial_Robotics_Gym
 import Industrial_Robotics_Gym.Utilities
 
 """
+Notes:
+    A command to kill all Python processes within the GPU.
+    $ ../>  sudo killall -9 python
+
+    Start training the model.
+    $ ../>  python train_td3.py
+"""
+
+"""
 Description:
     Initialization of constants.
 """
@@ -45,9 +54,22 @@ def main():
     # Initialization of the structure of the main parameters of the robot.
     Robot_Str = CONST_ROBOT_TYPE
 
-    # The specified path of the file ...
+    # The specified path of the file to save the log file.
     file_path = f'{CONST_PROJECT_FOLDER}/Data/Training/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM_NAME}/{Robot_Str.Name}'
 
+    # Removes old files (if any) created by the previous training.
+    #   Training progress.
+    for _, file_name in enumerate(['monitor', 'progress']):
+        if os.path.isfile(f'{file_path}/{file_name}.csv'):
+            os.remove(f'{file_path}/{file_name}.csv')
+            print(f'[INFO] The file has been successfully removed.')
+            print(f'[INFO] >> {file_path}/{file_name}.csv')
+    #   Model.
+    if os.path.isfile(f'{CONST_PROJECT_FOLDER}/Data/Model/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM_NAME}/{Robot_Str.Name}/model.zip'):
+        os.remove(f'{CONST_PROJECT_FOLDER}/Data/Model/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM_NAME}/{Robot_Str.Name}/model.zip')
+        print(f'[INFO] The file has been successfully removed.')
+        print(f'[INFO] >> {CONST_PROJECT_FOLDER}/Data/Model/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM_NAME}/{Robot_Str.Name}/model.zip')
+        
     # ...
     logger_cfg = stable_baselines3.common.logger.configure(file_path, ['stdout', 'csv'])
 
@@ -81,7 +103,7 @@ def main():
     model.learn(total_timesteps=100000, log_interval=10)
 
     # ...
-    model.save('model')
+    model.save(f'{CONST_PROJECT_FOLDER}/Data/Model/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM_NAME}/{Robot_Str.Name}')
 
     # ...
     print(f'[INFO] Time: {time.time() - t_0:0.05f} in seconds.')

@@ -8,8 +8,6 @@ import os
 import gymnasium as gym
 # Custom Lib.: 
 #   Robotics Library for Everyone (RoLE)
-#       ../RoLE/Transformation/Utilities/Mathematics
-import RoLE.Transformation.Utilities.Mathematics as Mathematics
 #       ../RoLE/Parameters/Robot
 import RoLE.Parameters.Robot as Parameters
 #       ../RoLE/Kinematics/Core
@@ -36,8 +34,8 @@ Description:
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 
 class Industrial_Robotics_Gym_Env_Cls(gym.Env):
-    def __init__(self, mode='Default', Robot_Str=Parameters.Universal_Robots_UR3_Str, action_step_factor=0.05, distance_threshold=0.05,
-                 target=None):
+    def __init__(self, mode: str = 'Default', Robot_Str: Parameters = Parameters.Universal_Robots_UR3_Str, action_step_factor: float = 1.0, 
+                 distance_threshold: float = 1.0, target: HTM_Cls = None) -> None:
         try:
             assert mode in ['Default', 'Safe']
 
@@ -46,11 +44,17 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
             # ...
             self.__distance_threshold = np.float32(distance_threshold)
             self.__action_step_factor = np.float32(action_step_factor)
+
             #   ...
             if target is not None:
                 # Get the translational and rotational part from the transformation matrix.
                 pass
 
+            # Numerical IK Parameters.
+            #   The properties of the inverse kinematics solver.
+            self.__ik_properties = {'delta_time': 0.2, 'num_of_iteration': 100, 
+                                    'tolerance': 1e-30}
+        
             # ...
             self.__Set_Env_Parameters(mode, Robot_Str)
 
@@ -66,13 +70,7 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         except AssertionError as error:
             print(f'[ERROR] Information: {error}')
 
-    def __Set_Env_Parameters(self, mode, Robot_Str):
-        # Numerical IK Parameters.
-        #   The properties of the inverse kinematics solver.
-        self.__ik_properties = {'delta_time': 0.2, 'num_of_iteration': 100, 
-                                'tolerance': 1e-30}
-
-        # ...
+    def __Set_Env_Parameters(self, mode: str, Robot_Str: Parameters) -> None:
         if 'ABB_IRB_14000' in Robot_Str.Name:
             external_base = f'{CONST_PROJECT_FOLDER}/URDFs/Robots/ABB_IRB_14000_Base/ABB_IRB_14000_Base.urdf'
         else:
@@ -106,7 +104,7 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         #   of the end-effector is inside the search (configuration) space or not.
         self.__P_EE = Point_Cls([0.0, 0.0, 0.0])
 
-        # ...
+        # Get the vertices of the selected configuration space.
         vertices_C_target = self.__PyBullet_Robot_Cls.Get_Configuration_Space_Vertices('Target')
 
         # Get the minimum and maximum X, Y, Z values of the input vertices.
@@ -114,7 +112,9 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         self.__min_vec3 = min_vec3.astype(np.float32)
         self.__max_vec3 = max_vec3.astype(np.float32)
 
-        # ...
+        # Adding external objects corresponding to a random point.
+        #   Note:
+        #       The size of the sphere corresponds to the threshold distance.
         self.__PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Viewpoint/Viewpoint.urdf', 'T_EE_Rand_Viewpoint', HTM_Cls(None, np.float32),
                                                       None, 0.3, False)
         self.__PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Primitives/Sphere/Sphere.urdf', 'T_EE_Rand_Sphere', HTM_Cls(None, np.float32),
@@ -127,10 +127,10 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
     def compute_reward(self, p: tp.List[float], p_1: tp.List[float], info: tp.Dict[str, tp.Any] = {}) -> tp.List[float]:
         return -self.__Euclidean_Norm(p - p_1).astype(np.float32)
     
-    def is_success(self, p, p_1):
+    def is_success(self, p: tp.List[float], p_1: tp.List[float]) -> tp.List[float]:
         return np.array(self.__Euclidean_Norm(p - p_1) < self.__distance_threshold, dtype=bool)
     
-    def step(self, action):
+    def step(self, action: gym.spaces.Box) -> tp.Tuple[gym.spaces.Dict, float, bool, bool, tp.Dict]:
         # ...
         action = action.copy()
         action = np.clip(action, self.action_space.low, self.action_space.high)
@@ -147,10 +147,9 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
             (successful, theta) = self.__PyBullet_Robot_Cls.Get_Inverse_Kinematics_Solution(HTM_Cls(None, np.float32).Rotation(self.__q_0, 'QUATERNION').Translation(p_tmp), 
                                                                                             self.__ik_properties, False)
             
-            # ...
+            # Set the absolute position of the robot joints.
             self.__PyBullet_Robot_Cls.Set_Absolute_Joint_Position(theta, {'force': 100.0, 't_0': 0.0, 't_1': 0.1})
 
-            # ...
             truncated = not successful
         else:
             truncated = True
@@ -179,7 +178,7 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
                 truncated,
                 info)
     
-    def reset(self, seed=None, options=None):
+    def reset(self, seed=None, options=None) -> tp.Tuple[gym.spaces.Dict, tp.Dict]:
         # ...
         super().reset(seed=seed, options=options)
         self.np_random, seed = gym.utils.seeding.np_random(seed)
@@ -208,6 +207,10 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
                  'desired_goal': self.__p_1}, 
                 {'is_success': self.is_success(self.__p_0, self.__p_1)})
 
-    def close(self):
-        # Disconnect the created environment from a physical server.
+    def close(self) -> None:
+        """
+        Description:
+            Disconnect the created environment from a physical server.
+        """
+
         self.__PyBullet_Robot_Cls.Disconnect()

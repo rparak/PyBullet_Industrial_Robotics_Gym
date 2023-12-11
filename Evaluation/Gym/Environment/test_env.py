@@ -15,39 +15,51 @@ import Industrial_Robotics_Gym
 #       ../Industrial_Robotics_Gym/Utilities
 import Industrial_Robotics_Gym.Utilities
 
-from stable_baselines3.common.env_checker import check_env
-
 """
 Description:
     Initialization of constants.
 """
 # Set the structure of the main parameters of the robot.
 CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
-# ...
-CONST_MODE = 'Default'
+# The name of the environment mode.
+#   'Default': 
+#       A mode called "Default" that demonstrates an environment without a collision object.
+#   'Safe': 
+#       A mode called "Safe" that demonstrates an environment with a collision object.
+CONST_ENV_MODE = 'Default'
 
 def main():
+    """
+    Description:
+        A program for a simple test of a pre-defined environment.
+    """
 
     # Initialization of the structure of the main parameters of the robot.
     Robot_Str = CONST_ROBOT_TYPE
 
-    # ...
-    gym_environment = gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID(Robot_Str.Name, CONST_MODE))
+    # Create the environment that was previously registered using gymnasium.register() within the __init__.py file.
+    #   More information can be found in the following script:
+    #       ../src/Industrial_Robotics_Gym/__init__.py
+    gym_environment = gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID(Robot_Str.Name, CONST_ENV_MODE))
 
-    # ...
+    # Reset the pre-defined environment of the gym.
+    #   Note:
+    #       Obtain the initial information and observations.
     observations, informations = gym_environment.reset()
+
     for _ in range(1000):
-        # ...
+        # Obtain a random action sample from the entire action space.
         action = gym_environment.action_space.sample()
 
-        # ...
+        # Perform the action within the pre-defined environment and get the new observation space.
         observations, reward, terminated, truncated, informations = gym_environment.step(action)
 
+        # When the reach task process is terminated or truncated, reset the pre-defined gym environment.
         if terminated == True or truncated == True:
             observations, informations = gym_environment.reset()
 
+    # Disconnect the created environment from a physical server.
     gym_environment.close()
-
 
 if __name__ == '__main__':
     main()

@@ -12,23 +12,23 @@ import RoLE.Parameters.Robot as Parameters
 
 """
 Description:
-    ...
-
-    Notes:
-        id []:
-        entry_point []:
-        kwargs []: 
-        max_episode_steps [int]: The maximum number of steps that an episode can consist of.
+    Initialization of constants.
 """
+# The name of the environment mode.
+#   'Default': 
+#       A mode called "Default" that demonstrates an environment without a collision object.
+#   'Safe': 
+#       A mode called "Safe" that demonstrates an environment with a collision object.
+CONST_ENV_MODE = ['Default', 'Safe']
+# The name of a particular robotic structure.
+CONST_ROBOT_NAME = ['Ur3', 'AbbIrb120', 'AbbIrb120L', 'AbbIrb14000L', 'AbbIrb14000R', 'EpsonLs3']
+# Set the structure of the main parameters of the robot.
+CONST_ROBOT_TYPE = [Parameters.Universal_Robots_UR3_Str, Parameters.ABB_IRB_120_Str, Parameters.ABB_IRB_120_L_Ax_Str,
+                    Parameters.ABB_IRB_14000_L_Str, Parameters.ABB_IRB_14000_R_Str, Parameters.EPSON_LS3_B401S_Str]
 
-# ...
-env_mode = ['Default', 'Safe']
-robot_name = ['Ur3', 'AbbIrb120', 'AbbIrb120L', 'AbbIrb14000L', 'AbbIrb14000R', 'EpsonLs3']
-robot_str  = [Parameters.Universal_Robots_UR3_Str, Parameters.ABB_IRB_120_Str, Parameters.ABB_IRB_120_L_Ax_Str,
-              Parameters.ABB_IRB_14000_L_Str, Parameters.ABB_IRB_14000_R_Str, Parameters.EPSON_LS3_B401S_Str]
-
-for _, env_mode_i in enumerate(env_mode):
-    for _, (r_name_i, r_str_i) in enumerate(zip(robot_name, robot_str)):
+# The part that registers the gym environment with an additional parameters.
+for _, env_mode_i in enumerate(CONST_ENV_MODE):
+    for _, (r_name_i, r_str_i) in enumerate(zip(CONST_ROBOT_NAME, CONST_ROBOT_TYPE)):
         gymnasium.envs.registration.register(
             id=f'{r_name_i}-{env_mode_i}-Reach-v0',
             entry_point='Industrial_Robotics_Gym.Environment.Core:Industrial_Robotics_Gym_Env_Cls',
@@ -37,5 +37,4 @@ for _, env_mode_i in enumerate(env_mode):
                     'action_step_factor': 0.04,
                     'distance_threshold': 0.01,
                     'target': None},
-            max_episode_steps=100,
-    )
+            max_episode_steps=100)

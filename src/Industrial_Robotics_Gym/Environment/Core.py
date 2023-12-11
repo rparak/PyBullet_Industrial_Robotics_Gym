@@ -38,27 +38,33 @@ CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] 
 class Industrial_Robotics_Gym_Env_Cls(gym.Env):
     def __init__(self, mode='Default', Robot_Str=Parameters.Universal_Robots_UR3_Str, action_step_factor=0.05, distance_threshold=0.05,
                  target=None):
-        super(Industrial_Robotics_Gym_Env_Cls, self).__init__()
+        try:
+            assert mode in ['Default', 'Safe']
 
-        # ...
-        self.__distance_threshold = np.float32(distance_threshold)
-        self.__action_step_factor = np.float32(action_step_factor)
-        #   ...
-        if target is not None:
-            # Get the translational and rotational part from the transformation matrix.
-            pass
+            super(Industrial_Robotics_Gym_Env_Cls, self).__init__()
 
-        # ...
-        self.__Set_Env_Parameters(mode, Robot_Str)
+            # ...
+            self.__distance_threshold = np.float32(distance_threshold)
+            self.__action_step_factor = np.float32(action_step_factor)
+            #   ...
+            if target is not None:
+                # Get the translational and rotational part from the transformation matrix.
+                pass
 
-        # ...
-        observation, _ = self.reset()
+            # ...
+            self.__Set_Env_Parameters(mode, Robot_Str)
 
-        # ...
-        self.action_space = gym.spaces.Box(-1.0, 1.0, shape=(3, ), dtype=np.float32)
-        self.observation_space = gym.spaces.Dict({'observation': gym.spaces.Box(-1.0, 1.0, shape=observation['observation'].shape, dtype=np.float32),
-                                                  'achieved_goal': gym.spaces.Box(-1.0, 1.0, shape=observation['achieved_goal'].shape, dtype=np.float32),
-                                                  'desired_goal': gym.spaces.Box(-1.0, 1.0, shape=observation['desired_goal'].shape, dtype=np.float32)})
+            # ...
+            observation, _ = self.reset()
+
+            # ...
+            self.action_space = gym.spaces.Box(-1.0, 1.0, shape=(3, ), dtype=np.float32)
+            self.observation_space = gym.spaces.Dict({'observation': gym.spaces.Box(-1.0, 1.0, shape=observation['observation'].shape, dtype=np.float32),
+                                                      'achieved_goal': gym.spaces.Box(-1.0, 1.0, shape=observation['achieved_goal'].shape, dtype=np.float32),
+                                                      'desired_goal': gym.spaces.Box(-1.0, 1.0, shape=observation['desired_goal'].shape, dtype=np.float32)})
+
+        except AssertionError as error:
+            print(f'[ERROR] Information: {error}')
 
     def __Set_Env_Parameters(self, mode, Robot_Str):
         # Numerical IK Parameters.
@@ -160,8 +166,6 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
 
         # ...
         reward = float(self.compute_reward(self.__p, self.__p_1, info))
-
-        print(truncated, self.__Euclidean_Norm(p_tmp - self.__p))
 
         # ...
         observation = np.concatenate([self.__p, 

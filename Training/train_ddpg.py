@@ -7,6 +7,8 @@ if '../../../' + 'src' not in sys.path:
 import numpy as np
 # Time (Time access and conversions)
 import time
+# OS (Operating system interfaces)
+import os
 # Gymnasium (Developing and comparing reinforcement learning algorithms) [pip3 install gymnasium]
 import gymnasium as gym
 # Stable-Baselines3 (A set of implementations of reinforcement learning algorithms in PyTorch) [pip3 install stable-baselines3]
@@ -33,35 +35,56 @@ Description:
 CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 # ...
 CONST_ENV_MODE = 'Default'
+# ...
+#   DDPG, DDPG_HER
+CONST_ALGORITHM_NAME = 'DDPG'
+# Locate the path to the project folder.
+CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 
 def main():
-
     # Initialization of the structure of the main parameters of the robot.
     Robot_Str = CONST_ROBOT_TYPE
 
-    tmp_path = "./DDPG_results"
-    # set up logger
-    new_logger = stable_baselines3.common.logger.configure(tmp_path, ['stdout', 'csv'])
+    # The specified path of the file ...
+    file_path = f'{CONST_PROJECT_FOLDER}/Data/Training/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM_NAME}/{Robot_Str.Name}'
 
     # ...
-    env = gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID(Robot_Str.Name, CONST_ENV_MODE))
+    logger_cfg = stable_baselines3.common.logger.configure(file_path, ['stdout', 'csv'])
 
     # ...
-    env = stable_baselines3.common.monitor.Monitor(env, tmp_path)
-    env = stable_baselines3.common.vec_env.DummyVecEnv([lambda: env])
+    gym_environment = gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID(Robot_Str.Name, CONST_ENV_MODE))
 
     # ...
-    n_actions = env.action_space.shape[-1]
-    action_noise = stable_baselines3.common.noise.NormalActionNoise(mean=np.zeros(n_actions), sigma=0.1*np.ones(n_actions))
+    gym_environment = stable_baselines3.common.monitor.Monitor(gym_environment, file_path)
+    gym_environment = stable_baselines3.common.vec_env.DummyVecEnv([lambda: gym_environment])
 
+    # ...
+    n_action = gym_environment.action_space.shape[-1]
+    action_noise = stable_baselines3.common.noise.NormalActionNoise(mean=np.zeros(n_action), 
+                                                                    sigma=0.1*np.ones(n_action))
+
+    print('[INFO] The calculation is in progress.')
     t_0 = time.time()
-    model = stable_baselines3.DDPG(policy="MultiInputPolicy", env=env, gamma=0.95, learning_rate=0.001, action_noise=action_noise, device='cuda', 
-                                   batch_size=256, policy_kwargs=dict(net_arch=[256, 256, 256]), verbose=1)
-    model.set_logger(new_logger)
-    model.learn(total_timesteps=500000, log_interval=10)
+
+    # ...
+    if CONST_ALGORITHM_NAME == 'DDPG':
+        model = stable_baselines3.DDPG(policy="MultiInputPolicy", env=gym_environment, gamma=0.95, learning_rate=0.001, action_noise=action_noise, device='cuda', 
+                                       batch_size=256, policy_kwargs=dict(net_arch=[256, 256, 256]), verbose=1)
+    elif CONST_ALGORITHM_NAME == 'DDPG_HER':
+        model = stable_baselines3.DDPG(policy="MultiInputPolicy", env=gym_environment, replay_buffer_class=stable_baselines3.HerReplayBuffer, gamma=0.95, learning_rate=0.001, action_noise=action_noise, device='cuda', 
+                                       batch_size=256, replay_buffer_kwargs={'goal_selection_strategy' : 'future', 'n_sampled_goal' : 4}, policy_kwargs={'net_arch' : [256, 256, 256], 'n_critics' : 2}, verbose=1)
+
+    # ...  
+    model.set_logger(logger_cfg)
+    
+    # ...
+    model.learn(total_timesteps=100000, log_interval=10)
+
+    # ...
     model.save('model')
 
-    print(time.time() - t_0)
+    # ...
+    print(f'[INFO] Time: {time.time() - t_0:0.05f} in seconds.')
 
 if __name__ == '__main__':
     main()

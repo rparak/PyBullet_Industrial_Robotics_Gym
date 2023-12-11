@@ -5,7 +5,8 @@ def Get_Environment_ID(name: str, env_mode: int) -> str:
 
     Args:
         (1) name [string]: Name of the robotic structure.
-        (2) env_mode [int]: ....
+        (2) env_mode [int]: The name of the environment mode.
+                                env_mode = 'Default' or 'Safe'
 
     Returns:
         (1) parameter [string]: The string of the desired gym environment ID.

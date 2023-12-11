@@ -7,8 +7,6 @@ if '../' + 'src' not in sys.path:
 import time
 # OS (Operating system interfaces)
 import os
-# Shutil (High-level file operations)
-import shutil
 # Gymnasium (Developing and comparing reinforcement learning algorithms) [pip3 install gymnasium]
 import gymnasium as gym
 # Stable-Baselines3 (A set of implementations of reinforcement learning algorithms in PyTorch) [pip3 install stable-baselines3]
@@ -41,15 +39,33 @@ Description:
 """
 # Set the structure of the main parameters of the robot.
 CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
-# ...
+# The name of the environment mode.
+#   'Default': 
+#       A mode called "Default" that demonstrates an environment without a collision object.
+#   'Safe': 
+#       A mode called "Safe" that demonstrates an environment with a collision object.
 CONST_ENV_MODE = 'Default'
-# ...
-#   SAC, SAC_HER
+# The name of the reinforcement learning algorithm. 
+#   'SAC':
+#       Soft Actor Critic (SAC) Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor.
+#   'SAC_HER':
+#       Soft Actor Critic (SAC) + Hindsight Experience Replay (HER)
 CONST_ALGORITHM = 'SAC'
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 
 def main():
+    """
+    Description:
+        A program designed to train a specific robotic arm for a reach task in a pre-defined environment, utilizing 
+        the Soft Actor-Critic (SAC) reinforcement learning algorithm.
+
+        The algorithm can be extended using the Hindsight Experience Replay (HER).
+
+        More information about Stable Baselines3 (SB3) can be found at the link below:
+            https://stable-baselines3.readthedocs.io/en/master/
+    """
+
     # Initialization of the structure of the main parameters of the robot.
     Robot_Str = CONST_ROBOT_TYPE
 
@@ -69,20 +85,23 @@ def main():
         print(f'[INFO] The file has been successfully removed.')
         print(f'[INFO] >> {CONST_PROJECT_FOLDER}/Data/Model/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM}/{Robot_Str.Name}/model.zip')
 
-    # ...
+    # Configure the logger for the current training process.
     logger_cfg = stable_baselines3.common.logger.configure(file_path, ['stdout', 'csv'])
 
-    # ...
+    # Create the environment that was previously registered using gymnasium.register() within the __init__.py file.
+    #   More information can be found in the following script:
+    #       ../src/Industrial_Robotics_Gym/__init__.py
     gym_environment = gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID(Robot_Str.Name, CONST_ENV_MODE))
 
-    # ...
+    # A monitor for a defined gym environment that is used to collect data such as reward, length and time.
     gym_environment = stable_baselines3.common.monitor.Monitor(gym_environment, file_path)
+
+    # Create a vectorized environment.
     gym_environment = stable_baselines3.common.vec_env.DummyVecEnv([lambda: gym_environment])
 
     print('[INFO] The calculation is in progress.')
     t_0 = time.time()
 
-    # ...
     if CONST_ALGORITHM == 'SAC':
         model = stable_baselines3.SAC(policy="MultiInputPolicy", env=gym_environment, gamma=0.95, learning_rate=0.001, device='cuda', 
                                       batch_size=256, policy_kwargs=dict(net_arch=[256, 256, 256]), verbose=1)

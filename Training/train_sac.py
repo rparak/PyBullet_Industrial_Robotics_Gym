@@ -45,7 +45,7 @@ CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 CONST_ENV_MODE = 'Default'
 # ...
 #   SAC, SAC_HER
-CONST_ALGORITHM_NAME = 'SAC'
+CONST_ALGORITHM = 'SAC'
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 
@@ -54,7 +54,7 @@ def main():
     Robot_Str = CONST_ROBOT_TYPE
 
     # The specified path of the file to save the log file.
-    file_path = f'{CONST_PROJECT_FOLDER}/Data/Training/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM_NAME}/{Robot_Str.Name}'
+    file_path = f'{CONST_PROJECT_FOLDER}/Data/Training/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM}/{Robot_Str.Name}'
 
     # Removes old files (if any) created by the previous training.
     #   Training progress.
@@ -64,10 +64,10 @@ def main():
             print(f'[INFO] The file has been successfully removed.')
             print(f'[INFO] >> {file_path}/{file_name}.csv')
     #   Model.
-    if os.path.isfile(f'{CONST_PROJECT_FOLDER}/Data/Model/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM_NAME}/{Robot_Str.Name}/model.zip'):
-        os.remove(f'{CONST_PROJECT_FOLDER}/Data/Model/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM_NAME}/{Robot_Str.Name}/model.zip')
+    if os.path.isfile(f'{CONST_PROJECT_FOLDER}/Data/Model/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM}/{Robot_Str.Name}/model.zip'):
+        os.remove(f'{CONST_PROJECT_FOLDER}/Data/Model/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM}/{Robot_Str.Name}/model.zip')
         print(f'[INFO] The file has been successfully removed.')
-        print(f'[INFO] >> {CONST_PROJECT_FOLDER}/Data/Model/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM_NAME}/{Robot_Str.Name}/model.zip')
+        print(f'[INFO] >> {CONST_PROJECT_FOLDER}/Data/Model/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM}/{Robot_Str.Name}/model.zip')
 
     # ...
     logger_cfg = stable_baselines3.common.logger.configure(file_path, ['stdout', 'csv'])
@@ -83,23 +83,21 @@ def main():
     t_0 = time.time()
 
     # ...
-    if CONST_ALGORITHM_NAME == 'SAC':
+    if CONST_ALGORITHM == 'SAC':
         model = stable_baselines3.SAC(policy="MultiInputPolicy", env=gym_environment, gamma=0.95, learning_rate=0.001, device='cuda', 
                                       batch_size=256, policy_kwargs=dict(net_arch=[256, 256, 256]), verbose=1)
-    elif CONST_ALGORITHM_NAME == 'SAC_HER':
+    elif CONST_ALGORITHM == 'SAC_HER':
         model = stable_baselines3.SAC(policy="MultiInputPolicy", env=gym_environment, replay_buffer_class=stable_baselines3.HerReplayBuffer, gamma=0.95, learning_rate=0.001, device='cuda', 
                                       batch_size=256, replay_buffer_kwargs={'goal_selection_strategy' : 'future', 'n_sampled_goal' : 4}, policy_kwargs={'net_arch' : [256, 256, 256], 'n_critics' : 2}, verbose=1)
 
-    # ...  
+    # Set the logger configuration for the training.  
     model.set_logger(logger_cfg)
     
-    # ...
-    model.learn(total_timesteps=10, log_interval=10)
+    # Train the model during the selected time steps.
+    model.learn(total_timesteps=100000, log_interval=10)
 
-    # ...
-    model.save(f'{CONST_PROJECT_FOLDER}/Data/Model/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM_NAME}/{Robot_Str.Name}/model')
-
-    # ...
+    # Save all the attributes of the object and the model parameters in a zip-file.
+    model.save(f'{CONST_PROJECT_FOLDER}/Data/Model/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM}/{Robot_Str.Name}/model')
     print(f'[INFO] Time: {time.time() - t_0:0.05f} in seconds.')
 
 if __name__ == '__main__':

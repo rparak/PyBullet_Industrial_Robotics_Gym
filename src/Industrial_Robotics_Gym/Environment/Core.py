@@ -40,7 +40,7 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
     """
 
     def __init__(self, mode: str = 'Default', Robot_Str: Parameters = Parameters.Universal_Robots_UR3_Str, action_step_factor: float = 1.0, 
-                 distance_threshold: float = 1.0, target: HTM_Cls = None) -> None:
+                 distance_threshold: float = 1.0, T: HTM_Cls = None) -> None:
         try:
             assert mode in ['Default', 'Safe']
 
@@ -50,36 +50,40 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
             self.__distance_threshold = np.float32(distance_threshold)
             self.__action_step_factor = np.float32(action_step_factor)
 
-            #   ...
-            if target is not None:
-                # Get the translational and rotational part from the transformation matrix.
-                pass
+            # Get the translational and rotational part from the input transformation matrix.
+            if T is not None:
+                self.__p_T = T.p.all().astype(np.float32); self.__q_T = T.Get_Rotation('QUATERNION').all().astype(np.float32)
 
             # Numerical IK Parameters.
             #   The properties of the inverse kinematics solver.
             self.__ik_properties = {'delta_time': 0.2, 'num_of_iteration': 100, 
                                     'tolerance': 1e-30}
         
-            # ...
+            # Set the parameters of the environment.
             self.__Set_Env_Parameters(mode, Robot_Str)
 
-            # ...
+            # Reset the pre-defined environment of the gym.
+            #   Note:
+            #       Obtain the initial observations.
             observation, _ = self.reset()
 
-            # ...
+            # Brief description of the action space and the observation space.
+            #   The action space is defined by the Cartesian displacement in each x, y and z axis of the robot's end-effector.
             self.action_space = gym.spaces.Box(-1.0, 1.0, shape=(3, ), dtype=np.float32)
+            #   The observation space is defined by a dictionary with information about the position and linear velocity of the robot 
+            #   end-effector, as well as information about the achieved and desired goals.
             self.observation_space = gym.spaces.Dict({'observation': gym.spaces.Box(-1.0, 1.0, shape=observation['observation'].shape, dtype=np.float32),
                                                       'achieved_goal': gym.spaces.Box(-1.0, 1.0, shape=observation['achieved_goal'].shape, dtype=np.float32),
                                                       'desired_goal': gym.spaces.Box(-1.0, 1.0, shape=observation['desired_goal'].shape, dtype=np.float32)})
 
         except AssertionError as error:
             print(f'[ERROR] Information: {error}')
-            print(f'[ERROR] ')
+            print('[ERROR] Incorrect environment mode selected. The selected mode must be chosen from the two options (Default, Safe).')
 
     def __Set_Env_Parameters(self, mode: str, Robot_Str: Parameters) -> None:
         """
         Description:
-            ...
+            A function to set the parameters of the environment.
 
         Args:
             (1) mode [string]: The name of the environment mode.
@@ -198,25 +202,25 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
     def step(self, action: gym.spaces.Box) -> tp.Tuple[gym.spaces.Dict, float, bool, bool, tp.Dict]:
         """
         Description:
-            ...
+            A function to perform the action within the pre-defined environment and obtain the new observation space.
 
         Args:
-            (1) action [gym.spaces.Box]:
+            (1) action [gym.spaces.Box]: An action performed by the agent.
 
         Returns:
-            (1) parameter [gym.spaces.Dict]:
-            (2) parameter [float]:
-            (3) parameter [bool]:
-            (4) parameter [bool]:
+            (1) parameter [gym.spaces.Dict]: Observation of the current state.
+            (2) parameter [float]: The amount of reward returned as a result of the execution of the action.
+            (3) parameter [bool]: Information whether the terminal state (as defined under the MDP tasks) is reached. 
+            (4) parameter [bool]: Information on whether a truncation condition outside the scope 
+                                  of the MDP (Markov Decision Process) is satisfied.
             (5) parameter [Dictionary {'is_success': float}]: Information whether the desired target 
                                                               has been successfully found.
         """
                 
-        # ...
         action = action.copy()
         action = np.clip(action, self.action_space.low, self.action_space.high)
     
-        # ...
+        # Obtain a new position based on an input action to be performed within the environment.
         p_tmp = self.__PyBullet_Robot_Cls.T_EE.p.all().copy().astype(np.float32) + action * self.__action_step_factor
         
         # Transformation of point position in X, Y, Z axes.
@@ -235,21 +239,18 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         else:
             truncated = True
 
-        # ...
+        # Get the homogeneous transformation matrix of the robot end-effector.
         self.__p = self.__PyBullet_Robot_Cls.T_EE.p.all().copy().astype(np.float32)
 
-        # ...
-        terminated = bool(self.is_success(self.__p, self.__p_1))
-
-        # ...
-        info = {'is_success': terminated}
-
-        # ...
-        reward = float(self.compute_reward(self.__p, self.__p_1, info))
-
-        # ...
+        # Get an observation of the current state.
         observation = np.concatenate([self.__p, 
                                       self.__PyBullet_Robot_Cls.T_EE_v[0:3]], dtype=np.float32)
+        
+    
+        # Obtain additional output information from the execution of the action.
+        terminated = bool(self.is_success(self.__p, self.__p_1))
+        info = {'is_success': terminated}
+        reward = float(self.compute_reward(self.__p, self.__p_1, info))
 
         return ({'observation': observation,
                  'achieved_goal': self.__p,
@@ -262,39 +263,36 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
     def reset(self, seed: tp.Optional[int] = None, options: tp.Optional[tp.Dict] = None) -> tp.Tuple[gym.spaces.Dict, tp.Dict]:
         """
         Description:
-            ...
-
-            https://www.gymlibrary.dev/api/core/
+            A function to reset the pre-defined environment of the gym.
 
         Args:
-            (1) seed [int]:
-            (2) options [Dictionary {..}]:
+            (1) seed [int]: A seed that is used to initialize the environment.
+            (2) options [Dictionary {..}]: Additional information to determine how to reset the environment.
 
         Returns:
-            (1) parameter [gym.spaces.Dict]:
+            (1) parameter [gym.spaces.Dict]: Observation of the initial state.
             (2) parameter [Dictionary {'is_success': float}]: Information whether the desired target 
                                                               has been successfully found.
         """
                 
-        # ...
         super().reset(seed=seed, options=options)
         self.np_random, seed = gym.utils.seeding.np_random(seed)
 
-        # ...
+        # Obtain a random position within a defined configuration space.
         self.__p_1 = self.np_random.uniform(self.__min_vec3, self.__max_vec3).astype(np.float32)
 
         # Reset the absolute position of the robotic structure to 'Home'.
         self.__PyBullet_Robot_Cls.Reset(mode='Home', enable_ghost=False)
 
-        # ...
+        # Obtain the homogeneous transformation matrix of the generated random position.
         T_rand = HTM_Cls(None, np.float32).Rotation(self.__q_0, 'QUATERNION').Translation(self.__p_1)
         self.__PyBullet_Robot_Cls.Transformation_External_Object('T_EE_Rand_Viewpoint', T_rand, False)
         self.__PyBullet_Robot_Cls.Transformation_External_Object('T_EE_Rand_Sphere', T_rand, False)
 
-        # ...
+        # Get the homogeneous transformation matrix of the robot end-effector.
         self.__p = self.__PyBullet_Robot_Cls.T_EE.p.all().copy().astype(np.float32)
 
-        # ...
+        # Get an observation of the initial state.
         observation = np.concatenate([self.__p, 
                                       self.__PyBullet_Robot_Cls.T_EE_v[0:3]], dtype=np.float32)
 

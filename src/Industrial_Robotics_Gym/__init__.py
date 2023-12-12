@@ -36,5 +36,5 @@ for _, env_mode_i in enumerate(CONST_ENV_MODE):
                     'Robot_Str': r_str_i,
                     'action_step_factor': 0.04,
                     'distance_threshold': 0.01,
-                    'target': None},
+                    'T': None},
             max_episode_steps=100)

@@ -40,7 +40,7 @@ def main():
     # Create the environment that was previously registered using gymnasium.register() within the __init__.py file.
     #   More information can be found in the following script:
     #       ../src/Industrial_Robotics_Gym/__init__.py
-    gym_environment = gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID(Robot_Str.Name, CONST_ENV_MODE))
+    gym_environment = gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID(Robot_Str.Name, CONST_ENV_MODE), T=None)
 
     # Reset the pre-defined environment of the gym.
     #   Note:

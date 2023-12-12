@@ -74,6 +74,7 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
 
         except AssertionError as error:
             print(f'[ERROR] Information: {error}')
+            print(f'[ERROR] ')
 
     def __Set_Env_Parameters(self, mode: str, Robot_Str: Parameters) -> None:
         """
@@ -81,8 +82,8 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
             ...
 
         Args:
-            (1) mode [string]: 
-            (2) Robot_Str []: 
+            (1) mode [string]: The name of the environment mode.
+            (2) Robot_Str [Robot_Str(object)]: The structure of the main parameters of the robot.
         """
             
         if 'ABB_IRB_14000' in Robot_Str.Name:
@@ -156,13 +157,25 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
     def compute_reward(self, p: tp.List[float], p_1: tp.List[float], info: tp.Dict[str, tp.Any] = {}) -> tp.List[float]:
         """
         Description:
-            ...
+            Calculate the reward function using the 'Dense' method.
+
+            Note:
+                In our case, the 'Dense' reward function will be defined as the negative Euclidean distance between 
+                the achieved and the desired goal.
+
+            The "Sparse" method can also be used:
+
+                return -(self.__Euclidean_Norm(p - p_1) > self.__distance_threshold).astype(np.float32)
+
+                Note:
+                    The environment will return a reward if the task is completed.
 
         Args:
-            (1) ...
+            (1) p [Vector<float> 1x3]: The point 'p(x, y, z)' represents the achieved goal.
+            (2) p_1 [Vector<float> 1x3]: The point 'p_{1}(x, y, z)' represents the desired goal.
 
         Returns:
-            (1) ...
+            (1) parameter [Vector<float> 1x1]: Calculated reward using the 'Dense' method.
         """
                 
         return -self.__Euclidean_Norm(p - p_1).astype(np.float32)
@@ -170,13 +183,14 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
     def is_success(self, p: tp.List[float], p_1: tp.List[float]) -> tp.List[float]:
         """
         Description:
-            ...
+            A function to calculate whether the desired target has been successfully found.
 
         Args:
-            (1) ...
+            (1) p [Vector<float> 1x3]: The point 'p(x, y, z)' represents the achieved goal.
+            (2) p_1 [Vector<float> 1x3]: The point 'p_{1}(x, y, z)' represents the desired goal.
 
         Returns:
-            (1) ...
+            (1) parameter [Vector<float> 1x1]: Information whether the desired target has been successfully found.
         """
                 
         return np.array(self.__Euclidean_Norm(p - p_1) < self.__distance_threshold, dtype=bool)
@@ -187,10 +201,15 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
             ...
 
         Args:
-            (1) ...
+            (1) action [gym.spaces.Box]:
 
         Returns:
-            (1) ...
+            (1) parameter [gym.spaces.Dict]:
+            (2) parameter [float]:
+            (3) parameter [bool]:
+            (4) parameter [bool]:
+            (5) parameter [Dictionary {'is_success': float}]: Information whether the desired target 
+                                                              has been successfully found.
         """
                 
         # ...
@@ -246,11 +265,15 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
             ...
 
             https://www.gymlibrary.dev/api/core/
+
         Args:
-            (1) ...
+            (1) seed [int]:
+            (2) options [Dictionary {..}]:
 
         Returns:
-            (1) ...
+            (1) parameter [gym.spaces.Dict]:
+            (2) parameter [Dictionary {'is_success': float}]: Information whether the desired target 
+                                                              has been successfully found.
         """
                 
         # ...

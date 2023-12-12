@@ -26,3 +26,4 @@ def Get_Environment_ID(name: str, env_mode: int) -> str:
     
     except AssertionError as error:
         print(f'[ERROR] Information: {error}')
+        print('[ERROR] Incorrect environment mode selected. The selected mode must be chosen from the two options (Default, Safe).')

@@ -36,7 +36,42 @@ CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] 
 class Industrial_Robotics_Gym_Env_Cls(gym.Env):
     """
     Description:
-        ...
+        A class designed to train a specific robotic arm on the 'Reach' task within a pre-defined environment 
+        using the Deep Reinforcement Learning (DRL) algorithm.
+
+    Initialization of the Class:
+        Args:
+            (1) mode [string]: The name of the environment mode.
+            (2) Robot_Str [Robot_Str(object)]: The structure of the main parameters of the robot.
+            (3) action_step_factor [float]: The reduction of the action step.
+            (4) distance_threshold [float]: The threshold distance at which the result will be successfully completed.
+            (5) T [Matrix<float, float> 4x4]: Homogeneous transformation matrix of the robot end-effector position 
+                                              within the 'Target' configuration space.
+
+        Example:
+            # Create the environment that was previously registered using gymnasium.register() within the __init__.py file.
+            #   More information can be found in the following script:
+            #       ../src/Industrial_Robotics_Gym/__init__.py
+            gym_environment = gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID('Ur3-Default-Reach-v0', T=None)
+
+            # Reset the pre-defined environment of the gym.
+            #   Note:
+            #       Obtain the initial information and observations.
+            observations, informations = gym_environment.reset()
+
+            for _ in range(1000):
+                # Obtain a random action sample from the entire action space.
+                action = gym_environment.action_space.sample()
+
+                # Perform the action within the pre-defined environment and get the new observation space.
+                observations, reward, terminated, truncated, informations = gym_environment.step(action)
+
+                # When the reach task process is terminated or truncated, reset the pre-defined gym environment.
+                if terminated == True or truncated == True:
+                    observations, informations = gym_environment.reset()
+
+            # Disconnect the created environment from a physical server.
+            gym_environment.close()
     """
 
     def __init__(self, mode: str = 'Default', Robot_Str: Parameters = Parameters.Universal_Robots_UR3_Str, action_step_factor: float = 1.0, 
@@ -46,13 +81,9 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
 
             super(Industrial_Robotics_Gym_Env_Cls, self).__init__()
 
-            # ...
+            # Express the input variables.
             self.__distance_threshold = np.float32(distance_threshold)
             self.__action_step_factor = np.float32(action_step_factor)
-
-            # Get the translational and rotational part from the input transformation matrix.
-            if T is not None:
-                self.__p_T = T.p.all().astype(np.float32); self.__q_T = T.Get_Rotation('QUATERNION').all().astype(np.float32)
 
             # Numerical IK Parameters.
             #   The properties of the inverse kinematics solver.
@@ -61,6 +92,17 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         
             # Set the parameters of the environment.
             self.__Set_Env_Parameters(mode, Robot_Str)
+
+            # Get the translational and rotational part from the input transformation matrix.
+            if T is not None:
+                self.__p_T = T.p.all().astype(np.float32); self.__q_T = T.Get_Rotation('QUATERNION').all().astype(np.float32)
+
+                # Transformation of point position in X, Y, Z axes.
+                self.__P_EE.Transformation(self.__p_T)
+
+                # Determine if a given point is inside a search area.
+                if self.__AABB_C_search.Is_Point_Inside(self.__P_EE) == False:
+                    raise Exception('[ERROR] The input transformation matrix has point outside the "Target" configuration space.')
 
             # Reset the pre-defined environment of the gym.
             #   Note:

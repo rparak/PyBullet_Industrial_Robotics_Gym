@@ -6,14 +6,14 @@ def Get_Environment_ID(name: str, env_mode: int) -> str:
     Args:
         (1) name [string]: Name of the robotic structure.
         (2) env_mode [int]: The name of the environment mode.
-                                env_mode = 'Default' or 'Safe'
+                                env_mode = 'Default' or 'Collision-Free'
 
     Returns:
         (1) parameter [string]: The string of the desired gym environment ID.
     """
 
     try:
-        assert env_mode in ['Default', 'Safe']
+        assert env_mode in ['Default', 'Collision-Free']
 
         return {
             'Universal_Robots_UR3': lambda env_m: f'Ur3-{env_m}-Reach-v0',
@@ -26,4 +26,4 @@ def Get_Environment_ID(name: str, env_mode: int) -> str:
     
     except AssertionError as error:
         print(f'[ERROR] Information: {error}')
-        print('[ERROR] Incorrect environment mode selected. The selected mode must be chosen from the two options (Default, Safe).')
+        print('[ERROR] Incorrect environment mode selected. The selected mode must be chosen from the two options (Default, Collision-Free).')

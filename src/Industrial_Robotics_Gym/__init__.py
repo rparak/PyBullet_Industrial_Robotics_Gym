@@ -16,10 +16,10 @@ Description:
 """
 # The name of the environment mode.
 #   'Default': 
-#       A mode called "Default" that demonstrates an environment without a collision object.
-#   'Safe': 
-#       A mode called "Safe" that demonstrates an environment with a collision object.
-CONST_ENV_MODE = ['Default', 'Safe']
+#       The mode called "Default" demonstrates an environment without a collision object.
+#   'Collision-Free': 
+#       The mode called "Collision-Free" demonstrates an environment with a collision object.
+CONST_ENV_MODE = ['Default', 'Collision-Free']
 # The name of a particular robotic structure.
 CONST_ROBOT_NAME = ['Ur3', 'AbbIrb120', 'AbbIrb120L', 'AbbIrb14000L', 'AbbIrb14000R', 'EpsonLs3']
 # Set the structure of the main parameters of the robot.

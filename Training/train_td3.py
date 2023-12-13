@@ -46,9 +46,9 @@ Description:
 CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 # The name of the environment mode.
 #   'Default': 
-#       A mode called "Default" that demonstrates an environment without a collision object.
-#   'Safe': 
-#       A mode called "Safe" that demonstrates an environment with a collision object.
+#       The mode called "Default" demonstrates an environment without a collision object.
+#   'Collision-Free': 
+#       The mode called "Collision-Free" demonstrates an environment with a collision object.
 CONST_ENV_MODE = 'Default'
 # The name of the reinforcement learning algorithm. 
 #   'TD3':

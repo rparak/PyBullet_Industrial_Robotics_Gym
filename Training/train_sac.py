@@ -45,16 +45,16 @@ Description:
 CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 # The name of the environment mode.
 #   'Default': 
-#       A mode called "Default" that demonstrates an environment without a collision object.
-#   'Safe': 
-#       A mode called "Safe" that demonstrates an environment with a collision object.
+#       The mode called "Default" demonstrates an environment without a collision object.
+#   'Collision-Free': 
+#       The mode called "Collision-Free" demonstrates an environment with a collision object.
 CONST_ENV_MODE = 'Default'
 # The name of the reinforcement learning algorithm. 
 #   'SAC':
 #       Soft Actor Critic (SAC) Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor.
 #   'SAC_HER':
 #       Soft Actor Critic (SAC) + Hindsight Experience Replay (HER)
-CONST_ALGORITHM = 'SAC'
+CONST_ALGORITHM = 'SAC_HER'
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 

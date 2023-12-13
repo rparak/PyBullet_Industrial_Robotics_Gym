@@ -77,7 +77,7 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
     def __init__(self, mode: str = 'Default', Robot_Str: Parameters = Parameters.Universal_Robots_UR3_Str, action_step_factor: float = 1.0, 
                  distance_threshold: float = 1.0, T: HTM_Cls = None) -> None:
         try:
-            assert mode in ['Default', 'Safe']
+            assert mode in ['Default', 'Collision-Free']
 
             super(Industrial_Robotics_Gym_Env_Cls, self).__init__()
 
@@ -120,7 +120,7 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
 
         except AssertionError as error:
             print(f'[ERROR] Information: {error}')
-            print('[ERROR] Incorrect environment mode selected. The selected mode must be chosen from the two options (Default, Safe).')
+            print('[ERROR] Incorrect environment mode selected. The selected mode must be chosen from the two options (Default, Collision-Free).')
 
     def __Set_Env_Parameters(self, mode: str, Robot_Str: Parameters) -> None:
         """

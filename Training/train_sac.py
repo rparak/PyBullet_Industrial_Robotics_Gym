@@ -54,7 +54,7 @@ CONST_ENV_MODE = 'Default'
 #       Soft Actor Critic (SAC) Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor.
 #   'SAC_HER':
 #       Soft Actor Critic (SAC) + Hindsight Experience Replay (HER)
-CONST_ALGORITHM = 'SAC_HER'
+CONST_ALGORITHM = 'SAC'
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 

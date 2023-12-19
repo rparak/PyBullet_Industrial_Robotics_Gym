@@ -1,1 +1,0 @@
-Training time: 52295.93039 in seconds.

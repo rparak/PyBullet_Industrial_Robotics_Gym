@@ -56,7 +56,7 @@ CONST_ENV_MODE = 'Default'
 #       policy gradient, to obtain an algorithm for continuous actions.
 #   'DDPG_HER':
 #       Deep Deterministic Policy Gradient (DDPG) + Hindsight Experience Replay (HER)
-CONST_ALGORITHM = 'DDPG_HER'
+CONST_ALGORITHM = 'DDPG'
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 

@@ -48,7 +48,7 @@ CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 #       The mode called "Default" demonstrates an environment without a collision object.
 #   'Collision-Free': 
 #       The mode called "Collision-Free" demonstrates an environment with a collision object.
-CONST_ENV_MODE = 'Default'
+CONST_ENV_MODE = 'Collision-Free'
 # The name of the reinforcement learning algorithm. 
 #   'SAC':
 #       Soft Actor Critic (SAC) Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor.

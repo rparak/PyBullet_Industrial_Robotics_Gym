@@ -76,13 +76,13 @@ class Robot_Cls(object):
             (2) urdf_file_path [string]: The specified path of the robotic structure file with an extension '*.urdf'.
                                             Note:
                                                 urdf - Unified Robotics Description Format
-            (3) properties [Dictionary {'Enable_GUI': int, 'fps': int, 'External_Base': None or string, 'Env_ID': int,
+            (3) properties [Dictionary {'Enable_GUI': int, 'fps': int, 'External_Base': None or string, 'Env_ID': bool,
                                         'Camera': {'Yaw': float, 
                                                    'Pitch': float, 
                                                    'Distance': float, 
                                                    'Position': Vector<float> 1x3}}]: The properties of the PyBullet environment.
                                                                                         Note:
-                                                                                            'Enable_GUI': Enable/disable the PyBullet explorer view.
+                                                                                            'Enable_GUI': Enable/disable the PyBullet GUI.
                                                                                             'fps': The FPS (Frames Per Seconds) value.
                                                                                             'External_Base: The specified path of the robotic structure 
                                                                                                             base, if it exists. If not, set the value 
@@ -100,7 +100,7 @@ class Robot_Cls(object):
                 #   Example for the ABB IRB 120 robot.
                 Robot_Parameters_Str = RoLE.Parameters.Robot.ABB_IRB_120_Str
                 #   The properties of the PyBullet environment.
-                env_properties = {'Enable_GUI': 0, 'fps': 100, 'External_Base': None,
+                env_properties = {'Enable_GUI': True, 'fps': 100, 'External_Base': None,
                                   'Camera': {'Yaw': 70.0, 'Pitch': -32.0, 'Distance':1.3, 
                                              'Position': [0.05, -0.10, 0.06]}}
 
@@ -202,13 +202,13 @@ class Robot_Cls(object):
             _ = PyBullet.Utilities.Add_Wireframe_Cuboid(self.__Env_Structure.Collision_Object.T, 3 * [self.__Env_Structure.Collision_Object.Scale * 2.0], 
                                                         self.__Env_Structure.Collision_Object.Color[0:3], 1.0)
 
-    def __Set_Env_Parameters(self, enable_gui: int, camera_parameters: tp.Dict) -> None:
+    def __Set_Env_Parameters(self, enable_gui: bool, camera_parameters: tp.Dict) -> None:
         """
         Description:
             A function to set the parameters of the PyBullet environment.
 
         Args:
-            (1) enable_gui [int]: Enable/disable the PyBullet explorer view.
+            (1) enable_gui [bool]: Enable/disable the PyBullet GUI.
             (2) camera_parameters [Dictionary {'Yaw': float, 'Pitch': float, 'Distance': float, 
                                                'Position': Vector<float> 1x3}]: The parameters of the camera.
                                                                                     Note:
@@ -221,7 +221,11 @@ class Robot_Cls(object):
         """
 
         # Connect to the physics simulation and create an environment with additional properties.
-        pb.connect(pb.GUI, options='--background_color_red=0.0 --background_color_green=0.0 --background_color_blue=0.0')
+        if enable_gui == True:
+            pb.connect(pb.GUI, options='--background_color_red=0.0 --background_color_green=0.0 --background_color_blue=0.0')
+        else:
+            pb.connect(pb.DIRECT)
+        # Additional properties.
         pb.setTimeStep(self.__delta_time)
         pb.setRealTimeSimulation(0)
         pb.resetSimulation()
@@ -235,7 +239,7 @@ class Robot_Cls(object):
         # Configure settings for the built-in OpenGL visualizer.
         pb.configureDebugVisualizer(pb.COV_ENABLE_RENDERING, 1)
         pb.configureDebugVisualizer(pb.COV_ENABLE_SHADOWS, 1)
-        pb.configureDebugVisualizer(pb.COV_ENABLE_GUI, enable_gui)
+        pb.configureDebugVisualizer(pb.COV_ENABLE_GUI, 0)
         pb.configureDebugVisualizer(pb.COV_ENABLE_MOUSE_PICKING, 0)
 
         # Load a physics model of the plane.

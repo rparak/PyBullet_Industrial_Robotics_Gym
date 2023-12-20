@@ -138,7 +138,7 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
             external_base = None
 
         # The properties of the PyBullet environment. 
-        pybullet_env_properties = {'Enable_GUI': 0, 'fps': 1000, 
+        pybullet_env_properties = {'Enable_GUI': True, 'fps': 1000, 
                                    'External_Base': external_base, 'Env_ID': 0 if mode == 'Default' else 1,
                                    'Camera': {'Yaw': 70.0, 'Pitch': -32.0, 'Distance': 1.3, 
                                               'Position': [0.05, -0.10, 0.06]}}

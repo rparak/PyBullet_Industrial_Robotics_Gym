@@ -19,7 +19,6 @@ Install:
 conda install -c conda-forge matplotlib
 conda install -c conda-forge scienceplots
 conda install -c conda-forge pandas
-conda install -c conda-forge seaborn
 conda install pytorch::pytorch torchvision torchaudio -c pytorch
 conda install -c conda-forge pybullet
 conda install -c conda-forge gymnasium

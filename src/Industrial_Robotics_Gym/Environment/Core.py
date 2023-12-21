@@ -84,6 +84,7 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
             # Express the input variables.
             self.__distance_threshold = np.float32(distance_threshold)
             self.__action_step_factor = np.float32(action_step_factor)
+            self.__mode = mode
 
             # Numerical IK Parameters.
             #   The properties of the inverse kinematics solver.
@@ -223,9 +224,13 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         Returns:
             (1) parameter [Vector<float> 1x1]: Calculated reward using the 'Dense' method.
         """
-                
-        return -self.__Euclidean_Norm(p - p_1).astype(np.float32)
-    
+        
+        if self.__mode == 'Default':
+            return -self.__Euclidean_Norm(p - p_1).astype(np.float32)
+        else:
+            collision_obj_penalty = 1.0 / (1.0 + self.__Euclidean_Norm(p - self.__Env_Structure.Collision_Object.T.p.all().copy().astype(np.float32)))
+            return -(self.__Euclidean_Norm(p - p_1) + collision_obj_penalty * self.__distance_threshold).astype(np.float32)  
+ 
     def is_success(self, p: tp.List[float], p_1: tp.List[float]) -> tp.List[float]:
         """
         Description:

@@ -56,7 +56,7 @@ CONST_ENV_MODE = 'Collision-Free'
 #       it using three major tricks: clipped double Q-Learning, delayed policy update and target policy smoothing.
 #   'TD3_HER':
 #       Twin Delayed DDPG (TD3) + Hindsight Experience Replay (HER)
-CONST_ALGORITHM = 'TD3'
+CONST_ALGORITHM = 'TD3_HER'
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 

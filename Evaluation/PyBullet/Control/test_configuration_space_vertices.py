@@ -38,17 +38,13 @@ CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] 
 #      ABB_IRB_14000_{L, R}_Str:
 #       'External_Base': f'{CONST_PROJECT_FOLDER}/URDFs/Robots/ABB_IRB_14000_Base/ABB_IRB_14000_Base.urdf'
 CONST_PYBULLET_ENV_PROPERTIES = {'Enable_GUI': True, 'fps': 100, 
-                                 'External_Base': None, 'Env_ID': 0,
+                                 'External_Base': None, 'Env_ID': 1,
                                  'Camera': {'Yaw': 70.0, 'Pitch': -32.0, 'Distance': 1.3, 
                                             'Position': [0.05, -0.10, 0.06]}}
 # Type of the configuration space.
 #   Note:
 #       'Search' or 'Target'
-CONST_C_TYPE = 'Search'
-# The name of the mode to be used to perform the transformation.
-#   Note:
-#       mode = 'Reset' or 'Motion'
-CONST_CTRL_MODE = 'Motion'
+CONST_C_TYPE = 'Target'
 
 def main():
     """
@@ -93,7 +89,7 @@ def main():
         # Set the absolute position of the robot joints.
         in_position = False
         if successful == True:
-            in_position = PyBullet_Robot_Cls.Set_Absolute_Joint_Position(theta, {'force': 100.0, 't_0': 0.0, 't_1': 2.0})
+            in_position = PyBullet_Robot_Cls.Set_Absolute_Joint_Position(theta, {'force': 100.0, 't_0': 0.0, 't_1': 1.0})
 
         if in_position == False or successful == False:
             print('[WARNING] There is an issue during the execution of the TCP (tool center point) target.')

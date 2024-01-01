@@ -11,6 +11,9 @@ https://robotics.farama.org/envs/fetch/reach/
 
 plot, train (+ HER), add static point ...
 
+plot Env. 0 - find the best DRL method
+train Env. 1
+
 ```
 Create:
 conda create -n env_robotics_gym python=3.9

@@ -12,7 +12,8 @@ https://robotics.farama.org/envs/fetch/reach/
 plot, train (+ HER), add static point ...
 
 plot Env. 0 - find the best DRL method
-train Env. 1
+
+train Env. 1 and find the best DRL method
 
 ```
 Create:

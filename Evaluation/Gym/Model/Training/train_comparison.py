@@ -76,11 +76,9 @@ def main():
         print(f'[INFO] {name_algorithm}')
         for _, metric_i in enumerate(CONST_METRICS):
             if 'success_rate' in metric_i:
-                sucess_rate = np.max(data_i[metric_i])
-                print(f'[INFO] >> max({metric_i}): {CONST_TOLERANCE} - {sucess_rate}')
-                info = np.where(data_i[metric_i] >= CONST_TOLERANCE)
-                index = np.min(np.where(data_i[metric_i] >= 0.99)[0])
-                print(f'[INFO] >> Best result in timestep: {data_i["time/total_timesteps"][index]}')
+                #sucess_rate = np.max(data_i[metric_i])
+                info = np.where(data_i[metric_i] >= CONST_TOLERANCE); index = np.min(info[0])
+                print(f'[INFO] >> First successful result in a timestep: {data_i["time/total_timesteps"][index]}')
                 print(f'[INFO] >> Percentage of success with defined tolerance: {(info[0].size / data_i[metric_i].size)}')
             else:
                 if metric_i in ['rollout/ep_rew_mean', 'train/actor_loss']:

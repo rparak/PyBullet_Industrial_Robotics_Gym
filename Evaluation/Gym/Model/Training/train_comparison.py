@@ -38,8 +38,8 @@ CONST_ALGORITHMS = ['DDPG', 'DDPG_HER', 'SAC', 'SAC_HER',
 # The selected metrics that will be observed for the comparison.
 CONST_METRICS = ['rollout/success_rate', 'rollout/ep_rew_mean', 'rollout/ep_len_mean',
                  'train/critic_loss', 'train/actor_loss']
-# Tolerance of success rate.
-CONST_TOLERANCE = 0.99
+# Minimum success rate.
+CONST_MIN_SUCCESS_RATE = 0.99
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 
@@ -77,9 +77,9 @@ def main():
         for _, metric_i in enumerate(CONST_METRICS):
             if 'success_rate' in metric_i:
                 #sucess_rate = np.max(data_i[metric_i])
-                info = np.where(data_i[metric_i] >= CONST_TOLERANCE); index = np.min(info[0])
+                info = np.where(data_i[metric_i] >= CONST_MIN_SUCCESS_RATE); index = np.min(info[0])
                 print(f'[INFO] >> First successful result in a timestep: {data_i["time/total_timesteps"][index]}')
-                print(f'[INFO] >> Percentage of success with defined tolerance: {(info[0].size / data_i[metric_i].size)}')
+                print(f'[INFO] >> Percentage of success with a defined minimum success rate: {(info[0].size / data_i[metric_i].size)}')
             else:
                 if metric_i in ['rollout/ep_rew_mean', 'rollout/ep_len_mean']:
                     print(f'[INFO] >> mean({metric_i}) - success: {np.mean(data_i[metric_i][index::])}')

@@ -19,6 +19,9 @@ import RoLE.Parameters.Robot as Parameters
 import Industrial_Robotics_Gym
 #       ../Industrial_Robotics_Gym/Utilities
 import Industrial_Robotics_Gym.Utilities
+#   PyBullet
+#       ../PyBullet/Utilities
+import PyBullet.Utilities
 
 """
 Description:
@@ -51,7 +54,7 @@ def main():
             - Universal Robots UR3
             
         Note:
-            The target will be defined statically.
+            The target will be statically defined as the center of the target configuration space.
 
         More information about the training process can be found in the script below:
             ../PyBullet_Industrial_Robotics_Gym/Training/train_{CONST_ALGORITHM}.py
@@ -60,10 +63,13 @@ def main():
     # Initialization of the structure of the main parameters of the robot.
     Robot_Str = CONST_ROBOT_TYPE
 
+    # Obtain the structure of the main parameters of the environment for the defined robotic arm.
+    Env_Structure = PyBullet.Utilities.Get_Environment_Structure(Robot_Str.Name, 0 if CONST_ENV_MODE == 'Default' else 1)
+
     # Create the environment that was previously registered using gymnasium.register() within the __init__.py file.
     #   More information can be found in the following script:
     #       ../src/Industrial_Robotics_Gym/__init__.py
-    gym_environment = gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID(Robot_Str.Name, CONST_ENV_MODE), T=None)
+    gym_environment = gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID(Robot_Str.Name, CONST_ENV_MODE), T=Env_Structure.C.Target.T)
 
     # Create a vectorized environment.
     gym_environment = stable_baselines3.common.vec_env.DummyVecEnv([lambda: gym_environment])
@@ -76,7 +82,7 @@ def main():
     #       Obtain the initial information and observations.
     observations, informations = gym_environment.reset()
 
-    for _ in range(1000):
+    while True:
         # Get the policy action from an observation.
         action, _ = model.predict(observations)
 
@@ -86,6 +92,7 @@ def main():
         # When the reach task process is terminated or truncated, reset the pre-defined gym environment.
         if terminated == True or truncated == True:
             observations, informations = gym_environment.reset()
+            break
 
     # Disconnect the created environment from a physical server.
     gym_environment.close()

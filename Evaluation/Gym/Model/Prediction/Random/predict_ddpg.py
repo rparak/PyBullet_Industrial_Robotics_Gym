@@ -39,6 +39,8 @@ CONST_ENV_MODE = 'Default'
 #   'DDPG_HER':
 #       Deep Deterministic Policy Gradient (DDPG) + Hindsight Experience Replay (HER)
 CONST_ALGORITHM = 'DDPG'
+# Number of randomly generated targets.
+CONST_N_TARGETS = 100
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 
@@ -77,7 +79,8 @@ def main():
     #       Obtain the initial information and observations.
     observations, informations = gym_environment.reset()
 
-    for _ in range(1000):
+    i = 0
+    while i < CONST_N_TARGETS:
         # Get the policy action from an observation.
         action, _ = model.predict(observations)
 
@@ -87,6 +90,7 @@ def main():
         # When the reach task process is terminated or truncated, reset the pre-defined gym environment.
         if terminated == True or truncated == True:
             observations, informations = gym_environment.reset()
+            i += 1
 
     # Disconnect the created environment from a physical server.
     gym_environment.close()

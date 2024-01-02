@@ -38,14 +38,19 @@ CONST_ALGORITHMS = ['DDPG', 'DDPG_HER', 'SAC', 'SAC_HER',
 # The selected metrics that will be observed for the comparison.
 CONST_METRICS = ['rollout/success_rate', 'rollout/ep_rew_mean', 'rollout/ep_len_mean',
                  'train/critic_loss', 'train/actor_loss']
+# Tolerance of success rate.
+CONST_TOLERANCE = 0.99
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 
 def main():
     """
     Description:
-        ...
+        A program to compare the metrics obtained during training for a 'reach' task in a pre-defined 
+        environment, utilizing a specific reinforcement learning algorithm
 
+        The program simply displays the results as the values shown in the console.
+        
         More information about the training process can be found in the script below:
             ../PyBullet_Industrial_Robotics_Gym/Training/train_{CONST_ALGORITHM}.py
     """
@@ -72,11 +77,16 @@ def main():
         for _, metric_i in enumerate(CONST_METRICS):
             if 'success_rate' in metric_i:
                 sucess_rate = np.max(data_i[metric_i])
-                print(f'[INFO] >> {metric_i}: {sucess_rate}')
-                index = np.min(np.where(data_i[metric_i] >= sucess_rate))
-                print(f'[INFO] >> index: {index}')
+                print(f'[INFO] >> max({metric_i}): {CONST_TOLERANCE} - {sucess_rate}')
+                info = np.where(data_i[metric_i] >= CONST_TOLERANCE)
+                index = np.min(np.where(data_i[metric_i] >= 0.99)[0])
+                print(f'[INFO] >> Best result in timestep: {data_i["time/total_timesteps"][index]}')
+                print(f'[INFO] >> Percentage of success with defined tolerance: {(info[0].size / data_i[metric_i].size)}')
             else:
-                print(f'[INFO] >> {metric_i}: {np.min(data_i[metric_i][index])}')
+                if metric_i in ['rollout/ep_rew_mean', 'train/actor_loss']:
+                    print(f'[INFO] >> min({metric_i}): {np.min(np.abs(data_i[metric_i]))}')
+                else:
+                    print(f'[INFO] >> min({metric_i}): {np.min(data_i[metric_i])}')
 
 if __name__ == '__main__':
     sys.exit(main())

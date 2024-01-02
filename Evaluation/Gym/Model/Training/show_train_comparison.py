@@ -49,7 +49,10 @@ CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] 
 def main():
     """
     Description:
-        ...
+        A program to compare the metrics obtained during training for a 'reach' task in a pre-defined 
+        environment, utilizing a specific reinforcement learning algorithm
+
+        The program visualizes the results in a graph (plot).
 
         More information about the training process can be found in the script below:
             ../PyBullet_Industrial_Robotics_Gym/Training/train_{CONST_ALGORITHM}.py
@@ -76,7 +79,6 @@ def main():
 
     # Create a figure.
     _, ax = plt.subplots()
-
 
     # Get the x and y axis of the graph.
     color = ['#f2c89b', '#e69138', '#c5d3e2', '#8ca8c5', 

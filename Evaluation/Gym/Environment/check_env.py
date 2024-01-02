@@ -48,4 +48,4 @@ def main():
     stable_baselines3.common.env_checker.check_env(gym_environment, warn=True)
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

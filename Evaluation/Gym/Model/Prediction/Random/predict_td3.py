@@ -14,6 +14,8 @@ import stable_baselines3.common.vec_env
 #   Robotics Library for Everyone (RoLE)
 #       ../RoLE/Parameters/Robot
 import RoLE.Parameters.Robot as Parameters
+#       ../RoLE/Utilities/File_IO
+import RoLE.Utilities.File_IO
 #   Industrial_Robotics_Gym
 #       ../Industrial_Robotics_Gym
 import Industrial_Robotics_Gym
@@ -63,6 +65,13 @@ def main():
     # Initialization of the structure of the main parameters of the robot.
     Robot_Str = CONST_ROBOT_TYPE
 
+    # The specified path of the file to save the data.
+    file_path = f'{CONST_PROJECT_FOLDER}/Data/Prediction/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM}/{Robot_Str.Name}/random_N_{CONST_N_TARGETS}'
+    
+    # Removes old files (if any) created by the previous prediction.
+    if os.path.isfile(f'{file_path}.txt'):
+        os.remove(f'{file_path}.txt')
+
     # Create the environment that was previously registered using gymnasium.register() within the __init__.py file.
     #   More information can be found in the following script:
     #       ../src/Industrial_Robotics_Gym/__init__.py
@@ -79,7 +88,7 @@ def main():
     #       Obtain the initial information and observations.
     observations, informations = gym_environment.reset()
 
-    i = 0
+    i = 0; path_length = 1
     while i < CONST_N_TARGETS:
         # Get the policy action from an observation.
         action, _ = model.predict(observations)
@@ -89,8 +98,18 @@ def main():
 
         # When the reach task process is terminated or truncated, reset the pre-defined gym environment.
         if terminated == True or truncated == True:
+            # Get the Euclidean distance.
+            e_d = np.linalg.norm(observations['achieved_goal'] - observations['desired_goal'], axis=-1)
+
+            # Save the data to the '*.txt' file.
+            RoLE.Utilities.File_IO.Save(file_path, np.array([i, informations['is_success'], reward, path_length, 
+                                                             e_d]), 'txt', ',')
+
+            # Reset the pre-defined environment of the gym.
             observations, informations = gym_environment.reset()
-            i += 1
+            path_length = 0; i += 1
+
+        path_length += 1
 
     # Disconnect the created environment from a physical server.
     gym_environment.close()

@@ -54,6 +54,10 @@ def main():
 
         The program visualizes the results in a graph (plot).
 
+        Note:
+            The comparison is only defined for the Universal Robots UR3 robotic arm. The other 
+            robotic arms are trained using the best method obtained from the comparison.
+
         More information about the training process can be found in the script below:
             ../PyBullet_Industrial_Robotics_Gym/Training/train_{CONST_ALGORITHM}.py
     """

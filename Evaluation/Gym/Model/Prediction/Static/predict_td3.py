@@ -14,6 +14,8 @@ import stable_baselines3.common.vec_env
 #   Robotics Library for Everyone (RoLE)
 #       ../RoLE/Parameters/Robot
 import RoLE.Parameters.Robot as Parameters
+#       ../RoLE/Utilities/File_IO
+import RoLE.Utilities.File_IO
 #   Industrial_Robotics_Gym
 #       ../Industrial_Robotics_Gym
 import Industrial_Robotics_Gym
@@ -64,6 +66,13 @@ def main():
     # Initialization of the structure of the main parameters of the robot.
     Robot_Str = CONST_ROBOT_TYPE
 
+    # The specified path of the file to save the data.
+    file_path = f'{CONST_PROJECT_FOLDER}/Data/Prediction/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM}/{Robot_Str.Name}/path_static_target'
+    
+    # Removes old files (if any) created by the previous prediction.
+    if os.path.isfile(f'{file_path}.txt'):
+        os.remove(f'{file_path}.txt')
+
     # Obtain the structure of the main parameters of the environment for the defined robotic arm.
     Env_Structure = PyBullet.Utilities.Get_Environment_Structure(Robot_Str.Name, 0 if CONST_ENV_MODE == 'Default' else 1)
 
@@ -90,6 +99,9 @@ def main():
         # Perform the action within the pre-defined environment and get the new observation space.
         observations, reward, terminated, truncated, informations = gym_environment.step(action)
 
+        # Save the data to the '*.txt' file.
+        RoLE.Utilities.File_IO.Save(file_path, observations['achieved_goal'], 'txt', ',')
+        
         # When the reach task process is terminated or truncated, reset the pre-defined gym environment.
         if terminated == True or truncated == True:
             observations, informations = gym_environment.reset()

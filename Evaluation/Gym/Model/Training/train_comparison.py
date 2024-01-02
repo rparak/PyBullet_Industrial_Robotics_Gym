@@ -81,10 +81,10 @@ def main():
                 print(f'[INFO] >> First successful result in a timestep: {data_i["time/total_timesteps"][index]}')
                 print(f'[INFO] >> Percentage of success with defined tolerance: {(info[0].size / data_i[metric_i].size)}')
             else:
-                if metric_i in ['rollout/ep_rew_mean', 'train/actor_loss']:
-                    print(f'[INFO] >> min({metric_i}): {np.min(np.abs(data_i[metric_i]))}')
+                if metric_i in ['rollout/ep_rew_mean', 'rollout/ep_len_mean']:
+                    print(f'[INFO] >> mean({metric_i}) - success: {np.mean(data_i[metric_i][index::])}')
                 else:
-                    print(f'[INFO] >> min({metric_i}): {np.min(data_i[metric_i])}')
+                    print(f'[INFO] >> min({metric_i}): {np.min(np.abs(data_i[metric_i]))}')
 
 if __name__ == '__main__':
     sys.exit(main())

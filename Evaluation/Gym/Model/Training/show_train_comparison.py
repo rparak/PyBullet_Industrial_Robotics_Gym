@@ -40,8 +40,9 @@ CONST_ENV_MODE = 'Default'
 CONST_ALGORITHMS = ['DDPG', 'DDPG_HER', 'SAC', 'SAC_HER', 
                     'TD3', 'TD3_HER']
 # The selected metric to be displayed in the graph (plot).
-#   CONST_METRIC = 'success_rate', 'ep_rew_mean', or 'ep_len_mean'
-CONST_METRIC = 'success_rate'
+#   CONST_METRIC = 'rollout/success_rate', 'rollout/ep_rew_mean', 'rollout/ep_len_mean', 
+#                  'train/actor_loss' or 'train/critic_loss'
+CONST_METRIC = 'rollout/success_rate'
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 
@@ -67,6 +68,7 @@ def main():
             data.append(pd.read_csv(f'{file_path}/progress.csv'))
         else:
             print('[WARNING] The file does not exist.')
+            print(f'[WARNING] >> {file_path}/progress.csv')
             exit(0)
 
     # Set the parameters for the scientific style.
@@ -82,7 +84,7 @@ def main():
     for _, (color_i, data_i, label_i) in enumerate(zip(color, data, ['DDPG', 'DDPG + HER', 'SAC', 'SAC + HER', 
                                                                      'TD3', 'TD3 + HER'])):
         # Visualization of relevant structures.
-        ax.plot(data_i['time/total_timesteps'], data_i[f'rollout/{CONST_METRIC}'], '-', color=color_i, 
+        ax.plot(data_i['time/total_timesteps'], data_i[CONST_METRIC], '-', color=color_i, 
                 label=label_i)
 
     # Set parameters of the graph (plot).
@@ -91,12 +93,16 @@ def main():
     ax.set_xticks(np.arange(0.0, 100000.0 + 10000.0, 10000.0))
     #   Label
     ax.set_xlabel(r'Deep Reinforcement Learning Algorithm', fontsize=15, labelpad=10)
-    if CONST_METRIC == 'success_rate':
+    if CONST_METRIC == 'rollout/success_rate':
         y_label = 'Mean Success Rate During Training'
-    elif CONST_METRIC == 'ep_rew_mean':
+    elif CONST_METRIC == 'rollout/ep_rew_mean':
         y_label = 'Mean Training Reward per Episode'
-    elif CONST_METRIC == 'ep_len_mean':
+    elif CONST_METRIC == 'rollout/ep_len_mean':
         y_label = 'Mean Episode Length'
+    elif CONST_METRIC == 'train/actor_loss':
+        y_label = 'Actor Loss'
+    elif CONST_METRIC == 'train/critic_loss':
+        y_label = 'Critic Loss'
     ax.set_ylabel(y_label, fontsize=15, labelpad=10) 
     #   Set parameters of the visualization.
     ax.grid(which='major', linewidth = 0.15, linestyle = '--')

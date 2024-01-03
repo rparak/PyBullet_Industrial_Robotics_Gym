@@ -17,12 +17,9 @@ import matplotlib.pyplot as plt
 import RoLE.Parameters.Robot as Parameters
 #       ../RoLE/Utilities/File_IO
 import RoLE.Utilities.File_IO
-#   Industrial_Robotics_Gym
-#       ../Industrial_Robotics_Gym/Utilities
-#import Industrial_Robotics_Gym.Utilities
 #   PyBullet
 #       ../PyBullet/Utilities
-#import PyBullet.Utilities
+import PyBullet.Utilities
 
 """
 Description:
@@ -52,7 +49,7 @@ def main():
     Robot_Str = CONST_ROBOT_TYPE
 
     # Obtain the structure of the main parameters of the environment for the defined robotic arm.
-    #Env_Structure = PyBullet.Utilities.Get_Environment_Structure(Robot_Str.Name, 0 if CONST_ENV_MODE == 'Default' else 1)
+    Env_Structure = PyBullet.Utilities.Get_Environment_Structure(Robot_Str.Name, 0 if CONST_ENV_MODE == 'Default' else 1)
 
     # The name of the path where the file was saved.
     file_path = f'{CONST_PROJECT_FOLDER}/Data/Prediction/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM}/{Robot_Str.Name}/path_static_target'

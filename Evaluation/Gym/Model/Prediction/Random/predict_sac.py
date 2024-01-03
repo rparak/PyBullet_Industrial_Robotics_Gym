@@ -89,7 +89,7 @@ def main():
     #       Obtain the initial information and observations.
     observations, informations = gym_environment.reset()
 
-    i = 0; path_length = 1
+    i = 0; episode_length = 1
     while i < CONST_N_TARGETS:
         # Get the policy action from an observation.
         action, _ = model.predict(observations)
@@ -100,17 +100,17 @@ def main():
         # When the reach task process is terminated or truncated, reset the pre-defined gym environment.
         if terminated == True or truncated == True:
             # Get the Euclidean distance.
-            e_d = np.linalg.norm(observations['achieved_goal'] - observations['desired_goal'], axis=-1)
+            d = np.linalg.norm(observations['achieved_goal'] - observations['desired_goal'], axis=-1)
 
             # Save the data to the '*.txt' file.
-            RoLE.Utilities.File_IO.Save(file_path, np.array([i, informations['is_success'], reward, path_length, 
-                                                             e_d]), 'txt', ',')
+            RoLE.Utilities.File_IO.Save(file_path, np.array([i, informations['is_success'], reward, episode_length, 
+                                                             d]), 'txt', ',')
 
             # Reset the pre-defined environment of the gym.
             observations, informations = gym_environment.reset()
-            path_length = 0; i += 1
+            episode_length = 0; i += 1
 
-        path_length += 1
+        episode_length += 1
 
     # Disconnect the created environment from a physical server.
     gym_environment.close()

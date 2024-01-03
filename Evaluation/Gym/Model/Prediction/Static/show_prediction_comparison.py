@@ -17,9 +17,6 @@ import matplotlib.pyplot as plt
 import RoLE.Parameters.Robot as Parameters
 #       ../RoLE/Utilities/File_IO
 import RoLE.Utilities.File_IO
-#   Industrial_Robotics_Gym
-#       ../Industrial_Robotics_Gym/Utilities
-import Industrial_Robotics_Gym.Utilities
 #   PyBullet
 #       ../PyBullet/Utilities
 import PyBullet.Utilities

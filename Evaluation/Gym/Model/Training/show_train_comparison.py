@@ -67,7 +67,7 @@ def main():
 
     data = []
     for _, name_algorithm in enumerate(CONST_ALGORITHMS):
-        # The specified path of the file to save the log file.
+        # The specified path to the file to read the data.
         file_path = f'{CONST_PROJECT_FOLDER}/Data/Training/Environment_{CONST_ENV_MODE}/{name_algorithm}/{Robot_Str.Name}'
 
         # Read data from the file {*.csv}.

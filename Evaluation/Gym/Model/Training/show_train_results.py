@@ -59,7 +59,7 @@ def main():
     # Initialization of the structure of the main parameters of the robot.
     Robot_Str = CONST_ROBOT_TYPE
 
-    # The specified path of the file to save the log file.
+    # The specified path to the file to read the data.
     file_path = f'{CONST_PROJECT_FOLDER}/Data/Training/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM}/{Robot_Str.Name}'
 
     # Read data from the file {*.csv}.

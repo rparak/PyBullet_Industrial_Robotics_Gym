@@ -1,10 +1,12 @@
 # System (Default)
 import sys
 #   Add access if it is not in the system path.
-if '../../../' + 'src' not in sys.path:
-    sys.path.append('../../../' + 'src')
+if '../../../../../' + 'src' not in sys.path:
+    sys.path.append('../../../../../' + 'src')
 # OS (Operating system interfaces)
 import os
+# Numpy (Array computing) [pip3 install numpy]
+import numpy as np
 # Gymnasium (Developing and comparing reinforcement learning algorithms) [pip3 install gymnasium]
 import gymnasium as gym
 # Stable-Baselines3 (A set of implementations of reinforcement learning algorithms in PyTorch) [pip3 install stable-baselines3]

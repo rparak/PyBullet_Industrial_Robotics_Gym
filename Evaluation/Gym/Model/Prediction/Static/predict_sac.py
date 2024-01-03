@@ -1,8 +1,8 @@
 # System (Default)
 import sys
 #   Add access if it is not in the system path.
-if '../../../' + 'src' not in sys.path:
-    sys.path.append('../../../' + 'src')
+if '../../../../../' + 'src' not in sys.path:
+    sys.path.append('../../../../../' + 'src')
 # OS (Operating system interfaces)
 import os
 # Gymnasium (Developing and comparing reinforcement learning algorithms) [pip3 install gymnasium]

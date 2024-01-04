@@ -210,6 +210,9 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
                 In our case, the 'Dense' reward function will be defined as the negative Euclidean distance between 
                 the achieved and the desired goal.
 
+                If the environment contains a collision object, the reward will be extended by a penalty 
+                defined by the distance from the object.
+
             The "Sparse" method can also be used:
 
                 return -(self.__Euclidean_Norm(p - p_1) > self.__distance_threshold).astype(np.float32)

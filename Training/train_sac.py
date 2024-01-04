@@ -134,4 +134,4 @@ def main():
     gym_environment.close()
     
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

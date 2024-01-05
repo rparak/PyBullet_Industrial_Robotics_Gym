@@ -142,7 +142,5 @@ def main():
         # Show the result.
         plt.show()
 
-           
-        
 if __name__ == '__main__':
     sys.exit(main())

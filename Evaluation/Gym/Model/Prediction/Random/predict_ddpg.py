@@ -79,24 +79,27 @@ def main():
     #       ../src/Industrial_Robotics_Gym/__init__.py
     gym_environment = gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID(Robot_Str.Name, CONST_ENV_MODE), T=None)
 
-    # Create a vectorized environment.
-    gym_environment = stable_baselines3.common.vec_env.DummyVecEnv([lambda: gym_environment])
-
     # Load a pre-trained model from a zip file.
-    model = stable_baselines3.DDPG.load(f'{CONST_PROJECT_FOLDER}/Data/Model/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM}/{Robot_Str.Name}/model')
+    if 'HER' in CONST_ALGORITHM:
+        model = stable_baselines3.DDPG.load(f'{CONST_PROJECT_FOLDER}/Data/Model/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM}/{Robot_Str.Name}/model', env=gym_environment)
+    else:
+        model = stable_baselines3.DDPG.load(f'{CONST_PROJECT_FOLDER}/Data/Model/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM}/{Robot_Str.Name}/model')
     
     # Reset the pre-defined environment of the gym.
     #   Note:
     #       Obtain the initial information and observations.
     observations, informations = gym_environment.reset()
 
-    i = 0; episode_length = 1
+    i = 0; episode_length = 1; reward_sum = 0.0
     while i < CONST_N_TARGETS:
         # Get the policy action from an observation.
         action, _ = model.predict(observations)
 
         # Perform the action within the pre-defined environment and get the new observation space.
         observations, reward, terminated, truncated, informations = gym_environment.step(action)
+        
+        # Get a current reward.
+        reward_sum += reward
 
         # When the reach task process is terminated or truncated, reset the pre-defined gym environment.
         if terminated == True or truncated == True:
@@ -104,12 +107,14 @@ def main():
             d = np.linalg.norm(observations['achieved_goal'] - observations['desired_goal'], axis=-1)
 
             # Save the data to the '*.txt' file.
-            RoLE.Utilities.File_IO.Save(file_path, np.array([i, informations['is_success'], reward, episode_length, 
+            RoLE.Utilities.File_IO.Save(file_path, np.array([i + 1, informations['is_success'], reward_sum, episode_length, 
                                                              d]), 'txt', ',')
 
             # Reset the pre-defined environment of the gym.
             observations, informations = gym_environment.reset()
-            episode_length = 0; i += 1
+            episode_length = 0; i += 1; reward_sum = 0.0
+
+            print(f'[INFO] Progress: {i} / {CONST_N_TARGETS}')
 
         episode_length += 1
 

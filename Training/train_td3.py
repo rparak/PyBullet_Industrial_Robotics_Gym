@@ -32,10 +32,10 @@ import Industrial_Robotics_Gym.Utilities
 """
 Notes:
     A command to kill all Python processes within the GPU.
-    $ ../>  sudo killall -9 python
+    $ ../> sudo killall -9 python
 
     Start training the model.
-    $ ../>  python train_ddpg.py
+    $ ../> python train_ddpg.py
 """
 
 """
@@ -49,7 +49,7 @@ CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 #       The mode called "Default" demonstrates an environment without a collision object.
 #   'Collision-Free': 
 #       The mode called "Collision-Free" demonstrates an environment with a collision object.
-CONST_ENV_MODE = 'Collision-Free'
+CONST_ENV_MODE = 'Default'
 # The name of the reinforcement learning algorithm. 
 #   'TD3':
 #       Twin Delayed DDPG (TD3) Addressing Function Approximation Error in Actor-Critic Methods. TD3 is a direct successor of DDPG and improves 

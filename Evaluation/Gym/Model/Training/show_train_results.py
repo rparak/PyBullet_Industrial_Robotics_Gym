@@ -9,6 +9,8 @@ import os
 import pandas as pd
 # Numpy (Array computing) [pip3 install numpy]
 import numpy as np
+# Integrate a system of ordinary differential equations (ODE) [pip3 install scipy]
+import scipy
 # SciencePlots (Matplotlib styles for scientific plotting) [pip3 install SciencePlots]
 import scienceplots
 # Matplotlib (Visualization) [pip3 install matplotlib]
@@ -77,15 +79,23 @@ def main():
     _, ax = plt.subplots()
 
     # Get the x and y axis of the graph.
-    t = data['time/total_timesteps']; y = data[CONST_METRIC]
+    t = np.arange(0, data['time/total_timesteps'].size, 40)
 
+    # Interpolate a 1-D function.
+    f = scipy.interpolate.interp1d(np.arange(0, data['time/total_timesteps'].size), data[CONST_METRIC], kind='linear')
+
+    # Approximation of the function: y = f(x).
+    y = f(t)
+    
     # Visualization of relevant structures.
-    ax.plot(t, y, '-', color='#aeaeae')
+    ax.plot(t, y, '.-', color='#aeaeae')
 
+    from matplotlib import ticker
     # Set parameters of the graph (plot).
     #ax.set_title(f'Title ...', fontsize=25, pad=25.0)
     #   Set the x ticks.
-    ax.set_xticks(np.arange(0.0, 100000.0 + 10000.0, 10000.0))
+    ax.set_xticks(np.linspace(np.min(t), np.max(t), 11), 
+                  np.round(np.linspace(0.0, 100000.0, np.linspace(np.min(t), np.max(t), 11).size)))
     #   Label
     ax.set_xlabel(r'Total Number of Timesteps', fontsize=15, labelpad=10)
     if CONST_METRIC == 'rollout/success_rate':

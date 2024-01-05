@@ -9,6 +9,8 @@ import os
 import pandas as pd
 # Numpy (Array computing) [pip3 install numpy]
 import numpy as np
+# Integrate a system of ordinary differential equations (ODE) [pip3 install scipy]
+import scipy 
 # SciencePlots (Matplotlib styles for scientific plotting) [pip3 install SciencePlots]
 import scienceplots
 # Matplotlib (Visualization) [pip3 install matplotlib]
@@ -82,42 +84,52 @@ def main():
     plt.style.use('science')
 
     # Create a figure.
-    _, ax = plt.subplots()
+    _, ax = plt.subplots(1, 2)
 
     # Get the x and y axis of the graph.
-    color = ['#f2c89b', '#e69138', '#c5d3e2', '#8ca8c5', 
-             '#d2a6bc', '#a64d79']
-    for _, (color_i, data_i, label_i) in enumerate(zip(color, data, ['DDPG', 'DDPG + HER', 'SAC', 'SAC + HER', 
-                                                                     'TD3', 'TD3 + HER'])):
-        # Visualization of relevant structures.
-        ax.plot(data_i['time/total_timesteps'], data_i[CONST_METRIC], '-', color=color_i, 
-                label=label_i)
+    label = [['DDPG', 'SAC', 'TD3'], 
+             ['DDPG + HER', 'SAC + HER', 'TD3 + HER']]
+    color = [['#f2c89b', '#c5d3e2', '#d2a6bc'], 
+             ['#e69138', '#8ca8c5', '#a64d79']]
+    for i, (color_i, label_i) in enumerate(zip(color, label)):
+        t_min = []; t_max = []
+        for _, (color_ij, label_ij, data_i) in enumerate(zip(color_i, label_i, data[i::2])):
+            t = np.arange(0, data_i['time/total_timesteps'].size, 40)
 
-    # Set parameters of the graph (plot).
-    #ax.set_title(f'Title ...', fontsize=25, pad=25.0)
-    #   Set the x ticks.
-    ax.set_xticks(np.arange(0.0, 100000.0 + 10000.0, 10000.0))
-    #   Label
-    ax.set_xlabel(r'Deep Reinforcement Learning Algorithm', fontsize=15, labelpad=10)
-    if CONST_METRIC == 'rollout/success_rate':
-        y_label = 'Mean Success Rate During Training'
-    elif CONST_METRIC == 'rollout/ep_rew_mean':
-        y_label = 'Mean Training Reward per Episode'
-    elif CONST_METRIC == 'rollout/ep_len_mean':
-        y_label = 'Mean Episode Length'
-    elif CONST_METRIC == 'train/actor_loss':
-        y_label = 'Actor Loss'
-    elif CONST_METRIC == 'train/critic_loss':
-        y_label = 'Critic Loss'
-    ax.set_ylabel(y_label, fontsize=15, labelpad=10) 
-    #   Set parameters of the visualization.
-    ax.grid(which='major', linewidth = 0.15, linestyle = '--')
-    # Get handles and labels for the legend.
-    handles, labels = plt.gca().get_legend_handles_labels()
-    # Remove duplicate labels.
-    legend = dict(zip(labels, handles))
-    # Show the labels (legends) of the graph.
-    ax.legend(legend.values(), legend.keys(), fontsize=10.0)
+            # Interpolate a 1-D function.
+            f = scipy.interpolate.interp1d(np.arange(0, data_i['time/total_timesteps'].size), data_i[CONST_METRIC], kind='linear')
+
+            # Approximation of the function: y = f(x).
+            y = f(t)
+
+            # Visualization of relevant structures.
+            ax[i].plot(t, y, '.-', color=color_ij, label=label_ij)
+
+            # Get the minimum and maximum timestep.
+            t_min.append(np.min(t)); t_max.append(np.max(t))
+ 
+        # Set parameters of the graph (plot).
+        #ax[i].set_title(f'Title ...', fontsize=25, pad=25.0)
+        #   Set the x ticks.
+        ax[i].set_xticks(np.linspace(np.min(t_min), np.max(t_max), 11), 
+                         np.round(np.linspace(0.0, 100000.0, np.linspace(np.min(t_min), np.max(t_max), 11).size)))
+        #   Label
+        ax[i].set_xlabel(r'Total Number of Timesteps', fontsize=15, labelpad=10)
+        if CONST_METRIC == 'rollout/success_rate':
+            y_label = 'Mean Success Rate During Training'
+        elif CONST_METRIC == 'rollout/ep_rew_mean':
+            y_label = 'Mean Training Reward per Episode'
+        elif CONST_METRIC == 'rollout/ep_len_mean':
+            y_label = 'Mean Episode Length'
+        elif CONST_METRIC == 'train/actor_loss':
+            y_label = 'Actor Loss'
+        elif CONST_METRIC == 'train/critic_loss':
+            y_label = 'Critic Loss'
+        ax[i].set_ylabel(y_label, fontsize=15, labelpad=10) 
+        #   Set parameters of the visualization.
+        ax[i].grid(which='major', linewidth = 0.15, linestyle = '--')
+        # Show the labels (legends) of the graph.
+        ax[i].legend(fontsize=10.0)
 
     # Show the result.
     plt.show()

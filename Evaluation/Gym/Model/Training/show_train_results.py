@@ -90,7 +90,6 @@ def main():
     # Visualization of relevant structures.
     ax.plot(t, y, '.-', color='#aeaeae')
 
-    from matplotlib import ticker
     # Set parameters of the graph (plot).
     #ax.set_title(f'Title ...', fontsize=25, pad=25.0)
     #   Set the x ticks.

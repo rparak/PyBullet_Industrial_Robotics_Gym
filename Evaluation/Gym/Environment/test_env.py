@@ -14,6 +14,9 @@ import RoLE.Parameters.Robot as Parameters
 import Industrial_Robotics_Gym
 #       ../Industrial_Robotics_Gym/Utilities
 import Industrial_Robotics_Gym.Utilities
+#   PyBullet
+#       ../PyBullet/Utilities
+import PyBullet.Utilities
 
 """
 Description:
@@ -26,7 +29,9 @@ CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 #       The mode called "Default" demonstrates an environment without a collision object.
 #   'Collision-Free': 
 #       The mode called "Collision-Free" demonstrates an environment with a collision object.
-CONST_ENV_MODE = 'Collision-Free'
+CONST_ENV_MODE = 'Default'
+# Information about whether the target is selected statically or randomly.
+CONST_STATIC_TARGET = False
 
 def main():
     """
@@ -37,10 +42,17 @@ def main():
     # Initialization of the structure of the main parameters of the robot.
     Robot_Str = CONST_ROBOT_TYPE
 
+    if CONST_STATIC_TARGET == True:
+        # Obtain the structure of the main parameters of the environment for the defined robotic arm.
+        Env_Structure = PyBullet.Utilities.Get_Environment_Structure(Robot_Str.Name, 0 if CONST_ENV_MODE == 'Default' else 1)
+        T = Env_Structure.C.Target.T
+    else:
+        T = None
+
     # Create the environment that was previously registered using gymnasium.register() within the __init__.py file.
     #   More information can be found in the following script:
     #       ../src/Industrial_Robotics_Gym/__init__.py
-    gym_environment = gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID(Robot_Str.Name, CONST_ENV_MODE), T=None)
+    gym_environment = gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID(Robot_Str.Name, CONST_ENV_MODE), T=T)
 
     # Reset the pre-defined environment of the gym.
     #   Note:

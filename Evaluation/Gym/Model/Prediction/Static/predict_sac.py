@@ -5,6 +5,8 @@ if '../../../../../' + 'src' not in sys.path:
     sys.path.append('../../../../../' + 'src')
 # OS (Operating system interfaces)
 import os
+# Numpy (Array computing) [pip3 install numpy]
+import numpy as np
 # Gymnasium (Developing and comparing reinforcement learning algorithms) [pip3 install gymnasium]
 import gymnasium as gym
 # Stable-Baselines3 (A set of implementations of reinforcement learning algorithms in PyTorch) [pip3 install stable-baselines3]
@@ -14,6 +16,8 @@ import stable_baselines3.common.vec_env
 #   Robotics Library for Everyone (RoLE)
 #       ../RoLE/Parameters/Robot
 import RoLE.Parameters.Robot as Parameters
+#   ../RoLE/Transformation/Core
+from RoLE.Transformation.Core import Homogeneous_Transformation_Matrix_Cls as HTM_Cls
 #       ../RoLE/Utilities/File_IO
 import RoLE.Utilities.File_IO
 #   Industrial_Robotics_Gym
@@ -52,7 +56,7 @@ def main():
         A program designed for the prediction of a 'reach' task in a pre-defined environment, utilizing 
         the Soft Actor-Critic (SAC) reinforcement learning algorithm.
 
-        The DDPG algorithm is pre-trained only for the following robotic arms:
+        The SAC algorithm is pre-trained only for the following robotic arms:
             - Universal Robots UR3
             
         Note:
@@ -75,16 +79,22 @@ def main():
     # Obtain the structure of the main parameters of the environment for the defined robotic arm.
     Env_Structure = PyBullet.Utilities.Get_Environment_Structure(Robot_Str.Name, 0 if CONST_ENV_MODE == 'Default' else 1)
 
+    # Create a static target for path prediction.
+    v = np.array([Env_Structure.C.Target.T.p.x + (Env_Structure.C.Target.Size[0]/4.0), 
+                    Env_Structure.C.Target.T.p.y + (-1) * (Env_Structure.C.Target.Size[1]/4.0), 
+                    Env_Structure.C.Target.T.p.z], dtype=np.float64)
+    T = HTM_Cls(None, np.float64).Rotation(Env_Structure.C.Target.T.Get_Rotation('QUATERNION').all(), 'QUATERNION').Translation(v)
+
     # Create the environment that was previously registered using gymnasium.register() within the __init__.py file.
     #   More information can be found in the following script:
     #       ../src/Industrial_Robotics_Gym/__init__.py
-    gym_environment = gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID(Robot_Str.Name, CONST_ENV_MODE), T=Env_Structure.C.Target.T)
-
-    # Create a vectorized environment.
-    gym_environment = stable_baselines3.common.vec_env.DummyVecEnv([lambda: gym_environment])
+    gym_environment = gym.make(Industrial_Robotics_Gym.Utilities.Get_Environment_ID(Robot_Str.Name, CONST_ENV_MODE), T=T)
 
     # Load a pre-trained model from a zip file.
-    model = stable_baselines3.SAC.load(f'{CONST_PROJECT_FOLDER}/Data/Model/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM}/{Robot_Str.Name}/model')
+    if 'HER' in CONST_ALGORITHM:
+        model = stable_baselines3.SAC.load(f'{CONST_PROJECT_FOLDER}/Data/Model/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM}/{Robot_Str.Name}/model', env=gym_environment)
+    else:
+        model = stable_baselines3.SAC.load(f'{CONST_PROJECT_FOLDER}/Data/Model/Environment_{CONST_ENV_MODE}/{CONST_ALGORITHM}/{Robot_Str.Name}/model')
     
     # Reset the pre-defined environment of the gym.
     #   Note:

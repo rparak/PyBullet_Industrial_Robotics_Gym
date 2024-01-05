@@ -85,6 +85,7 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
             self.__distance_threshold = np.float32(distance_threshold)
             self.__action_step_factor = np.float32(action_step_factor)
             self.__mode = mode
+            self.__T = T
 
             # Numerical IK Parameters.
             #   The properties of the inverse kinematics solver.
@@ -95,7 +96,7 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
             self.__Set_Env_Parameters(mode, Robot_Str)
 
             # Get the translational and rotational part from the input transformation matrix.
-            if T is not None:
+            if self.__T is not None:
                 self.__p_T = T.p.all().astype(np.float32); self.__q_T = T.Get_Rotation('QUATERNION').all().astype(np.float32)
 
                 # Transformation of point position in X, Y, Z axes.
@@ -328,8 +329,11 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         super().reset(seed=seed, options=options)
         self.np_random, seed = gym.utils.seeding.np_random(seed)
 
-        # Obtain a random position within a defined configuration space.
-        self.__p_1 = self.np_random.uniform(self.__min_vec3, self.__max_vec3).astype(np.float32)
+        if self.__T is not None:
+            self.__p_1 = self.__p_T
+        else:
+            # Obtain a random position within a defined configuration space.
+            self.__p_1 = self.np_random.uniform(self.__min_vec3, self.__max_vec3).astype(np.float32)
 
         # Reset the absolute position of the robotic structure to 'Home'.
         self.__PyBullet_Robot_Cls.Reset(mode='Home', enable_ghost=False)

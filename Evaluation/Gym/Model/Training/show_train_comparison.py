@@ -112,7 +112,7 @@ def main():
         #ax[i].set_title(f'Title ...', fontsize=25, pad=25.0)
         #   Set the x ticks.
         ax[i].set_xticks(np.linspace(np.min(t_min), np.max(t_max), 11), 
-                         np.round(np.linspace(0.0, 100000.0, np.linspace(np.min(t_min), np.max(t_max), 11).size)))
+                         np.round(np.linspace(0.0, 100000.0, np.linspace(np.min(t_min), np.max(t_max), 11).size, dtype=np.int32)))
         #   Label
         ax[i].set_xlabel(r'Total Number of Timesteps', fontsize=15, labelpad=10)
         if CONST_METRIC == 'rollout/success_rate':

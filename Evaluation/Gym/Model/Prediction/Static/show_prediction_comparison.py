@@ -50,7 +50,19 @@ CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] 
 def main():
     """
     Description:
-        ...
+        A program to compare the metrics obtained during prediction of a 'reach' task in a pre-defined environment, utilizing 
+        a specific reinforcement learning algorithm.
+
+        In this case, the target is statically defined and we observe the predicted points of the path and absolute position error (APE).
+
+        The program visualizes the results in a graph (plot).
+        
+        Note:
+            The comparison is only defined for the Universal Robots UR3 robotic arm. The other 
+            robotic arms are trained using the best method obtained from the comparison.
+
+        More information about the prediction process can be found in the script below:
+            ../Static/train_{CONST_ALGORITHM}.py
     """
         
     # Initialization of the structure of the main parameters of the robot.
@@ -82,6 +94,7 @@ def main():
     for i, data_i in enumerate(data):
         x_tmp = []; y_tmp = []; z_tmp = []
         for _, data_ij in enumerate(data_i):
+            
             x_tmp.append(data_ij[0]); y_tmp.append(data_ij[1]); 
             z_tmp.append(data_ij[2])
         x.append(x_tmp); y.append(y_tmp); z.append(z_tmp)          

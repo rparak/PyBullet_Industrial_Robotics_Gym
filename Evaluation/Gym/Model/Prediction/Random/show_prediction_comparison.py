@@ -47,7 +47,20 @@ CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] 
 def main():
     """
     Description:
-        ...
+        A program to compare the metrics obtained during prediction of a 'reach' task in a pre-defined environment, utilizing 
+        a specific reinforcement learning algorithm.
+
+        In this case, the target is randomly defined and we observe the metrics as Success Rate, Reward per Episode, Episode Length, and Absolute 
+        Position Error (APE).
+
+        The program visualizes the results in a graph (plot).
+
+        Note:
+            The comparison is only defined for the Universal Robots UR3 robotic arm. The other 
+            robotic arms are trained using the best method obtained from the comparison.
+
+        More information about the prediction process can be found in the script below:
+            ../Random/train_{CONST_ALGORITHM}.py
     """
 
     # Initialization of the structure of the main parameters of the robot.
@@ -71,31 +84,36 @@ def main():
     for i, data_i in enumerate(data):
         s_r_tmp = []; r_tmp = []; l_tmp = []; e_tmp = []
         for _, data_ij in enumerate(data_i):
-            s_r_tmp.append(data_ij[1]); r_tmp.append(data_ij[2]); 
-            l_tmp.append(data_ij[3]); e_tmp.append(data_ij[4])
-        s_r.append(s_r_tmp); r.append(r_tmp); l.append(l_tmp)
-        e.append(e_tmp)      
-    
+            s_r_tmp.append(data_ij[1]); 
+            if data_ij[1] == 1.0:
+                r_tmp.append(data_ij[2]); l_tmp.append(data_ij[3]); 
+                e_tmp.append(data_ij[4])
+
         # Display informations.
         print(f'[INFO] Algorithm: {CONST_ALGORITHMS[i]}')
         for _, (metrics_data_i, metrics_label_i) in enumerate(zip([s_r_tmp, r_tmp, l_tmp, e_tmp], 
                                                                   [r'Success Rate', r'Reward per Episode', 
-                                                                   r'Episode Length', r'$e_{p}(t)$'])):
+                                                                   r'Episode Length', r'Absolute Position Error (APE)'])):
             print(f'[INFO] Metrics: {metrics_label_i}')
-            print(f'[INFO] >> mean = {np.mean(metrics_data_i)}')
+            print(f'[INFO] >> mean = {np.sum(metrics_data_i)/CONST_N_TARGETS}')
+
+        # Store the data.
+        s_r.append(s_r_tmp); r.append(r_tmp); l.append(l_tmp)
+        e.append(e_tmp)    
 
     # Set the parameters for the scientific style.
     plt.style.use('science')
 
-    label = [r'Success Rate', r'Reward per Episode', r'Episode Length', r'$e_{p}(t)$']
+    label_algorithm = ['DDPG', 'DDPG + HER', 'SAC', 'SAC + HER', 'TD3', 'TD3 + HER']
+    label = [r'Success Rate', r'Reward per Episode', r'Episode Length', r'Absolute Position Error (APE)']
     for i, (data_i, label_i) in enumerate(zip([s_r, r, l, e], label)):
         # Create a figure.
         _, ax = plt.subplots()
 
         # Visualization of relevant structures.
-        box_plot_out = ax.boxplot(data_i, labels=CONST_ALGORITHMS, showmeans=True, patch_artist=True, meanline = True, medianprops = dict(linestyle=None, linewidth=0.0),
+        box_plot_out = ax.boxplot(data_i, labels=label_algorithm, showmeans=True, patch_artist=True, meanline=True, medianprops=dict(linestyle=None, linewidth=0.0),
                                   showfliers=False)
-        
+
         # Set the properties of the box plot.
         #   Boxes.
         plt.setp(box_plot_out['boxes'][0], color='#f2c89b', facecolor='#ffffff'); plt.setp(box_plot_out['boxes'][1], color='#e69138', facecolor='#ffffff')

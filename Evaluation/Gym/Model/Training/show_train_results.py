@@ -54,6 +54,8 @@ def main():
         Training Reward per Episode, Mean Episode Length, etc., were used to evaluate the performance of the selected 
         reinforcement learning algorithm.
 
+        The program visualizes the results in a graph (plot).
+        
         More information about the training process can be found in the script below:
             ../PyBullet_Industrial_Robotics_Gym/Training/train_{CONST_ALGORITHM}.py
     """

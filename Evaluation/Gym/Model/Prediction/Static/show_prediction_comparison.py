@@ -53,7 +53,8 @@ def main():
         A program to compare the metrics obtained during prediction of a 'reach' task in a pre-defined environment, utilizing 
         a specific reinforcement learning algorithm.
 
-        In this case, the target is statically defined and we observe the predicted points of the path and absolute position error (APE).
+        In this case, the target is statically defined and we observe the predicted points of the path and absolute 
+        position error (APE). The path will be interpolated using B-Spline.
 
         The program visualizes the results in a graph (plot).
         
@@ -73,8 +74,8 @@ def main():
 
     # Create a static target that was used to predict the path.
     v = np.array([Env_Structure.C.Target.T.p.x + (Env_Structure.C.Target.Size[0]/4.0), 
-                    Env_Structure.C.Target.T.p.y + (-1) * (Env_Structure.C.Target.Size[1]/4.0), 
-                    Env_Structure.C.Target.T.p.z], dtype=np.float64)
+                  Env_Structure.C.Target.T.p.y + (-1) * (Env_Structure.C.Target.Size[1]/4.0), 
+                  Env_Structure.C.Target.T.p.z], dtype=np.float64)
     T = HTM_Cls(None, np.float64).Rotation(Env_Structure.C.Target.T.Get_Rotation('QUATERNION').all(), 'QUATERNION').Translation(v)
 
     data = []

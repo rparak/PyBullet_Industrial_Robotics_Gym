@@ -76,8 +76,8 @@ def main():
 
     # Create a static target that was used to predict the path.
     v = np.array([Env_Structure.C.Target.T.p.x + (Env_Structure.C.Target.Size[0]/4.0), 
-                    Env_Structure.C.Target.T.p.y + (-1) * (Env_Structure.C.Target.Size[1]/4.0), 
-                    Env_Structure.C.Target.T.p.z], dtype=np.float64)
+                  Env_Structure.C.Target.T.p.y + (-1) * (Env_Structure.C.Target.Size[1]/4.0), 
+                  Env_Structure.C.Target.T.p.z], dtype=np.float64)
     T = HTM_Cls(None, np.float64).Rotation(Env_Structure.C.Target.T.Get_Rotation('QUATERNION').all(), 'QUATERNION').Translation(v)
         
     # The name of the path where the file was saved.

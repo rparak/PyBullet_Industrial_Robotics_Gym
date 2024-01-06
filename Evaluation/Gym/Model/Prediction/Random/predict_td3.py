@@ -42,7 +42,7 @@ CONST_ENV_MODE = 'Default'
 #       it using three major tricks: clipped double Q-Learning, delayed policy update and target policy smoothing.
 #   'TD3_HER':
 #       Twin Delayed DDPG (TD3) + Hindsight Experience Replay (HER)
-CONST_ALGORITHM = 'TD3_HER'
+CONST_ALGORITHM = 'TD3'
 # Number of randomly generated targets.
 CONST_N_TARGETS = 100
 # Locate the path to the project folder.

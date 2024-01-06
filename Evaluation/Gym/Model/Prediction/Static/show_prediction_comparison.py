@@ -83,12 +83,12 @@ def main():
         x_tmp = []; y_tmp = []; z_tmp = []
         for _, data_ij in enumerate(data_i):
             x_tmp.append(data_ij[0]); y_tmp.append(data_ij[1]); 
-            z_tmp.append(data_ij[2]); 
+            z_tmp.append(data_ij[2])
         x.append(x_tmp); y.append(y_tmp); z.append(z_tmp)          
     
         # Display informations.
-        print(f'[INFO] Euclidean Distance ({CONST_ALGORITHMS[i]}):')
-        print(f'[INFO] >> d = {np.linalg.norm([x_tmp[-1], y_tmp[-1], z_tmp[-1]] - T.p.all(), axis=-1).astype(np.float32):.5f} in meters')
+        print(f'[INFO] Absolute Position Error (APE): {CONST_ALGORITHMS[i]}')
+        print(f'[INFO] >> e_p(t) = {np.linalg.norm([x_tmp[-1], y_tmp[-1], z_tmp[-1]] - T.p.all(), axis=-1).astype(np.float32):.5f} in meters')
 
     # Set the parameters for the scientific style.
     plt.style.use('science')

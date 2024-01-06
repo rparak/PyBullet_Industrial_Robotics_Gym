@@ -89,9 +89,9 @@ def main():
     L = S_Cls.Get_Arc_Length()
 
     # Display informations.
-    print('[INFO] Euclidean Distance:')
-    print(f'[INFO] >> d = {np.linalg.norm(data[-1] - T.p.all(), axis=-1).astype(np.float32):.5f} in meters')
-    print('[INFO] Arc length L(x):')
+    print('[INFO] Absolute Position Error (APE):')
+    print(f'[INFO] >> e_p(t) = {np.linalg.norm(data[-1] - T.p.all(), axis=-1).astype(np.float32):.5f} in meters')
+    print('[INFO] Arc length L(t):')
     print(f'[INFO] >> L = {L:.5f} in meters')
 
     # Set the parameters for the scientific style.

@@ -44,6 +44,11 @@ CONST_N_TARGETS = 100
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 
 def main():
+    """
+    Description:
+        ...
+    """
+    
     # Initialization of the structure of the main parameters of the robot.
     Robot_Str = CONST_ROBOT_TYPE
 
@@ -52,6 +57,16 @@ def main():
 
     # Read data from the file.
     data = RoLE.Utilities.File_IO.Load(file_path, 'txt', ',')
+
+    print(f'[INFO] Algorithm: {CONST_ALGORITHM}')
+    print(f'[INFO] Environment mode: {CONST_ENV_MODE}')
+    label = [r'Success Rate', r'Reward per Episode', r'Episode Length', r'$e_{p}(t)$']
+    for i, label_i in enumerate(label):
+        # Display the results as the values shown in the console.
+        print(f'[INFO] Metrics: {label_i}')
+        print(f'[INFO] >> max = {np.max(data[:, i + 1])}')
+        print(f'[INFO] >> min = {np.min(data[:, i + 1])}')
+        print(f'[INFO] >> mean = {np.mean(data[:, i + 1])}')
 
 if __name__ == '__main__':
     sys.exit(main())

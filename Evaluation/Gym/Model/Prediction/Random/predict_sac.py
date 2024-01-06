@@ -41,7 +41,7 @@ CONST_ENV_MODE = 'Default'
 #       Soft Actor Critic (SAC) Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor.
 #   'SAC_HER':
 #       Soft Actor Critic (SAC) + Hindsight Experience Replay (HER)
-CONST_ALGORITHM = 'SAC_HER'
+CONST_ALGORITHM = 'SAC'
 # Number of randomly generated targets.
 CONST_N_TARGETS = 100
 # Locate the path to the project folder.

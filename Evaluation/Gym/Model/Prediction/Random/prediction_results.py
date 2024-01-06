@@ -58,14 +58,16 @@ def main():
     # Read data from the file.
     data = RoLE.Utilities.File_IO.Load(file_path, 'txt', ',')
 
+    # ... add success rate vector to calculate min, max, wihout unsucessfull 
+    
     print(f'[INFO] Algorithm: {CONST_ALGORITHM}')
     print(f'[INFO] Environment mode: {CONST_ENV_MODE}')
     label = [r'Success Rate', r'Reward per Episode', r'Episode Length', r'$e_{p}(t)$']
     for i, label_i in enumerate(label):
         # Display the results as the values shown in the console.
         print(f'[INFO] Metrics: {label_i}')
-        print(f'[INFO] >> max = {np.max(data[:, i + 1])}')
-        print(f'[INFO] >> min = {np.min(data[:, i + 1])}')
+        print(f'[INFO] >> max = {np.min(np.abs(data[:, i + 1]))}')
+        print(f'[INFO] >> min = {np.min(np.abs(data[:, i + 1]))}')
         print(f'[INFO] >> mean = {np.mean(data[:, i + 1])}')
 
 if __name__ == '__main__':

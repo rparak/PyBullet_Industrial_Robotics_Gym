@@ -36,7 +36,7 @@ CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 #       The mode called "Default" demonstrates an environment without a collision object.
 #   'Collision-Free': 
 #       The mode called "Collision-Free" demonstrates an environment with a collision object.
-CONST_ENV_MODE = 'Default'
+CONST_ENV_MODE = 'Collision-Free'
 # The name of the reinforcement learning algorithm. 
 #   Deep Deterministic Policy Gradient (DDPG)
 #       CONST_ALGORITHM = 'DDPG' or 'DDPG_HER'
@@ -118,8 +118,8 @@ def main():
         ax.scatter(t_hat[-1], p_i, c='#84b070', s=100.0, linewidths=1, label=f'Target')
         ax.plot(t_hat, data_i, 'o--', color='#d0d0d0', linewidth=1.0, markersize=6.0, 
                 markeredgewidth=3.0, markerfacecolor='#ffffff', label=f'Predicted Control Points')
-        ax.plot(S_Cls.x, data_S_i, '-', color='#ffcb99', linewidth=1.0, label=f'B-Spline (n = {S_Cls.n}, N = {S_Cls.N}, L = {L:.03})')
-        ax.plot([t_hat[-1]] * 2, [data_i[-1], p_i], '.-', color='#e06666', linewidth=1.0, label=f'Absolute Error ($\Delta$e) = {np.abs(data_i[-1] - p_i):.5f} in meters')
+        ax.plot(S_Cls.x, data_S_i, '.-', color='#ffcb99', linewidth=1.0, label=f'B-Spline (n = {S_Cls.n}, N = {S_Cls.N}, L = {L:.03})')
+        ax.plot([t_hat[-1]] * 2, [data_i[-1], p_i], '.-', color='#e06666', linewidth=1.0, label=f'$\Delta$e = {np.abs(data_i[-1] - p_i):.5f} in meters')
 
         # Set parameters of the graph (plot).
         #   Set the x ticks.

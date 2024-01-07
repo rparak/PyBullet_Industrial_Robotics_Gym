@@ -102,6 +102,9 @@ def main():
     #       Obtain the initial information and observations.
     observations, informations = gym_environment.reset()
 
+    # Save the data (initial) to the '*.txt' file.
+    RoLE.Utilities.File_IO.Save(file_path, observations['achieved_goal'], 'txt', ',')
+    
     while True:
         # Get the policy action from an observation.
         action, _ = model.predict(observations)

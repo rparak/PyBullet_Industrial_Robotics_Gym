@@ -130,7 +130,7 @@ def main():
                 
                 # Display informations.
                 print(f'[INFO] {label_ij}:')
-                print(f'[INFO] >> delta_e = {np.abs(p_achieved_ij[-1] - p_desired_i):.5f}')
+                print(f'[INFO] >> Delta_e = {np.abs(p_achieved_ij[-1] - p_desired_i):.5f}')
 
                 # Get the minimum and maximum position.
                 p_min.append(np.min(p_achieved_ij)); p_max.append(np.max(p_achieved_ij))

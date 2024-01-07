@@ -1,19 +1,10 @@
 # I4C_Gym
 
-75.0556,-142.5,-67.7383,59.1416,-171.923,103.913,13.9756
--75.0556,-142.5,67.7383,59.1416,171.923,103.913,-13.9756
-
-L = [[75.0556,-142.5,59.1416,-171.923,103.913,13.9756],[-67.7383,9E+9,9E+9,9E+9,9E+9,9E+9]]
-
-R = [[-75.0556,-142.5,59.1416,171.923,103.913,-13.9756],[67.7383,9E+9,9E+9,9E+9,9E+9,9E+9]]
+Optimize number of points!
 
 https://robotics.farama.org/envs/fetch/reach/
 
 plot, train (+ HER), add static point ...
-
-plot Env. 0 - find the best DRL method
-
-train Env. 1 and find the best DRL method
 
 ```
 Create:

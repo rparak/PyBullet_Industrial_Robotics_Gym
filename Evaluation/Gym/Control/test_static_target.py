@@ -35,20 +35,26 @@ CONST_IK_PROPERTIES = {'delta_time': 0.1, 'num_of_iteration': 500,
                        'tolerance': 1e-30}
 # Visibility of the target position as the 'ghost' of the robotic model.
 CONST_VISIBILITY_GHOST = False
-# The properties of the PyBullet environment.
-#   Note:
-#      ABB_IRB_14000_{L, R}_Str:
-#       'External_Base': f'{CONST_PROJECT_FOLDER}/URDFs/Robots/ABB_IRB_14000_Base/ABB_IRB_14000_Base.urdf'
-CONST_PYBULLET_ENV_PROPERTIES = {'Enable_GUI': True, 'fps': 100, 
-                                 'External_Base': None, 'Env_ID': 0,
-                                 'Camera': {'Yaw': 70.0, 'Pitch': -32.0, 'Distance': 1.3, 
-                                            'Position': [0.05, -0.10, 0.06]}}
 # The name of the environment mode.
 #   'Default': 
 #       The mode called "Default" demonstrates an environment without a collision object.
 #   'Collision-Free': 
 #       The mode called "Collision-Free" demonstrates an environment with a collision object.
-CONST_ENV_MODE = 'Collision-Free'
+CONST_ENV_MODE = 'Default'
+# The properties of the PyBullet environment.
+#   Note:
+#      ABB_IRB_14000_{L, R}_Str:
+#       'External_Base': f'{CONST_PROJECT_FOLDER}/URDFs/Robots/ABB_IRB_14000_Base/ABB_IRB_14000_Base.urdf'
+if CONST_ENV_MODE == 'Default':
+    CONST_PYBULLET_ENV_PROPERTIES = {'Enable_GUI': True, 'fps': 100, 
+                                    'External_Base': None, 'Env_ID': 0,
+                                    'Camera': {'Yaw': 70.0, 'Pitch': -32.0, 'Distance': 1.3, 
+                                                'Position': [0.05, -0.10, 0.06]}}
+else:
+    CONST_PYBULLET_ENV_PROPERTIES = {'Enable_GUI': True, 'fps': 100, 
+                                    'External_Base': None, 'Env_ID': 1,
+                                    'Camera': {'Yaw': 70.0, 'Pitch': -32.0, 'Distance': 1.3, 
+                                                'Position': [0.05, -0.10, 0.06]}}
 # The name of the reinforcement learning algorithm. 
 #   Deep Deterministic Policy Gradient (DDPG)
 #       CONST_ALGORITHM = 'DDPG' or 'DDPG_HER'

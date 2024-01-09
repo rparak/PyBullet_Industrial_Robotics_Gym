@@ -41,10 +41,6 @@ CONST_PYBULLET_ENV_PROPERTIES = {'Enable_GUI': True, 'fps': 100,
 #   Note:
 #       'Search' or 'Target'
 CONST_C_TYPE = 'Target'
-# The name of the mode to be used to perform the transformation.
-#   Note:
-#       mode = 'Reset' or 'Motion'
-CONST_CTRL_MODE = 'Motion'
 
 def main():
     """

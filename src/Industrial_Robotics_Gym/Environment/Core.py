@@ -86,6 +86,9 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
             self.__action_step_factor = np.float32(action_step_factor)
             self.__mode = mode
             self.__T = T
+            # Penalty threshold used in the calculation of the reward 
+            # in a collision environment.
+            self.__collision_obj_penalty_threshold = np.float32(0.01)
 
             # Numerical IK Parameters.
             #   The properties of the inverse kinematics solver.
@@ -233,7 +236,7 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
             return -self.__Euclidean_Norm(p - p_1).astype(np.float32)
         else:
             collision_obj_penalty = 1.0 / (1.0 + self.__Euclidean_Norm(p - self.__Env_Structure.Collision_Object.T.p.all().copy().astype(np.float32)))
-            return -(self.__Euclidean_Norm(p - p_1) + collision_obj_penalty * self.__distance_threshold).astype(np.float32)  
+            return -(self.__Euclidean_Norm(p - p_1) + collision_obj_penalty * self.__collision_obj_penalty_threshold).astype(np.float32)  
  
     def is_success(self, p: tp.List[float], p_1: tp.List[float]) -> tp.List[float]:
         """

@@ -806,7 +806,7 @@ class Robot_Cls(object):
         #   Note:
         #       'Red': Collision.
         #       'Green': No collision.
-        if successful:
+        if successful == True:
             self.__Reset_Ghost_Structure(theta, enable_ghost, [0.70, 0.85, 0.60])
         else:
             self.__Reset_Ghost_Structure(theta, enable_ghost, [0.85, 0.60, 0.60])

@@ -15,8 +15,8 @@ import RoLE.Parameters.Robot as Parameters
 from RoLE.Transformation.Core import Homogeneous_Transformation_Matrix_Cls as HTM_Cls
 #       ../RoLE/Utilities/File_IO
 import RoLE.Utilities.File_IO
-#       ../RoLE/Interpolation/B_Spline/Core
-import RoLE.Interpolation.B_Spline.Core as B_Spline
+#       ../RoLE/Trajectory/Core
+import RoLE.Trajectory.Core
 #       ../RoLE/Kinematics/Core
 import RoLE.Kinematics.Core
 #   PyBullet
@@ -42,7 +42,7 @@ CONST_VISIBILITY_GHOST = False
 #       The mode called "Default" demonstrates an environment without a collision object.
 #   'Collision-Free': 
 #       The mode called "Collision-Free" demonstrates an environment with a collision object.
-CONST_ENV_MODE = 'Collision-Free'
+CONST_ENV_MODE = 'Default'
 # The properties of the PyBullet environment.
 #   Note:
 #      ABB_IRB_14000_{L, R}_Str:
@@ -96,14 +96,27 @@ def main():
 
     # Read data from the file.
     data = RoLE.Utilities.File_IO.Load(file_path, 'txt', ',')
-    
-    # Initialization of a specific class to work with B-Spline curves.
-    S_Cls = B_Spline.B_Spline_Cls(CONST_B_SPLINE['n'], CONST_B_SPLINE['method'], data, 
-                                  CONST_B_SPLINE['N'])
-    
-    # Interpolation of parametric B-Spline curve.
-    S = S_Cls.Interpolate()
 
+    # ...
+    s = []
+    for _, data_i in enumerate(data.T):
+        # Initialization of multi-segment constraints for trajectory generation.
+        #  1\ Input control points (waypoints) to be used for trajectory generation.
+        P_i = data_i.copy()
+        #  2\ Trajectory duration between control points.
+        delta_T = np.array((P_i.size - 1) * [2.5], dtype=np.float32)
+        #  3\ Duration of the blend phase.
+        t_blend = np.array(P_i.size * [0.5], dtype=np.float32)
+
+        # Initialization of the class to generate multi-segment trajectory.
+        MST_Cls = RoLE.Trajectory.Core.Multi_Segment_Cls('Trapezoidal', delta_time=0.1)
+    
+        # Generation of position multi-segment trajectories from input parameters.
+        (s_i, _, _, _, _) = MST_Cls.Generate(P_i, delta_T, t_blend)
+
+        # ...
+        s.append(s_i)
+    
     # Initialization of the class to work with a robotic arm object in a PyBullet environment.
     PyBullet_Robot_Cls = PyBullet.Core.Robot_Cls(Robot_Str, f'{CONST_PROJECT_FOLDER}/URDFs/Robots/{Robot_Str.Name}/{Robot_Str.Name}.urdf', 
                                                  CONST_PYBULLET_ENV_PROPERTIES)
@@ -123,7 +136,7 @@ def main():
     
     # Calculation of inverse kinematics (IK) using the chosen numerical method.
     theta_0 = PyBullet_Robot_Cls.Theta; theta_arr = []
-    for i, S_i in enumerate(S):
+    for i, S_i in enumerate(np.array(s, dtype=np.float32).T):
         # Get the homogeneous transformation matrix of the predicted path with index 'i'.
         #   Note:
         #       The orientation is defined from the homogeneous 
@@ -153,6 +166,8 @@ def main():
 
         if successful == False:
             print(f'[WARNING] The calculation of IK stopped in iteration {i}.')
+            print(f'[WARNING] >> is_self_collision = {info["is_self_collision"]}')
+            print(f'[WARNING] >> is_close_singularity = {info["is_close_singularity"]}')
             break
 
         theta_arr.append(theta_i)
@@ -164,7 +179,7 @@ def main():
     i = 0
     while PyBullet_Robot_Cls.is_connected == True:
         # Set the absolute position of the robot joints.
-        _ = PyBullet_Robot_Cls.Set_Absolute_Joint_Position(theta_arr[i], {'force': 100.0, 't_0': 0.0, 't_1': 1/CONST_B_SPLINE['N']})  
+        _ = PyBullet_Robot_Cls.Set_Absolute_Joint_Position(theta_arr[i], {'force': 100.0, 't_0': 0.0, 't_1': 0.1})  
 
         # If index 'i' is out of range, break the cycle.
         if i < len(theta_arr) - 1:

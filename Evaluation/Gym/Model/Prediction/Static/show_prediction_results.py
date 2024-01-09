@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 #   Robotics Library for Everyone (RoLE)
 #       ../RoLE/Parameters/Robot
 import RoLE.Parameters.Robot as Parameters
-#   ../RoLE/Transformation/Core
+#       ../RoLE/Transformation/Core
 from RoLE.Transformation.Core import Homogeneous_Transformation_Matrix_Cls as HTM_Cls
 #       ../RoLE/Utilities/File_IO
 import RoLE.Utilities.File_IO

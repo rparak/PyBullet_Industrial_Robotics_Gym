@@ -702,6 +702,7 @@ class Robot_Cls(object):
         try:
             assert self.__Robot_Parameters_Str.Theta.Zero.size == theta.size
 
+            """
             # Generation of multi-axis position trajectories from input parameters.
             theta_arr = []
             for _, (th_actual, th_desired) in enumerate(zip(self.Theta, theta)):
@@ -722,6 +723,20 @@ class Robot_Cls(object):
 
                 # Update the state of the dynamic system.
                 self.Step()
+            """
+
+            for i, (th_i, th_i_limit, th_index) in enumerate(zip(theta, self.__Robot_Parameters_Str.Theta.Limit, 
+                                                                 self.__theta_index)): 
+                if th_i_limit[0] <= th_i <= th_i_limit[1]:
+                    # Control of the robot's joint positions.
+                    pb.setJointMotorControl2(self.__robot_id, th_index, pb.POSITION_CONTROL, targetPosition=th_i, 
+                                                positionGain=1.0, velocityGain=1.0,force=properties['force'])
+                else:
+                    print(f'[WARNING] The desired input joint {th_i} in index {i} is out of limit.')
+                    return False
+
+            # Update the state of the dynamic system.
+            self.Step()
 
             return True
             

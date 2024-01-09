@@ -11,12 +11,14 @@ import numpy as np
 #   Robotics Library for Everyone (RoLE)
 #       ../RoLE/Parameters/Robot
 import RoLE.Parameters.Robot as Parameters
-#   ../RoLE/Transformation/Core
+#       ../RoLE/Transformation/Core
 from RoLE.Transformation.Core import Homogeneous_Transformation_Matrix_Cls as HTM_Cls
 #       ../RoLE/Utilities/File_IO
 import RoLE.Utilities.File_IO
-#   ../RoLE/Interpolation/B_Spline/Core
+#       ../RoLE/Interpolation/B_Spline/Core
 import RoLE.Interpolation.B_Spline.Core as B_Spline
+#       ../RoLE/Kinematics/Core
+import RoLE.Kinematics.Core
 #   PyBullet
 #       ../PyBullet/Utilities
 import PyBullet.Utilities
@@ -31,7 +33,7 @@ Description:
 CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 # Numerical IK Parameters.
 #   The properties of the inverse kinematics solver.
-CONST_IK_PROPERTIES = {'delta_time': 0.1, 'num_of_iteration': 500, 
+CONST_IK_PROPERTIES = {'delta_time': None, 'num_of_iteration': 500, 
                        'tolerance': 1e-30}
 # Visibility of the target position as the 'ghost' of the robotic model.
 CONST_VISIBILITY_GHOST = False
@@ -119,34 +121,68 @@ def main():
     PyBullet_Robot_Cls.Add_External_Object(f'{CONST_PROJECT_FOLDER}/URDFs/Primitives/Sphere/Sphere.urdf', 'T_EE_Rand_Sphere', T,
                                            [0.0, 1.0, 0.0, 0.2], 0.01, False)
     
-    # The physical simulation is in progress.
-    i = 0
-    while PyBullet_Robot_Cls.is_connected == True:
+    # Calculation of inverse kinematics (IK) using the chosen numerical method.
+    theta_0 = PyBullet_Robot_Cls.Theta; theta_arr = []
+    for i, S_i in enumerate(S):
         # Get the homogeneous transformation matrix of the predicted path with index 'i'.
         #   Note:
         #       The orientation is defined from the homogeneous 
         #       transformation matrix of the "Individual" position.
-        T_i = HTM_Cls(None, np.float64).Rotation(q_0, 'QUATERNION').Translation(data[i, :])
+        T_i = HTM_Cls(None, np.float64).Rotation(q_0, 'QUATERNION').Translation(S_i)
 
         # Obtain the inverse kinematics (IK) solution of the robotic structure from the desired TCP (tool center point).
-        (successful, theta) = PyBullet_Robot_Cls.Get_Inverse_Kinematics_Solution(T_i, CONST_IK_PROPERTIES, CONST_VISIBILITY_GHOST)
+        (info, theta_i) = RoLE.Kinematics.Core.Inverse_Kinematics_Numerical(T_i, theta_0, 'Levenberg-Marquardt', Robot_Str, 
+                                                                            CONST_IK_PROPERTIES)
 
-        # Set the absolute position of the robot joints.
-        in_position = False
-        if successful == True:
-            in_position = PyBullet_Robot_Cls.Set_Absolute_Joint_Position(theta, {'force': 100.0, 't_0': 0.0, 't_1': 0.1})
+        # Check the calculation.
+        if info["successful"] == False:
+            print(f'[WARNING] The calculation of IK stopped in iteration {i}.')
+            break
+
+        # Obtain the last absolute position of the joint.
+        theta_0 = theta_i.copy()
+
+    print('Done!')
         
-        if in_position == False or successful == False:
-            print('[WARNING] There is an issue during the execution of the TCP (tool center point) target.')
-            print(f'[WARNING] >> p = {T_i.p.all()}')
-            print(f'[WARNING] >> Quaternion = {T_i.Get_Rotation("QUATERNION").all()}')
-            break
+    """
+    # The physical simulation is in progress.
+    i = 0; movement = False; theta_arr = []
+    while PyBullet_Robot_Cls.is_connected == True:
+        if movement == False:
+            # Get the homogeneous transformation matrix of the predicted path with index 'i'.
+            #   Note:
+            #       The orientation is defined from the homogeneous 
+            #       transformation matrix of the "Individual" position.
+            T_i = HTM_Cls(None, np.float64).Rotation(q_0, 'QUATERNION').Translation(S[i, :])
 
-        # If index 'i' is out of range, break the cycle.
-        if i < data[:, 0].size - 1:
-            i += 1
+            # Obtain the inverse kinematics (IK) solution of the robotic structure from the desired TCP (tool center point).
+            (successful, theta) = PyBullet_Robot_Cls.Get_Inverse_Kinematics_Solution(T_i, CONST_IK_PROPERTIES, CONST_VISIBILITY_GHOST)
+
+            if successful == True:
+                theta_arr.append(theta)
+
+            if successful == False:
+                print('[WARNING] There is an issue during the execution of the TCP (tool center point) target.')
+                print(f'[WARNING] >> p = {T_i.p.all()}')
+                print(f'[WARNING] >> Quaternion = {T_i.Get_Rotation("QUATERNION").all()}')
+                break
+
+            # If index 'i' is out of range, break the cycle.
+            if i < S[:, 0].size - 1:
+                i += 1
+            else:
+                movement = True; i = 0
         else:
-            break
+            # Set the absolute position of the robot joints.
+            _ = PyBullet_Robot_Cls.Set_Absolute_Joint_Position(theta_arr[i], {'force': 100.0, 't_0': 0.0, 't_1': 0.01})
+
+            # If index 'i' is out of range, break the cycle.
+            if i < len(theta_arr) - 1:
+                i += 1
+            else:
+                break
+
+    """
         
     # Disconnect the created environment from a physical server.
     PyBullet_Robot_Cls.Disconnect()

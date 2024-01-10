@@ -7,6 +7,7 @@ if '../../../../../' + 'src' not in sys.path:
 import os
 # Numpy (Array computing) [pip3 install numpy]
 import numpy as np
+np.set_printoptions(suppress=True, precision=5)
 # SciencePlots (Matplotlib styles for scientific plotting) [pip3 install SciencePlots]
 import scienceplots
 # Matplotlib (Visualization) [pip3 install matplotlib]
@@ -95,7 +96,7 @@ def main():
                                                                   [r'Success Rate', r'Reward per Episode', 
                                                                    r'Episode Length', r'Absolute Position Error (APE)'])):
             print(f'[INFO] Metrics: {metrics_label_i}')
-            print(f'[INFO] >> mean = {np.sum(metrics_data_i)/CONST_N_TARGETS}')
+            print(f'[INFO] >> mean = {np.sum(metrics_data_i)/CONST_N_TARGETS:.05}')
 
         # Store the data.
         s_r.append(s_r_tmp); r.append(r_tmp); l.append(l_tmp)

@@ -20,7 +20,16 @@ conda install -c conda-forge gymnasium
 conda install -c conda-forge stable-baselines3
 ```
 
-| Type  | Metric |
-| :---: | :---:       | 
-| Type ID 0 | Data |
+**Comparison of training results**
+
+| Type  | First successful result in a timestep | Percentage of success with a defined minimum success rate | mean(rollout/ep_rew_mean) | mean(rollout/ep_len_mean) | min(train/critic_loss) | min(train/actor_loss) |
+| :---: | :---:                                 | :---:                                                     | :---:                     | :---:                     | :---:                  | :---:                 |
+| DDPG  | 10484                                 |                                                           |                           |                           |                        |                       | 
+| DDPG + HER |                                  |                                                           |                           |                           |                        |                       |
+| SAC | Data | 10484                                 |                                                           |                           |                           |                        |                       |
+| SAC + HER |                                   |                                                           |                           |                           |                        |                       |
+| TD3 | Data | 10484                                 |                                                           |                           |                           |                        |                       |
+| TD3 + HER |                                   |                                                           |                           |                           |                        |                       |
+
+
 

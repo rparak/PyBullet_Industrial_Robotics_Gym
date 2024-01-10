@@ -20,4 +20,7 @@ conda install -c conda-forge gymnasium
 conda install -c conda-forge stable-baselines3
 ```
 
+| Type  | Metric |
+| :---: | :---:       | 
+| Type ID 0 | Data |
 

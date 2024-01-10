@@ -694,6 +694,10 @@ class Robot_Cls(object):
                                                                             't_0': Animation start time in seconds.
                                                                             't_1': Animation stop time in seconds.
 
+                                                                            Note 2:
+                                                                                If time t_0, t_1 is equal to 'None', the trajectory generation 
+                                                                                will be ignored.
+
         Returns:
             (1) parameter [bool]: The result is 'True' if the robot is in the desired position,
                                   and 'False' if it is not.
@@ -702,41 +706,40 @@ class Robot_Cls(object):
         try:
             assert self.__Robot_Parameters_Str.Theta.Zero.size == theta.size
 
-            """
-            # Generation of multi-axis position trajectories from input parameters.
-            theta_arr = []
-            for _, (th_actual, th_desired) in enumerate(zip(self.Theta, theta)):
-                (theta_arr_i, _, _) = self.__Polynomial_Cls.Generate(th_actual, th_desired, 0.0, 0.0, 0.0, 0.0,
-                                                                     properties['t_0'], properties['t_1'])
-                theta_arr.append(theta_arr_i)
-
-            for _, theta_arr_i in enumerate(np.array(theta_arr, dtype=np.float64).T):
-                for i, (th_i, th_i_limit, th_index) in enumerate(zip(theta_arr_i, self.__Robot_Parameters_Str.Theta.Limit, 
+            if None in [properties['t_0'], properties['t_1']]:
+                for i, (th_i, th_i_limit, th_index) in enumerate(zip(theta, self.__Robot_Parameters_Str.Theta.Limit, 
                                                                     self.__theta_index)): 
                     if th_i_limit[0] <= th_i <= th_i_limit[1]:
                         # Control of the robot's joint positions.
                         pb.setJointMotorControl2(self.__robot_id, th_index, pb.POSITION_CONTROL, targetPosition=th_i, 
-                                                 positionGain=1.0, velocityGain=1.0,force=properties['force'])
+                                                    positionGain=1.0, velocityGain=1.0, force=properties['force'])
                     else:
                         print(f'[WARNING] The desired input joint {th_i} in index {i} is out of limit.')
                         return False
-
+                    
                 # Update the state of the dynamic system.
                 self.Step()
-            """
+            else:
+                # Generation of multi-axis position trajectories from input parameters.
+                theta_arr = []
+                for _, (th_actual, th_desired) in enumerate(zip(self.Theta, theta)):
+                    (theta_arr_i, _, _) = self.__Polynomial_Cls.Generate(th_actual, th_desired, 0.0, 0.0, 0.0, 0.0,
+                                                                            properties['t_0'], properties['t_1'])
+                    theta_arr.append(theta_arr_i)
 
-            for i, (th_i, th_i_limit, th_index) in enumerate(zip(theta, self.__Robot_Parameters_Str.Theta.Limit, 
-                                                                 self.__theta_index)): 
-                if th_i_limit[0] <= th_i <= th_i_limit[1]:
-                    # Control of the robot's joint positions.
-                    pb.setJointMotorControl2(self.__robot_id, th_index, pb.POSITION_CONTROL, targetPosition=th_i, 
-                                                positionGain=1.0, velocityGain=1.0,force=properties['force'])
-                else:
-                    print(f'[WARNING] The desired input joint {th_i} in index {i} is out of limit.')
-                    return False
+                for _, theta_arr_i in enumerate(np.array(theta_arr, dtype=np.float64).T):
+                    for i, (th_i, th_i_limit, th_index) in enumerate(zip(theta_arr_i, self.__Robot_Parameters_Str.Theta.Limit, 
+                                                                            self.__theta_index)): 
+                        if th_i_limit[0] <= th_i <= th_i_limit[1]:
+                            # Control of the robot's joint positions.
+                            pb.setJointMotorControl2(self.__robot_id, th_index, pb.POSITION_CONTROL, targetPosition=th_i, 
+                                                        positionGain=1.0, velocityGain=1.0, force=properties['force'])
+                        else:
+                            print(f'[WARNING] The desired input joint {th_i} in index {i} is out of limit.')
+                            return False
 
-            # Update the state of the dynamic system.
-            self.Step()
+                    # Update the state of the dynamic system.
+                    self.Step()
 
             return True
             
@@ -792,7 +795,11 @@ class Robot_Cls(object):
         #       3\ No singularities.
         if info['successful'] == True:
             # Check whether a part of the robotic structure collides with external objects.
-            (is_external_collision, _) = Kinematics.General.Is_External_Collision(theta, self.__Robot_Parameters_Str)
+            if bool(self.__Robot_Parameters_Str.Collider.External) == True:
+                (is_external_collision, _) = Kinematics.General.Is_External_Collision(theta, self.__Robot_Parameters_Str)
+            else:
+                # There are no collision objects in the environment.
+                is_external_collision = False
 
             if info['is_self_collision'] == False and info['is_close_singularity'] == False \
                 and is_external_collision == False:

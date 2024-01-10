@@ -24,4 +24,4 @@ conda install -c conda-forge stable-baselines3
 
 Default Env. - TD3
 
-Collision-Free Env. - 
+Collision-Free Env. - DDPG

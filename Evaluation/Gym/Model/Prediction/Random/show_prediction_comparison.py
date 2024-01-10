@@ -60,7 +60,7 @@ def main():
             robotic arms are trained using the best method obtained from the comparison.
 
         More information about the prediction process can be found in the script below:
-            ../Random/train_{CONST_ALGORITHM}.py
+            ../Random/predict_{CONST_ALGORITHM}.py
     """
 
     # Initialization of the structure of the main parameters of the robot.

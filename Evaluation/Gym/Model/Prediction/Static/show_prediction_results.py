@@ -62,12 +62,14 @@ def main():
         A program to show result data from the prediction. The absolute position error (APE) metric was used to evaluate the performance 
         of the selected reinforcement learning algorithm.
 
-        In this case, the target is statically defined and we observe the predicted points of the path and absolute position error (APE).
+        In this case, the target is statically defined and we observe the predicted points of the path and absolute 
+        position error (APE). The predicted points are optimized using the least squares method and interpolated 
+        using B-Spline.
         
         The program visualizes the results in a graph (plot).
         
         More information about the prediction process can be found in the script below:
-            ../Static/train_{CONST_ALGORITHM}.py
+            ../Static/predict_{CONST_ALGORITHM}.py
     """
 
     # Initialization of the structure of the main parameters of the robot.

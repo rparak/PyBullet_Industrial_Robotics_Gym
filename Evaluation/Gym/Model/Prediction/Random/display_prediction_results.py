@@ -54,7 +54,7 @@ def main():
         The program simply displays the results as the values shown in the console.
         
         More information about the prediction process can be found in the script below:
-            ../Random/train_{CONST_ALGORITHM}.py
+            ../Random/predict_{CONST_ALGORITHM}.py
     """
     
     # Initialization of the structure of the main parameters of the robot.

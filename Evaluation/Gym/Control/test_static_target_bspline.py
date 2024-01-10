@@ -17,6 +17,8 @@ from RoLE.Transformation.Core import Homogeneous_Transformation_Matrix_Cls as HT
 import RoLE.Utilities.File_IO
 #       ../RoLE/Kinematics/Core
 import RoLE.Kinematics.Core
+#       ../RoLE/Interpolation/B_Spline/Core
+import RoLE.Interpolation.B_Spline.Core as B_Spline
 #   PyBullet
 #       ../PyBullet/Utilities
 import PyBullet.Utilities
@@ -63,6 +65,14 @@ else:
 #   Twin Delayed DDPG (TD3)
 #       CONST_ALGORITHM = 'TD3' or 'TD3_HER'
 CONST_ALGORITHM = 'DDPG'
+# B-Spline interpolation parameters.
+#   n: Degree of a polynomial.
+#   N: The number of points to be generated in the interpolation function.
+#   'method': The method to be used to select the parameters of the knot vector. 
+#               method = 'Uniformly-Spaced', 'Chord-Length' or 'Centripetal'.
+CONST_B_SPLINE = {'n': 3, 'N': 100, 'method': 'Chord-Length'}
+# Number of optimized control points.
+CONST_NUM_OF_OPT_POINTS = 4
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 
@@ -72,7 +82,8 @@ def main():
         A program designed to test the data generated from the prediction trained by an individual reinforcement 
         learning algorithm.
 
-        In this case, the target is statically defined and we observe the predicted points of the path.
+        In this case, the target is statically defined and we observe the predicted points of the path. Tthe predicted points 
+        are optimized using the least squares method and interpolated using B-Spline.
 
         More information about the prediction process can be found in the script below:
             ../Static/predict_{CONST_ALGORITHM}.py
@@ -98,6 +109,17 @@ def main():
     # Read data from the file.
     data = RoLE.Utilities.File_IO.Load(file_path, 'txt', ',')
 
+    # Initialization of a specific class to work with B-Spline curves from 
+    # control points.
+    S_Cls = B_Spline.B_Spline_Cls(CONST_B_SPLINE['n'], CONST_B_SPLINE['method'], data, 
+                                  CONST_B_SPLINE['N'])
+    
+    # Get optimized control points.
+    S_Cls_optimized = S_Cls.Optimize_Control_Points(CONST_NUM_OF_OPT_POINTS)
+
+    # Interpolation of the parametric B-Spline curve from the optimized control points.
+    S_optimized = S_Cls_optimized.Interpolate()
+
     # Initialization of the class to work with a robotic arm object in a PyBullet environment.
     PyBullet_Robot_Cls = PyBullet.Core.Robot_Cls(Robot_Str, f'{CONST_PROJECT_FOLDER}/URDFs/Robots/{Robot_Str.Name}/{Robot_Str.Name}.urdf', 
                                                  CONST_PYBULLET_ENV_PROPERTIES)
@@ -105,7 +127,7 @@ def main():
     # Reset the absolute position of the robot joints to the 'Home'.
     PyBullet_Robot_Cls.Reset('Home')
     
-    # Adding external objects corresponding to a static target that was used to predict the path.
+     # Adding external objects corresponding to a static target that was used to predict the path.
     #   Note:
     #       The size of the sphere corresponds to the threshold distance.
     q_0 = PyBullet_Robot_Cls.T_EE.Get_Rotation('QUATERNION').all()
@@ -120,10 +142,10 @@ def main():
                                                                      {'delta_time': 0.2, 'num_of_iteration': 500, 
                                                                       'tolerance': 1e-30})
     PyBullet_Robot_Cls.Reset('Individual', theta_f, True)
-    
+
     # Calculation of inverse kinematics (IK) using the chosen numerical method.
     theta_0 = PyBullet_Robot_Cls.Theta; theta_arr = []
-    for i, data_i in enumerate(data):
+    for i, data_i in enumerate(S_optimized):
         # Get the homogeneous transformation matrix of the predicted path with index 'i'.
         #   Note:
         #       The orientation is defined from the homogeneous 
@@ -146,7 +168,7 @@ def main():
         # If index 'i' is out of range, stop the movement
         if i < len(theta_arr):
             # Set the absolute position of the robot joints.
-            _ = PyBullet_Robot_Cls.Set_Absolute_Joint_Position(theta_arr[i], {'force': 100.0, 't_0': 0.0, 't_1': 1/data[:, 0].size})  
+            _ = PyBullet_Robot_Cls.Set_Absolute_Joint_Position(theta_arr[i], {'force': 100.0, 't_0': None, 't_1': None})  
             i += 1
         else:
             PyBullet_Robot_Cls.Step()

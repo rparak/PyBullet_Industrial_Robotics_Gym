@@ -19,3 +19,7 @@ conda install -c conda-forge pybullet
 conda install -c conda-forge gymnasium
 conda install -c conda-forge stable-baselines3
 ```
+
+**Best Algorithm**
+Default Env. - TD3
+Collision-Free Env. - 

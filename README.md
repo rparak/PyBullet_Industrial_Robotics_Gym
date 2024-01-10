@@ -22,7 +22,7 @@ conda install -c conda-forge stable-baselines3
 
 **Comparison of training results**
 
-| Type  | First successful result in a timestep | Percentage of success with a defined minimum success rate | mean(rollout/ep_rew_mean) | mean(rollout/ep_len_mean) | min(train/critic_loss) | min(train/actor_loss) |
+| Type  | successful timestep | Percentage | mean(rollout/ep_rew_mean) | mean(rollout/ep_len_mean) | min(train/critic_loss) | min(train/actor_loss) |
 | :---: | :---:                                 | :---:                                                     | :---:                     | :---:                     | :---:                  | :---:                 |
 | DDPG  | 10484 | 0.95862 | -0.38749 | 5.2994 | 7.5175e-07 | 0.077453 | 
 | DDPG + HER | 5700 | 0.8324 | -0.38643 | 5.4301 | 1.1162e-06 | 0.063439 | 

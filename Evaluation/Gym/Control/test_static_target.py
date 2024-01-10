@@ -17,6 +17,8 @@ from RoLE.Transformation.Core import Homogeneous_Transformation_Matrix_Cls as HT
 import RoLE.Utilities.File_IO
 #       ../RoLE/Kinematics/Core
 import RoLE.Kinematics.Core
+#       ../RoLE/Interpolation/B_Spline/Core
+import RoLE.Interpolation.B_Spline.Core as B_Spline
 #   PyBullet
 #       ../PyBullet/Utilities
 import PyBullet.Utilities
@@ -63,6 +65,12 @@ else:
 #   Twin Delayed DDPG (TD3)
 #       CONST_ALGORITHM = 'TD3' or 'TD3_HER'
 CONST_ALGORITHM = 'DDPG'
+# B-Spline interpolation parameters.
+#   n: Degree of a polynomial.
+#   N: The number of points to be generated in the interpolation function.
+#   'method': The method to be used to select the parameters of the knot vector. 
+#               method = 'Uniformly-Spaced', 'Chord-Length' or 'Centripetal'.
+CONST_B_SPLINE = {'n': 3, 'N': 100, 'method': 'Chord-Length'}
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 
@@ -89,6 +97,17 @@ def main():
     # Read data from the file.
     data = RoLE.Utilities.File_IO.Load(file_path, 'txt', ',')
 
+    # Initialization of a specific class to work with B-Spline curves from 
+    # noisy points.
+    S_Cls_2 = B_Spline.B_Spline_Cls(CONST_B_SPLINE['n'], CONST_B_SPLINE['method'], data, 
+                                    CONST_B_SPLINE['N'])
+    
+    # Get optimized control points from noisy points.
+    S_Cls_optimized = S_Cls_2.Optimize_Control_Points(4)
+
+    # Interpolation of the parametric B-Spline curve from the optimized control points.
+    S_optimized = S_Cls_optimized.Interpolate()
+
     # Initialization of the class to work with a robotic arm object in a PyBullet environment.
     PyBullet_Robot_Cls = PyBullet.Core.Robot_Cls(Robot_Str, f'{CONST_PROJECT_FOLDER}/URDFs/Robots/{Robot_Str.Name}/{Robot_Str.Name}.urdf', 
                                                  CONST_PYBULLET_ENV_PROPERTIES)
@@ -108,7 +127,7 @@ def main():
     
     # Calculation of inverse kinematics (IK) using the chosen numerical method.
     theta_0 = PyBullet_Robot_Cls.Theta; theta_arr = []
-    for i, data_i in enumerate(data):
+    for i, data_i in enumerate(S_optimized):
         # Get the homogeneous transformation matrix of the predicted path with index 'i'.
         #   Note:
         #       The orientation is defined from the homogeneous 
@@ -116,30 +135,10 @@ def main():
         T_i = HTM_Cls(None, np.float64).Rotation(q_0, 'QUATERNION').Translation(data_i)
 
         # Obtain the inverse kinematics (IK) solution of the robotic structure from the desired TCP (tool center point).
-        (info, theta_i) = RoLE.Kinematics.Core.Inverse_Kinematics_Numerical(T_i, theta_0, 'Levenberg-Marquardt', Robot_Str, 
-                                                                            CONST_IK_PROPERTIES)
-
-        # Check whether the inverse kinematics (IK) has a solution or not.
-        #   Conditions:
-        #       1\ IK solution within limits.
-        #       2\ Collision-free.
-        #       3\ No singularities.
-        if info['successful'] == True:
-            # Check whether a part of the robotic structure collides with external objects.
-            (is_external_collision, _) = RoLE.Kinematics.Core.General.Is_External_Collision(theta_i, Robot_Str)
-
-            if info['is_self_collision'] == False and info['is_close_singularity'] == False \
-                and is_external_collision == False:
-                    successful = True
-            else:
-                successful = False
-        else:
-            successful = False
-
-        if successful == False:
-            print(f'[WARNING] The calculation of IK stopped in iteration {i}.')
-            break
-
+        (_, theta_i) = RoLE.Kinematics.Core.Inverse_Kinematics_Numerical(T_i, theta_0, 'Levenberg-Marquardt', Robot_Str, 
+                                                                         CONST_IK_PROPERTIES)
+        
+        # ,,,
         theta_arr.append(theta_i)
 
         # Obtain the last absolute position of the joint.
@@ -149,7 +148,7 @@ def main():
     i = 0
     while PyBullet_Robot_Cls.is_connected == True:
         # Set the absolute position of the robot joints.
-        _ = PyBullet_Robot_Cls.Set_Absolute_Joint_Position(theta_arr[i], {'force': 100.0, 't_0': 0.0, 't_1': 1.0})  
+        _ = PyBullet_Robot_Cls.Set_Absolute_Joint_Position(theta_arr[i], {'force': 100.0, 't_0': None, 't_1': None})  
 
         # If index 'i' is out of range, break the cycle.
         if i < len(theta_arr) - 1:

@@ -29,7 +29,7 @@ CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 #       The mode called "Default" demonstrates an environment without a collision object.
 #   'Collision-Free': 
 #       The mode called "Collision-Free" demonstrates an environment with a collision object.
-CONST_ENV_MODE = 'Collision-Free'
+CONST_ENV_MODE = 'Default'
 # The name of the reinforcement learning algorithm. 
 #   Deep Deterministic Policy Gradient (DDPG)
 #       CONST_ALGORITHM = 'DDPG' or 'DDPG_HER'
@@ -37,7 +37,7 @@ CONST_ENV_MODE = 'Collision-Free'
 #       CONST_ALGORITHM = 'SAC' or 'SAC_HER'
 #   Twin Delayed DDPG (TD3)
 #       CONST_ALGORITHM = 'TD3' or 'TD3_HER'
-CONST_ALGORITHM = 'DDPG_HER'
+CONST_ALGORITHM = 'DDPG'
 # Number of randomly generated targets.
 CONST_N_TARGETS = 100
 # Locate the path to the project folder.

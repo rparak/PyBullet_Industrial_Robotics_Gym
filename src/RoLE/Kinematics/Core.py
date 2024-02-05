@@ -35,25 +35,15 @@ Description:
 
         | theta | 
         Joint angle (Theta_i). Rotation part in radians.
-            Description:
-                The joint angle Theta_i is the angle from xhat_{i-1} to xhat_i, measured about the zhat_i - axis.
+        
         | a | 
         Link length (a_i). Translation part in meters.
-            Description:
-                The length of the mutually perpendicular line, denoted by the scalar a_{i-1}, is called the link 
-                length of link i-1. Despite its name, this link length does not necessarily correspond to the actual 
-                length of the physical link. 
 
         | d | 
-        Link offset (d_i). Translation part in meters.
-            Description:
-                The link offset d_i is the distance from the intersection of xhat_{i-1} and zhat_i  to the origin 
-                of the link - i frame (the positive direction is defined to be along the zhat_i - axis). 
+        Joint offset (d_i). Translation part in meters.
 
         | alpha |  
         Link twist (alpha_i). Rotation part in radians.
-            Description:
-                The link twist a_{i-1} is the angle from zhat_{i-1} to zhat_i, measured about xhat_{i-1}. 
 """
 
 def DH_Standard(theta: float, a: float, d: float, alpha: float) -> tp.List[tp.List[float]]:

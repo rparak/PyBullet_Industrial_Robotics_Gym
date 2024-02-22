@@ -43,7 +43,7 @@ Description:
     Initialization of constants.
 """
 # Set the structure of the main parameters of the robot.
-CONST_ROBOT_TYPE = Parameters.ABB_IRB_120_L_Ax_Str
+CONST_ROBOT_TYPE = Parameters.ABB_IRB_14000_L_Str
 # The name of the environment mode.
 #   'Default': 
 #       The mode called "Default" demonstrates an environment without a collision object.

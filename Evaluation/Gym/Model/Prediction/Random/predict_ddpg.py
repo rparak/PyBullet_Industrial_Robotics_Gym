@@ -29,13 +29,13 @@ Description:
     Initialization of constants.
 """
 # Set the structure of the main parameters of the robot.
-CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
+CONST_ROBOT_TYPE = Parameters.ABB_IRB_14000_R_Str
 # The name of the environment mode.
 #   'Default': 
 #       The mode called "Default" demonstrates an environment without a collision object.
 #   'Collision-Free': 
 #       The mode called "Collision-Free" demonstrates an environment with a collision object.
-CONST_ENV_MODE = 'Default'
+CONST_ENV_MODE = 'Collision-Free'
 # The name of the reinforcement learning algorithm. 
 #   'DDPG':
 #       Deep Deterministic Policy Gradient (DDPG) combines the trick for DQN with the deterministic 

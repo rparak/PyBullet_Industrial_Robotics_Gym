@@ -21,7 +21,7 @@ SOFTWARE.
 Author   : Roman Parak
 Email    : Roman.Parak@outlook.com
 Github   : https://github.com/rparak
-File Name: Core.py
+File Name: ../RoLE/Bezier/Core.py
 ## =========================================================================== ## 
 """
 

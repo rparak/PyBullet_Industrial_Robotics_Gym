@@ -29,7 +29,7 @@ Description:
     Initialization of constants.
 """
 # Set the structure of the main parameters of the robot.
-CONST_ROBOT_TYPE = Parameters.ABB_IRB_14000_R_Str
+CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 # The name of the environment mode.
 #   'Default': 
 #       The mode called "Default" demonstrates an environment without a collision object.
@@ -55,7 +55,8 @@ def main():
         the Twin Delayed DDPG (TD3) reinforcement learning algorithm.
 
         The DDPG algorithm is pre-trained only for the following robotic arms:
-            - Universal Robots UR3
+            - Universal Robots UR3 -> Both environments and each algorithm.
+            - Default Env. -> Only the TD3 algorithm for all robotic structures.
 
         Note:
             Targets will be defined randomly.

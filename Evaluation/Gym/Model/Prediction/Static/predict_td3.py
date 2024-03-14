@@ -58,7 +58,8 @@ def main():
         the Twin Delayed DDPG (TD3) reinforcement learning algorithm.
 
         The TD3 algorithm is pre-trained only for the following robotic arms:
-            - Universal Robots UR3
+            - Universal Robots UR3 -> Both environments and each algorithm.
+            - Default Env. -> Only the TD3 algorithm for all robotic structures.
             
         Note:
             The goal will be statically defined as the center of the target configuration space.

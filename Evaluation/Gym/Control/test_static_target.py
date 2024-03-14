@@ -28,7 +28,7 @@ Description:
     Initialization of constants.
 """
 # Set the structure of the main parameters of the robot.
-CONST_ROBOT_TYPE = Parameters.EPSON_LS3_B401S_Str
+CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 # Numerical IK Parameters.
 #   The properties of the inverse kinematics solver.
 CONST_IK_PROPERTIES = {'delta_time': None, 'num_of_iteration': 500, 
@@ -62,7 +62,7 @@ else:
 #       CONST_ALGORITHM = 'SAC' or 'SAC_HER'
 #   Twin Delayed DDPG (TD3)
 #       CONST_ALGORITHM = 'TD3' or 'TD3_HER'
-CONST_ALGORITHM = 'TD3'
+CONST_ALGORITHM = 'DDPG'
 # Locate the path to the project folder.
 CONST_PROJECT_FOLDER = os.getcwd().split('PyBullet_Industrial_Robotics_Gym')[0] + 'PyBullet_Industrial_Robotics_Gym'
 

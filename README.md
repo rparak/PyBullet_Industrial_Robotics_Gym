@@ -18,6 +18,7 @@ conda install pytorch::pytorch torchvision torchaudio -c pytorch
 conda install -c conda-forge pybullet
 conda install -c conda-forge gymnasium
 conda install -c conda-forge stable-baselines3
+conda install -c conda-forge scipy
 ```
 
 **Best Algorithm**

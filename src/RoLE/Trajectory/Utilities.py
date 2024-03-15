@@ -246,11 +246,14 @@ class Trapezoidal_Profile_Cls(object):
         #           (s_f - s_0) / t_f < v < 2 * ((s_f - s_0) / t_f)
         v = 1.5 * ((s_f - s_0) / t_f)
         
-        # Time of constant acceleration phase.
-        T_a = ((s_0 - s_f) + v * t_f) / v
+        if v != 0.0:
+            # Time of constant acceleration phase.
+            T_a = ((s_0 - s_f) + v * t_f) / v
 
-        # Express the acceleration with a simple formula.
-        a = v / T_a
+            # Express the acceleration with a simple formula.
+            a = v / T_a
+        else:
+            T_a = 0.0; a = 0.0
 
         # Express the position (s), velocity (s_dot), and acceleration (s_ddot) of a trapezoidal 
         # trajectory.

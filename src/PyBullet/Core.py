@@ -124,7 +124,7 @@ class Robot_Cls(object):
         self.__delta_time = 1.0/np.float64(properties['fps'])
 
         # Initialization of the class to generate trajectory.
-        self.__Polynomial_Cls = RoLE.Trajectory.Utilities.Polynomial_Profile_Cls(delta_time=self.__delta_time)
+        self.__Trapezoidal_Cls = RoLE.Trajectory.Utilities.Trapezoidal_Profile_Cls(delta_time=self.__delta_time)
 
         # Set the parameters of the PyBullet environment.
         self.__Set_Env_Parameters(properties['Enable_GUI'], properties['Camera'])
@@ -680,7 +680,7 @@ class Robot_Cls(object):
                     pb.setJointMotorControl2(self.__robot_id, th_index, pb.VELOCITY_CONTROL, 
                                              targetVelocity=th_v_i, force=force),
 
-                and get the velocity from polynomial trajectories.
+                and get the velocity from trapezoidal trajectories.
 
         Args:
             (1) theta [Vector<float> 1xn]: Desired absolute joint position in radians / meters.
@@ -723,7 +723,7 @@ class Robot_Cls(object):
                 # Generation of multi-axis position trajectories from input parameters.
                 theta_arr = []
                 for _, (th_actual, th_desired) in enumerate(zip(self.Theta, theta)):
-                    (theta_arr_i, _, _) = self.__Polynomial_Cls.Generate(th_actual, th_desired, 0.0, 0.0, 0.0, 0.0,
+                    (theta_arr_i, _, _) = self.__Trapezoidal_Cls.Generate(th_actual, th_desired, 0.0, 0.0,
                                                                             properties['t_0'], properties['t_1'])
                     theta_arr.append(theta_arr_i)
 

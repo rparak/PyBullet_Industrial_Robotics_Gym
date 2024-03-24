@@ -4,6 +4,24 @@
 <img src=https://github.com/rparak/PyBullet_Industrial_Robotics_Gym/blob/main/images/I4C.png width="800" height="450">
 </p>
 
+## Requirements
+
+**Programming Language**
+
+```bash
+Python
+```
+
+**Import Libraries**
+```bash
+For additional information, please refer to the individual scripts (.py) or the 'Installation Dependencies' section located at the bottom of the Readme.md file.
+```
+
+**Supported on the following operating systems**
+```bash
+Linux, macOS
+```
+
 ## Installation Dependencies
 
 It will be useful for the project to create a virtual environment using Conda. Conda is an open source package management system and environment management system that runs on Windows, macOS, and Linux. Conda quickly installs, runs and updates packages and their dependencies.

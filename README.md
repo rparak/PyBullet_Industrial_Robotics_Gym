@@ -22,6 +22,18 @@ For additional information, please refer to the individual scripts (.py) or the 
 Linux, macOS
 ```
 
+## Project Description
+
+Text ....
+
+## Project Hierarchy
+
+Text ...
+
+## Demonstration
+
+Text ...
+
 ## Installation Dependencies
 
 It will be useful for the project to create a virtual environment using Conda. Conda is an open source package management system and environment management system that runs on Windows, macOS, and Linux. Conda quickly installs, runs and updates packages and their dependencies.
@@ -74,4 +86,16 @@ $ ../user_name> conda info --envs
 
 Rename the environment from the old name to the new one.
 $ ../user_name> conda rename -n {old_name} {name_name}
+```
+
+## Video
+
+....
+
+## Contact Info:
+Roman.Parak@outlook.com
+
+## Citation (BibTex)
+```
+....
 ```

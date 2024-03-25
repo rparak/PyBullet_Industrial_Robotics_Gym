@@ -33,11 +33,11 @@ The project focuses on the problem of motion planning for a wide range of roboti
 
 Unified Robotics Description Format (URDF) structure for a specific robotic arm used in the experiment.
 
-
+**../PyBullet_Industrial_Robotics_Gym/src/**
 
 ## Training
 
-Text ...
+The source code of the project, which includes additional dependencies. The individual scripts focused on the implementation of the solution such as kinematics, collision detection, AI-gym, PyBullet simulation, etc. contain additional information.
 
 
 ## Evaluation

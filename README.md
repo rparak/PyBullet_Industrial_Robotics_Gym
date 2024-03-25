@@ -31,14 +31,34 @@ The project focuses on the problem of motion planning for a wide range of roboti
 
 **../PyBullet_Industrial_Robotics_Gym/URDFs/**
 
-Unified Robotics Description Format (URDF) structure for a specific robotic arm used in the experiment.
+The folder contains the Unified Robotics Description Format (URDF) structure for the specific robotic arms used in the experiment.
 
 **../PyBullet_Industrial_Robotics_Gym/src/**
 
+The folder contains the main parts (source code) of the project, which contains other dependencies. The individual sections contain additional information about the implementation of the solution, such as kinematics, collision detection, AI-gym, PyBullet simulation, etc.
+
+**../PyBullet_Industrial_Robotics_Gym/Training/**
+
+The folder contains the main scripts for training the DRL model using the selected algorithms, where the name of the scripts is the same as the name of the DRL method used for training.
+
+Further information can be found in the scripts below.
+
+```
+$ ../Training> ls
+train_ddpg.py  train_sac.py  train_td3.py
+```
+
+**../PyBullet_Industrial_Robotics_Gym/Evaluation/**
+
+The folder contains evaluation scripts for the proposed solution. The individual sections contain evaluations of the environment for training the model and evaluations of the trained model on specific scenarios.
+
+**../PyBullet_Industrial_Robotics_Gym/Data/**
+
+The folder contains data from the training progress, the trained model, and the prediction data obtained from a specific test.
+
 ## Training
 
-The source code of the project, which includes additional dependencies. The individual scripts focused on the implementation of the solution such as kinematics, collision detection, AI-gym, PyBullet simulation, etc. contain additional information.
-
+Text ...
 
 ## Evaluation
 

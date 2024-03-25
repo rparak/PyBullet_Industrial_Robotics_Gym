@@ -44,7 +44,7 @@ The solved problem was divided into two parts, with both parts focusing on reach
 **Environment E2**
 
 <p align="center">
-  <img src=https://github.com/rparak/PyBullet_Industrial_Robotics_Gym/blob/main/images/PyBullet_Env_1.png width="800" height="450">
+  <img src=https://github.com/rparak/PyBullet_Industrial_Robotics_Gym/blob/main/images/PyBullet_Env_2.png width="800" height="450">
 </p>
 
 ## Project Hierarchy

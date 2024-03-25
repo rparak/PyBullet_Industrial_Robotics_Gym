@@ -65,7 +65,12 @@ train_ddpg.py train_sac.py train_td3.py
 To train a model, simply run the specified script. It is necessary to set the parameters, including the type of robot structure and environment, as well as whether or not to use Hindsight Experience Replay (HER).
 
 ```
+Deep Deterministic Policy Gradient (DDPG)
 $ ../Training> python train_ddpg.py
+Soft Actor Critic (SAC)
+$ ../Training> python train_sac.py
+Twin Delayed DDPG (TD3)
+$ ../Training> python train_td3.py
 ```
 
 **../PyBullet_Industrial_Robotics_Gym/Evaluation/**
@@ -78,7 +83,12 @@ Gym PyBullet
 ```
 
 Gym
-- ...
+- Test scripts to evaluate the selected trained model for both scenarios and for a specific type of robotic structure. The folder includes the evaluation of the OpenAI Gym environment, the model's training and prediction evaluation for the specific robot structure in both scenarios, and the control of the robot using the trained model to reach the static target as well as the spline of the predicted path.
+
+```
+$ ../Evaluation/Gym> ls
+Control Environment Model
+```
 
 PyBullet
 - Test scripts to evaluate the environment for both scenarios. The folder also contains components for controlling the robot in the specific environment to evaluate the reachability of the configuration spaces.

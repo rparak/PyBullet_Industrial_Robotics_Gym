@@ -48,6 +48,12 @@ $ ../Training> ls
 train_ddpg.py train_sac.py train_td3.py
 ```
 
+To train a model, simply run the specified script. It is necessary to set the parameters, including the type of robot structure and environment, as well as whether or not to use Hindsight Experience Replay (HER).
+
+```
+$ ../Training> python train_ddpg.py
+```
+
 **../PyBullet_Industrial_Robotics_Gym/Evaluation/**
 
 The folder contains evaluation scripts for the proposed solution. The individual sections contain evaluations of the environment for training the model and evaluations of the trained model on specific scenarios.

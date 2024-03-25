@@ -27,6 +27,12 @@ Linux, macOS
 
 The project focuses on the problem of motion planning for a wide range of robotic structures using deep reinforcement learning (DRL) algorithms to solve the problem of reaching a static or random target within a predefined configuration space. Its addresses the challenge of motion planning in environments under a variety of conditions, including environments with and without the presence of collision objects. It highlights the versatility and potential for future expansion through the integration of OpenAI Gym and PyBullet physics-based simulator.
 
+<p align="center">
+<img src=https://github.com/rparak/PyBullet_Industrial_Robotics_Gym/blob/main/images/DRL_Env_UR3.png width="800" height="450">
+</p>
+
+To demonstrate the versatility of the proposed method in this project, robotic structures that are part of a robotic laboratory Industry 4.0 Cell were used. The laboratory contains a variety of robotic structures, which represents a set of the most common geometric representations used for experiments in robotic research. Namely, an industrial robot ABB IRB 120 with six degrees of freedom, the same robot extended by a linear axis providing seven DoF, a SCARA robot Epson LS3-B401S with four DoF, a dual-arm collaborative robot ABB IRB14000 with seven DoF on each arm, and finally, a collaborative robot Universal Robots UR3 with six DoF.
+
 ## Project Hierarchy
 
 **../PyBullet_Industrial_Robotics_Gym/URDFs/**

@@ -25,7 +25,7 @@ Linux, macOS
 
 ## Project Description
 
-The project focuses on the problem of motion planning for a wide range of robotic structures using deep reinforcement learning (DRL) algorithms to solve the problem of reaching a static or random target within a predefined configuration space.
+The project focuses on the problem of motion planning for a wide range of robotic structures using deep reinforcement learning (DRL) algorithms to solve the problem of reaching a static or random target within a predefined configuration space. Its addresses the challenge of motion planning in environments under a variety of conditions, including environments with and without the presence of collision objects. It highlights the versatility and potential for future expansion through the integration of OpenAI Gym and PyBullet physics-based simulator.
 
 ## Project Hierarchy
 

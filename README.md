@@ -37,6 +37,20 @@ The folder contains the Unified Robotics Description Format (URDF) structure for
 
 The folder contains the main parts (source code) of the project, which contains other dependencies. The individual sections contain additional information about the implementation of the solution, such as kinematics, collision detection, AI-gym, PyBullet simulation, etc.
 
+```
+$ ../src> ls
+Industrial_Robotics_Gym PyBullet RoLE
+```
+
+Industrial_Robotics_Gym
+- The main library contains the OpenAI Gym for training models using Deep Reinforcement Learning (DRL) algorithms.
+
+PyBullet
+- The PyBullet library, which contains functions and classes for the work with the physics simulation.
+
+RoLE
+- A robotics library that includes several function and classes for efficient control of robot structures.
+
 **../PyBullet_Industrial_Robotics_Gym/Training/**
 
 The folder contains the main scripts for training the DRL model using the selected algorithms, where the name of the scripts is the same as the name of the DRL method used for training.

@@ -24,7 +24,7 @@ Linux, macOS
 
 ## Project Description
 
-Text ....
+The project focuses on the problem of motion planning for a wide range of robotic structures using deep reinforcement learning (DRL) algorithms to solve the problem of reaching a static or random target within a predefined configuration space.
 
 ## Project Hierarchy
 

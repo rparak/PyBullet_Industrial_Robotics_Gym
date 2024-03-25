@@ -14,7 +14,8 @@ Python
 
 **Import Libraries**
 ```bash
-For additional information, please refer to the individual scripts (.py) or the 'Installation Dependencies' section located at the bottom of the Readme.md file.
+For additional information, please refer to the individual scripts (.py) or
+the 'Installation Dependencies' section located at the bottom of the Readme.md file.
 ```
 
 **Supported on the following operating systems**

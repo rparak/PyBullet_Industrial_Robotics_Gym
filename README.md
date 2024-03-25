@@ -33,9 +33,18 @@ The project focuses on the problem of motion planning for a wide range of roboti
 
 To demonstrate the versatility of the proposed method in this project, robotic structures that are part of a robotic laboratory Industry 4.0 Cell were used. The laboratory contains a variety of robotic structures, which represents a set of the most common geometric representations used for experiments in robotic research. Namely, an industrial robot ABB IRB 120 with six degrees of freedom, the same robot extended by a linear axis providing seven DoF, a SCARA robot Epson LS3-B401S with four DoF, a dual-arm collaborative robot ABB IRB14000 with seven DoF on each arm, and finally, a collaborative robot Universal Robots UR3 with six DoF.
 
+The solved problem was divided into two parts, with both parts focusing on reaching the target in a pre-defined configuration space. The first part, defined by the environment E1 , was focused on reaching the target within the configuration space without any external collision. The second part, defined by the environment E2, focused on the same problem, but with the presence of a statically positioned external collision object.
+
+**Environment E1**
+
 <p align="center">
   <img src=https://github.com/rparak/PyBullet_Industrial_Robotics_Gym/blob/main/images/PyBullet_Env_1.png width="800" height="450">
-  <img src=https://github.com/rparak/PyBullet_Industrial_Robotics_Gym/blob/main/images/PyBullet_Env_2.png width="800" height="450">
+</p>
+
+**Environment E2**
+
+<p align="center">
+  <img src=https://github.com/rparak/PyBullet_Industrial_Robotics_Gym/blob/main/images/PyBullet_Env_1.png width="800" height="450">
 </p>
 
 ## Project Hierarchy

@@ -72,6 +72,26 @@ $ ../Training> python train_ddpg.py
 
 The folder contains evaluation scripts for the proposed solution. The individual sections contain evaluations of the environment for training the model and evaluations of the trained model on specific scenarios.
 
+```
+$ ../Data> ls
+Gym PyBullet
+```
+
+Gym
+- ...
+
+PyBullet
+- Test scripts to evaluate the environment for both scenarios. The folder also contains components for controlling the robot in the specific environment to evaluate the reachability of the configuration spaces.
+
+```
+$ ../PyBullet/Environment> python test_env.py
+```
+
+```
+$ ../PyBullet/Control> python test_configuration_space_rand.py
+$ ../PyBullet/Control> python test_configuration_space_vertices.py
+```
+
 **../PyBullet_Industrial_Robotics_Gym/Data/**
 
 The folder contains data from the training progress, the trained model, and the prediction data obtained from a specific test.

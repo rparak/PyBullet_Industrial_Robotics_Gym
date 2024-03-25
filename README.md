@@ -56,14 +56,6 @@ The folder contains evaluation scripts for the proposed solution. The individual
 
 The folder contains data from the training progress, the trained model, and the prediction data obtained from a specific test.
 
-## Training
-
-Text ...
-
-## Evaluation
-
-Text ...
-
 ## Installation Dependencies
 
 It will be useful for the project to create a virtual environment using Conda. Conda is an open source package management system and environment management system that runs on Windows, macOS, and Linux. Conda quickly installs, runs and updates packages and their dependencies.

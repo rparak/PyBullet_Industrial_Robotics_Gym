@@ -189,12 +189,12 @@ $ ../user_name> conda rename -n {old_name} {name_name}
 
 ## Video
 
-....
+In progress ...
 
 ## Contact Info:
 Roman.Parak@outlook.com
 
 ## Citation (BibTex)
 ```
-....
+In progress ...
 ```

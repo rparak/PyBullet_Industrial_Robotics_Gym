@@ -29,9 +29,18 @@ The project focuses on the problem of motion planning for a wide range of roboti
 
 ## Project Hierarchy
 
+**../PyBullet_Industrial_Robotics_Gym/URDFs/**
+
+Unified Robotics Description Format (URDF) structure for a specific robotic arm used in the experiment.
+
+
+
+## Training
+
 Text ...
 
-## Demonstration
+
+## Evaluation
 
 Text ...
 

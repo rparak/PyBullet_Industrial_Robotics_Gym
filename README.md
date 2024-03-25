@@ -45,7 +45,7 @@ Further information can be found in the scripts below.
 
 ```
 $ ../Training> ls
-train_ddpg.py  train_sac.py  train_td3.py
+train_ddpg.py train_sac.py train_td3.py
 ```
 
 **../PyBullet_Industrial_Robotics_Gym/Evaluation/**
@@ -55,6 +55,13 @@ The folder contains evaluation scripts for the proposed solution. The individual
 **../PyBullet_Industrial_Robotics_Gym/Data/**
 
 The folder contains data from the training progress, the trained model, and the prediction data obtained from a specific test.
+
+```
+$ ../Data> ls
+Model Prediction Training
+```
+
+The experimental data are generated depending on the training or evaluation of a particular algorithm and robot structure.
 
 ## Installation Dependencies
 

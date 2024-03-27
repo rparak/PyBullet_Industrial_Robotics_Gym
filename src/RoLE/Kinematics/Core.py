@@ -686,15 +686,16 @@ def Inverse_Kinematics_Numerical(TCP_Position: tp.List[tp.List[float]], theta_0:
                     # Obtain the new theta value using the chosen numerical method.
                     th_i += __Obtain_Theta_IK_N_Method(method, J, e_i, W_e, E)
 
-                # Get the current TCP position of the robotic arm using Forward Kinematics (FK).
-                (th_limit_err, T) = Forward_Kinematics(th_i, 'Fast', Robot_Parameters_Str)
-
                 # Check whether the desired absolute joint positions are within the limits.
+                th_limit_err = General.Check_Theta_Limit(th_i, Robot_Parameters_Str)
                 for i, th_limit_err_i in enumerate(th_limit_err):
                     if th_limit_err_i == True:
                         th_i[i] = th_i_tmp[i]
                     else:
                         th_i_tmp[i] = th_i[i]
+                        
+                # Get the current TCP position of the robotic arm using Forward Kinematics (FK).
+                T = Forward_Kinematics(th_i, 'Fast', Robot_Parameters_Str)[1]
 
             # Save the number of iterations needed to find the inverse 
             # kinematics (IK) solution at point 'T_i'.

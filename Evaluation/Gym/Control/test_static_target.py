@@ -119,7 +119,7 @@ def main():
     (_, theta_f) = RoLE.Kinematics.Core.Inverse_Kinematics_Numerical(T, PyBullet_Robot_Cls.Theta, 'Levenberg-Marquardt', Robot_Str, 
                                                                      {'delta_time': 0.2, 'num_of_iteration': 500, 
                                                                       'tolerance': 1e-30})
-    PyBullet_Robot_Cls.Reset('Individual', theta_f, True)
+    PyBullet_Robot_Cls.Reset('Individual', theta_f, CONST_VISIBILITY_GHOST)
     
     # Calculation of inverse kinematics (IK) using the chosen numerical method.
     theta_0 = PyBullet_Robot_Cls.Theta; theta_arr = []

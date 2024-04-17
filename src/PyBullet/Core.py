@@ -178,12 +178,12 @@ class Robot_Cls(object):
 
         # Obtain the structure of the main parameters of the environment for the defined robotic arm.
         self.__Env_Structure = PyBullet.Utilities.Get_Environment_Structure(self.__Robot_Parameters_Str.Name, properties['Env_ID'])
-        #   Add the cube of the search (configuration) space and get the vertices of the defined cube.
+        #   Add the cube of the search (configuration) space and get the vertices of the defined cube.[0.60, 1.0, 0.60]
         self.__vertices_C_search = PyBullet.Utilities.Add_Wireframe_Cuboid(self.__Env_Structure.C.Search.T, self.__Env_Structure.C.Search.Size, 
-                                                                           self.__Env_Structure.C.Search.Color, 1.0)
+                                                                           self.__Env_Structure.C.Search.Color, 2.5)
         #   Add the cube of the target (configuration) space and get the vertices of the defined cube.
         self.__vertices_C_target = PyBullet.Utilities.Add_Wireframe_Cuboid(self.__Env_Structure.C.Target.T, self.__Env_Structure.C.Target.Size, 
-                                                                           self.__Env_Structure.C.Target.Color, 1.0)
+                                                                           self.__Env_Structure.C.Target.Color, 2.5)
 
         # Get the home absolute joint positions of a specific environment for a defined robotic arm.
         Robot_Parameters_Str.Theta.Home = PyBullet.Utilities.Get_Robot_Structure_Theta_Home(self.__Robot_Parameters_Str.Name, properties['Env_ID'])
@@ -200,7 +200,7 @@ class Robot_Cls(object):
                                      f'{self.__Env_Structure.Collision_Object.Type}_Collision', self.__Env_Structure.Collision_Object.T, self.__Env_Structure.Collision_Object.Color,
                                      self.__Env_Structure.Collision_Object.Scale, True)
             _ = PyBullet.Utilities.Add_Wireframe_Cuboid(self.__Env_Structure.Collision_Object.T, 3 * [self.__Env_Structure.Collision_Object.Scale * 2.0], 
-                                                        self.__Env_Structure.Collision_Object.Color[0:3], 1.0)
+                                                        self.__Env_Structure.Collision_Object.Color[0:3], 2.5)
 
     def __Set_Env_Parameters(self, enable_gui: bool, camera_parameters: tp.Dict) -> None:
         """

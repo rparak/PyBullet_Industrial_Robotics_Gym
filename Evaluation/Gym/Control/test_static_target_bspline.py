@@ -33,10 +33,8 @@ Description:
 CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 # Numerical IK Parameters.
 #   The properties of the inverse kinematics solver.
-CONST_IK_PROPERTIES = {'delta_time': None, 'num_of_iteration': 500, 
+CONST_IK_PROPERTIES = {'delta_time': 0.1, 'num_of_iteration': 500, 
                        'tolerance': 1e-30}
-# Visibility of the target position as the 'ghost' of the robotic model.
-CONST_VISIBILITY_GHOST = False
 # The name of the environment mode.
 #   'Default': 
 #       The mode called "Default" demonstrates an environment without a collision object.
@@ -172,7 +170,7 @@ def main():
             i += 1
         else:
             PyBullet_Robot_Cls.Step()
-        
+
     # Disconnect the created environment from a physical server.
     PyBullet_Robot_Cls.Disconnect()
 

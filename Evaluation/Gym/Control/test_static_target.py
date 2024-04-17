@@ -31,10 +31,8 @@ Description:
 CONST_ROBOT_TYPE = Parameters.Universal_Robots_UR3_Str
 # Numerical IK Parameters.
 #   The properties of the inverse kinematics solver.
-CONST_IK_PROPERTIES = {'delta_time': None, 'num_of_iteration': 500, 
+CONST_IK_PROPERTIES = {'delta_time': 0.1, 'num_of_iteration': 500, 
                        'tolerance': 1e-30}
-# Visibility of the target position as the 'ghost' of the robotic model.
-CONST_VISIBILITY_GHOST = False
 # The name of the environment mode.
 #   'Default': 
 #       The mode called "Default" demonstrates an environment without a collision object.
@@ -119,8 +117,8 @@ def main():
     (_, theta_f) = RoLE.Kinematics.Core.Inverse_Kinematics_Numerical(T, PyBullet_Robot_Cls.Theta, 'Levenberg-Marquardt', Robot_Str, 
                                                                      {'delta_time': 0.2, 'num_of_iteration': 500, 
                                                                       'tolerance': 1e-30})
-    PyBullet_Robot_Cls.Reset('Individual', theta_f, CONST_VISIBILITY_GHOST)
-    
+    PyBullet_Robot_Cls.Reset('Individual', theta_f, True)
+
     # Calculation of inverse kinematics (IK) using the chosen numerical method.
     theta_0 = PyBullet_Robot_Cls.Theta; theta_arr = []
     for i, data_i in enumerate(data):
@@ -133,24 +131,25 @@ def main():
         # Obtain the inverse kinematics (IK) solution of the robotic structure from the desired TCP (tool center point).
         (_, theta_i) = RoLE.Kinematics.Core.Inverse_Kinematics_Numerical(T_i, theta_0, 'Levenberg-Marquardt', Robot_Str, 
                                                                          CONST_IK_PROPERTIES)
-        
         # Store the data.
         theta_arr.append(theta_i)
 
         # Obtain the last absolute position of the joint.
         theta_0 = theta_i.copy()
     
+
     # The physical simulation is in progress.
     i = 0
     while PyBullet_Robot_Cls.is_connected == True:
         # If index 'i' is out of range, stop the movement
         if i < len(theta_arr):
             # Set the absolute position of the robot joints.
-            _ = PyBullet_Robot_Cls.Set_Absolute_Joint_Position(theta_arr[i], {'force': 100.0, 't_0': 0.0, 't_1': 1/data[:, 0].size})  
+            _ = PyBullet_Robot_Cls.Set_Absolute_Joint_Position(theta_arr[i], {'force': 100.0, 't_0': 0.0, 't_1': np.round(1.0/data[:, 0].size, 2)})  
             i += 1
         else:
             PyBullet_Robot_Cls.Step()
         
+ 
     # Disconnect the created environment from a physical server.
     PyBullet_Robot_Cls.Disconnect()
 

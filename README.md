@@ -196,5 +196,18 @@ Roman.Parak@outlook.com
 
 ## Citation (BibTex)
 ```
-In progress ...
+
+@Article{computation12060116,
+AUTHOR = {Parák, Roman and Kůdela, Jakub and Matoušek, Radomil and Juříček, Martin},
+TITLE = {Deep-Reinforcement-Learning-Based Motion Planning for a Wide Range of Robotic Structures},
+JOURNAL = {Computation},
+VOLUME = {12},
+YEAR = {2024},
+NUMBER = {6},
+ARTICLE-NUMBER = {116},
+URL = {https://www.mdpi.com/2079-3197/12/6/116},
+ISSN = {2079-3197},
+ABSTRACT = {The use of robot manipulators in engineering applications and scientific research has significantly increased in recent years. This can be attributed to the rise of technologies such as autonomous robotics and physics-based simulation, along with the utilization of artificial intelligence techniques. The use of these technologies may be limited due to a focus on a specific type of robotic manipulator and a particular solved task, which can hinder modularity and reproducibility in future expansions. This paper presents a method for planning motion across a wide range of robotic structures using deep reinforcement learning (DRL) algorithms to solve the problem of reaching a static or random target within a pre-defined configuration space. The paper addresses the challenge of motion planning in environments under a variety of conditions, including environments with and without the presence of collision objects. It highlights the versatility and potential for future expansion through the integration of OpenAI Gym and the PyBullet physics-based simulator.},
+DOI = {10.3390/computation12060116}
+}
 ```

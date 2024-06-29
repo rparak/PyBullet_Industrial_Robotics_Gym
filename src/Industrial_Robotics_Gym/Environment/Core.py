@@ -277,7 +277,7 @@ class Industrial_Robotics_Gym_Env_Cls(gym.Env):
         Returns:
             (1) parameter [Vector<float> 1x1]: Information whether the desired target has been successfully found.
         """
-                
+
         return np.array(self.__Euclidean_Norm(p - p_1) < self.__distance_threshold, dtype=bool)
     
     def step(self, action: gym.spaces.Box) -> tp.Tuple[gym.spaces.Dict, float, bool, bool, tp.Dict]:

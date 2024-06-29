@@ -54,10 +54,6 @@ def main():
         A program designed for the prediction of a 'reach' task in a pre-defined environment, utilizing 
         the Deep Deterministic Policy Gradient (DDPG) reinforcement learning algorithm.
 
-        The DDPG algorithm is pre-trained only for the following robotic arms:
-            - Universal Robots UR3 -> Both environments and each algorithm.
-            - Collision-Free Env. -> Only the DDPG algorithm for all robotic structures.
-
         Note:
             Targets will be defined randomly.
 

@@ -61,7 +61,7 @@ for _, env_mode_i in enumerate(CONST_ENV_MODE):
             entry_point='Industrial_Robotics_Gym.Environment.Core:Industrial_Robotics_Gym_Env_Cls',
             kwargs={'mode': env_mode_i,
                     'Robot_Str': r_str_i,
-                    'action_step_factor': 0.04,
+                    'action_step_factor': 0.01,
                     'distance_threshold': 0.01,
                     'T': None},
             max_episode_steps=100)

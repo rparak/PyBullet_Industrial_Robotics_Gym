@@ -53,9 +53,6 @@ def main():
         A program designed for the prediction of a 'reach' task in a pre-defined environment, utilizing 
         the Soft Actor-Critic (SAC) reinforcement learning algorithm.
 
-        The DDPG algorithm is pre-trained only for the following robotic arms:
-            - Universal Robots UR3 -> Both environments and each algorithm.
-
         Note:
             Targets will be defined randomly.
 

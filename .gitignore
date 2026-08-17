@@ -2,3 +2,10 @@
 .DS_Store
 **/.DS_Store
 .DS_Store
+
+# Article sources (not part of the project)
+MDPI_DRL_RP_2024.zip
+MDPI_DRL_RP_2024/
+computation-12-00116.pdf
+README_INSTRUCTIONS.md
+_paper_src/

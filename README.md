@@ -1,4 +1,4 @@
-# PyBullet Industrial Robotics Gym
+# Deep-Reinforcement-Learning-Based Motion Planning for a Wide Range of Robotic Structures
 
 [![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Gymnasium](https://img.shields.io/badge/Gymnasium-env-0A0A0A)](https://gymnasium.farama.org/)

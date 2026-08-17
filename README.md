@@ -428,5 +428,3 @@ The experiments were run primarily on the Universal Robots UR3, comparing all si
 - **License.** The source files carry an MIT License header (© 2024 Roman Parak). No standalone `LICENSE` file is currently present in the repository.
 - **Contact.** Roman.Parak@outlook.com · GitHub: [rparak](https://github.com/rparak)
 - **Acknowledgements.** This work was supported by the project IGA BUT No. FSI-S-23-8394, *"Artificial intelligence methods in engineering tasks"*. The robotic structures are part of the Industry 4.0 Cell laboratory at Brno University of Technology.
-
-**Video:** in progress.
